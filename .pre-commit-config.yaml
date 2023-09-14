@@ -19,15 +19,6 @@ repos:
     -   id: check-shebang-scripts-are-executable
     -   id: check-added-large-files
         args: ['--maxkb=100']
--   repo: https://github.com/codespell-project/codespell
-    rev: v2.2.5
-    hooks:
-    -   id: codespell
-        exclude: '^(third_party/)|(body/)|(cereal/)|(rednose/)|(panda/)|(laika/)|(opendbc/)|(laika_repo/)|(rednose_repo/)|(selfdrive/ui/translations/.*.ts)|(poetry.lock)'
-        args:
-        # if you've got a short variable name that's getting flagged, add it here
-        - -L bu,ro,te,ue,alo,hda,ois,nam,nams,ned,som,parm,setts,inout,warmup,bumb,nd,sie
-        - --builtins clear,rare,informal,usage,code,names,en-GB_to_en-US
 -   repo: local
     hooks:
     -   id: mypy
@@ -64,7 +55,7 @@ repos:
         args:
         - --quiet
         - --counting=total
-        - --linelength=240
+        - --linelength=310
         # https://google.github.io/styleguide/cppguide.html
         # relevant rules are whitelisted, see all options with: cpplint --filter=
         - --filter=-build,-legal,-readability,-runtime,-whitespace,+build/include_subdir,+build/forward_decl,+build/include_what_you_use,+build/deprecated,+whitespace/comma,+whitespace/line_length,+whitespace/empty_if_body,+whitespace/empty_loop_body,+whitespace/empty_conditional_body,+whitespace/forcolon,+whitespace/parens,+whitespace/semicolon,+whitespace/tab,+readability/braces

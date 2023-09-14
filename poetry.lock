@@ -2805,6 +2805,16 @@ files = [
 numpy = {version = ">=1.23.5", markers = "python_version >= \"3.11\""}
 
 [[package]]
+name = "overpy"
+version = "0.6"
+description = "Python Wrapper to access the OpenStreepMap Overpass API"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "overpy-0.6.tar.gz", hash = "sha256:75fa462c445a3d8ade4dad84df6f150d273f45548639229316829a3a8c3e2190"},
+]
+
+[[package]]
 name = "packaging"
 version = "23.1"
 description = "Core utilities for Python packages"
@@ -5087,4 +5097,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
-content-hash = "7258a24274936ccdafb930a683f4ea197e82ab187698d0723bb4683ca41e6d26"
+content-hash = "a4327d4ba2753e7577ac18180899e3954a9304f2978d45670a952cac514667c9"

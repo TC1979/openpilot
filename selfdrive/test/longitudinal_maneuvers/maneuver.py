@@ -24,6 +24,9 @@ class Maneuver:
     self.duration = duration
     self.title = title
 
+    # KRKeegan allow testing distance_lines
+    self.distance_lines = kwargs.get("distance_lines", 0)
+
   def evaluate(self):
     plant = Plant(
       lead_relevancy=self.lead_relevancy,
@@ -33,6 +36,7 @@ class Maneuver:
       only_lead2=self.only_lead2,
       only_radar=self.only_radar,
       e2e=self.e2e,
+      distance_lines=self.distance_lines,
       force_decel=self.force_decel,
     )
 
@@ -59,6 +63,8 @@ class Maneuver:
         print("Crashed!!!!")
         valid = False
 
+      # TODO: log['speeds'][-1] <= 0.1 raise the planner not starting error
+      # lower speed threshold to ignore error
       if self.ensure_start and log['v_rel'] > 0 and log['speeds'][-1] <= 0.1:
         print('LongitudinalPlanner not starting!')
         valid = False

@@ -90,6 +90,7 @@ numpy = "*"
 onnx = ">=1.14.0"
 onnxruntime-gpu = { version = ">=1.15.1", platform = "linux", markers = "platform_machine == 'x86_64'" }
 pillow = "*"
+overpy = "==0.6"
 psutil = "*"
 pyaudio = "*"
 pycapnp = "*"
@@ -174,7 +175,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.ruff]
 select = ["E", "F", "W", "PIE", "C4", "ISC", "RUF100", "A", "B", "TID251"]
 ignore = ["W292", "E741", "E402", "C408", "ISC003", "B027", "B024"]
-line-length = 160
+line-length = 300
 target-version="py311"
 exclude = [
   "panda",

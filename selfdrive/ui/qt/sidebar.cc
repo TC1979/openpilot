@@ -78,6 +78,7 @@ void Sidebar::updateState(const UIState &s) {
   setProperty("netType", network_type[deviceState.getNetworkType()]);
   int strength = (int)deviceState.getNetworkStrength();
   setProperty("netStrength", strength > 0 ? strength + 1 : 0);
+  setProperty("wifiAddr", deviceState.getWifiIpAddress().cStr());
 
   ItemStatus connectStatus;
   auto last_ping = deviceState.getLastAthenaPingTime();
@@ -89,13 +90,15 @@ void Sidebar::updateState(const UIState &s) {
                         : ItemStatus{{tr("CONNECT"), tr("ERROR")}, danger_color};
   }
   setProperty("connectStatus", QVariant::fromValue(connectStatus));
-
-  ItemStatus tempStatus = {{tr("TEMP"), tr("HIGH")}, danger_color};
+  int temp = (int)deviceState.getAmbientTempC();
+  QString good_disp = QString::number(temp) + "°C";
+  ItemStatus tempStatus = {{tr("TEMP"), good_disp.toUtf8().data()}, danger_color};
   auto ts = deviceState.getThermalStatus();
   if (ts == cereal::DeviceState::ThermalStatus::GREEN) {
-    tempStatus = {{tr("TEMP"), tr("GOOD")}, good_color};
+    tempStatus = {{tr("TEMP"), good_disp.toUtf8().data()}, good_color};
+    //tempStatus = {{tr("TEMP"), tr("GOOD")}, good_color};
   } else if (ts == cereal::DeviceState::ThermalStatus::YELLOW) {
-    tempStatus = {{tr("TEMP"), tr("OK")}, warning_color};
+    tempStatus = {{tr("TEMP"), good_disp.toUtf8().data()}, warning_color};
   }
   setProperty("tempStatus", QVariant::fromValue(tempStatus));
 
@@ -133,8 +136,12 @@ void Sidebar::paintEvent(QPaintEvent *event) {
 
   p.setFont(InterFont(35));
   p.setPen(QColor(0xff, 0xff, 0xff));
-  const QRect r = QRect(50, 247, 100, 50);
-  p.drawText(r, Qt::AlignCenter, net_type);
+  const QRect r = QRect(0, 247, event->rect().width(), 50);
+  //p.drawText(r, Qt::AlignCenter, net_type);
+  if (net_type == network_type[cereal::DeviceState::NetworkType::WIFI])
+    p.drawText(r, Qt::AlignCenter, wifi_addr);
+  else
+    p.drawText(r, Qt::AlignCenter, net_type);
 
   // metrics
   drawMetric(p, temp_status.first, temp_status.second, 338);

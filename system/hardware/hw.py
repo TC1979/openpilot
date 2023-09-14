@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from openpilot.selfdrive.hardware import PC
+from openpilot.common.params import Params
 
 class Paths:
   @staticmethod
@@ -15,7 +16,11 @@ class Paths:
     elif PC:
       return str(Path(Paths.comma_home()) / "media" / "0" / "realdata")
     else:
-      return '/data/media/0/realdata/'
+      params = Params()
+      if params.get_bool("dp_jetson"):
+        return '/data/media/0/fakedata/'
+      else:
+        return '/data/media/0/realdata/'
 
   @staticmethod
   def swaglog_root() -> str:

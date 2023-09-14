@@ -94,6 +94,11 @@ typedef enum UIStatus {
   STATUS_DISENGAGED,
   STATUS_OVERRIDE,
   STATUS_ENGAGED,
+  STATUS_WARNING,
+  STATUS_ALERT,
+  // dpatl {{
+  STATUS_LAT_ALLOWED,
+  // }} dpatl
 } UIStatus;
 
 enum PrimeType {
@@ -109,6 +114,9 @@ const QColor bg_colors [] = {
   [STATUS_DISENGAGED] = QColor(0x17, 0x33, 0x49, 0xc8),
   [STATUS_OVERRIDE] = QColor(0x91, 0x9b, 0x95, 0xf1),
   [STATUS_ENGAGED] = QColor(0x17, 0x86, 0x44, 0xf1),
+  // dpatl {{
+  [STATUS_LAT_ALLOWED] = QColor(0x6f, 0xc0, 0xc9, 0xf1),
+  // }} dpatl
 };
 
 static std::map<cereal::ControlsState::AlertStatus, QColor> alert_colors = {
@@ -116,6 +124,11 @@ static std::map<cereal::ControlsState::AlertStatus, QColor> alert_colors = {
   {cereal::ControlsState::AlertStatus::USER_PROMPT, QColor(0xDA, 0x6F, 0x25, 0xf1)},
   {cereal::ControlsState::AlertStatus::CRITICAL, QColor(0xC9, 0x22, 0x31, 0xf1)},
 };
+
+typedef struct {
+  QPointF v[TRAJECTORY_SIZE * 2];
+  int cnt;
+} line_vertices_data;
 
 typedef struct UIScene {
   bool calibration_valid = false;
@@ -147,6 +160,18 @@ typedef struct UIScene {
   float light_sensor;
   bool started, ignition, is_metric, map_on_left, longitudinal_control;
   uint64_t started_frame;
+  bool onroadScreenOff;
+  bool blind_spot_left;
+  bool blind_spot_right;
+  bool driving_personalities_ui_wheel;
+  bool experimental_mode;
+  bool experimental_mode_via_wheel;
+  bool tim_signals;
+  bool mute_dm;
+  bool steering_wheel_car;
+  bool turn_signal_left;
+  bool turn_signal_right;
+  int personality_profile;
 } UIScene;
 
 class UIState : public QObject {

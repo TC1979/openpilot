@@ -252,6 +252,12 @@ public:
     }
   }
 
+  void refresh() {
+    for (auto btn : button_group->buttons()) {
+      btn->setChecked(button_group->id(btn) == params.getInt("LongitudinalPersonality"));
+    }
+  }
+
 private:
   std::string key;
   Params params;

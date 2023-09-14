@@ -711,3 +711,12 @@ HYBRID_CARS = {CAR.CROSSTREK_HYBRID, CAR.FORESTER_HYBRID}
 # Cars that temporarily fault when steering angle rate is greater than some threshold.
 # Appears to be all cars that started production after 2020
 STEER_RATE_LIMITED = GLOBAL_GEN2 | {CAR.IMPREZA_2020}
+
+def main():
+  for member, value in vars(CAR).items():
+    if not member.startswith("_"):
+      print(value)
+
+
+if __name__ == "__main__":
+  main()

@@ -3,6 +3,7 @@ LICENSE
 launch_env.sh
 launch_chffrplus.sh
 launch_openpilot.sh
+force_car_recognition.py
 
 Jenkinsfile
 SConstruct
@@ -118,6 +119,7 @@ selfdrive/car/tests/test_car_interfaces.py
 selfdrive/car/torque_data/params.yaml
 selfdrive/car/torque_data/substitute.yaml
 selfdrive/car/torque_data/override.yaml
+selfdrive/car/top_tmp/*
 
 selfdrive/car/body/*.py
 selfdrive/car/chrysler/*.py
@@ -146,6 +148,9 @@ selfdrive/debug/uiview.py
 
 selfdrive/debug/hyundai_enable_radar_points.py
 selfdrive/debug/vw_mqb_config.py
+
+selfdrive/gpxd/gpx_uploader.py
+selfdrive/gpxd/gpxd.py
 
 common/SConscript
 common/version.h
@@ -178,14 +183,17 @@ common/i2c.h
 
 selfdrive/controls/__init__.py
 selfdrive/controls/controlsd.py
+selfdrive/controls/distance_based_curvature.py
 selfdrive/controls/plannerd.py
 selfdrive/controls/radard.py
+selfdrive/controls/vtsc.py
 selfdrive/controls/lib/__init__.py
 selfdrive/controls/lib/alertmanager.py
 selfdrive/controls/lib/alerts_offroad.json
 selfdrive/controls/lib/desire_helper.py
 selfdrive/controls/lib/drive_helpers.py
 selfdrive/controls/lib/events.py
+selfdrive/controls/lib/lane_planner.py
 selfdrive/controls/lib/latcontrol_angle.py
 selfdrive/controls/lib/latcontrol_torque.py
 selfdrive/controls/lib/latcontrol_pid.py
@@ -350,6 +358,7 @@ system/camerad/imgproc/utils.h
 
 selfdrive/manager/__init__.py
 selfdrive/manager/build.py
+selfdrive/manager/custom_dep.py
 selfdrive/manager/helpers.py
 selfdrive/manager/manager.py
 selfdrive/manager/process_config.py
@@ -413,7 +422,7 @@ selfdrive/assets/assets.qrc
 selfdrive/assets/*.png
 selfdrive/assets/*.svg
 selfdrive/assets/body/*
-selfdrive/assets/fonts/*.ttf
+selfdrive/assets/fonts/*
 selfdrive/assets/icons/*
 selfdrive/assets/images/*
 selfdrive/assets/offroad/*
@@ -600,3 +609,7 @@ tinygrad_repo/tinygrad/nn/*
 tinygrad_repo/tinygrad/runtime/ops_gpu.py
 tinygrad_repo/tinygrad/shape/*
 tinygrad_repo/tinygrad/*.py
+selfdrive/opwebd/*.py
+selfdrive/opwebd/components/*.py
+selfdrive/opwebd/static/*
+selfdrive/opwebd/templates/**/*

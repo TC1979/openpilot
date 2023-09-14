@@ -90,7 +90,7 @@ def is_comma_remote() -> bool:
   if origin is None:
     return False
 
-  return origin.startswith(('git@github.com:commaai', 'https://github.com/commaai'))
+  return origin.startswith(('git@github.com:CT921', 'https://github.com/CT921'))
 
 
 @cache

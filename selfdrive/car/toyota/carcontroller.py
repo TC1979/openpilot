@@ -1,12 +1,15 @@
 from cereal import car
 from openpilot.common.numpy_fast import clip, interp
-from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, common_fault_avoidance, \
+from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, \
                           create_gas_interceptor_command, make_can_msg
 from openpilot.selfdrive.car.toyota import toyotacan
 from openpilot.selfdrive.car.toyota.values import CAR, STATIC_DSU_MSGS, NO_STOP_TIMER_CAR, TSS2_CAR, \
                                         MIN_ACC_SPEED, PEDAL_TRANSITION, CarControllerParams, ToyotaFlags, \
                                         UNSUPPORTED_DSU_CAR
+from openpilot.selfdrive.car.toyota.interface import CarInterface
 from opendbc.can.packer import CANPacker
+from openpilot.common.params import Params
+from openpilot.common.conversions import Conversions as CV
 
 SteerControlType = car.CarParams.SteerControlType
 VisualAlert = car.CarControl.HUDControl.VisualAlert
@@ -24,6 +27,26 @@ MAX_USER_TORQUE = 500
 MAX_STEER_ANGLE = 94.9461  # deg
 MAX_DRIVER_TORQUE_ALLOWANCE = 150  # slightly above steering pressed allows some resistance when changing lanes
 
+GearShifter = car.CarState.GearShifter
+UNLOCK_CMD = b'\x40\x05\x30\x11\x00\x40\x00\x00'
+LOCK_CMD = b'\x40\x05\x30\x11\x00\x80\x00\x00'
+LOCK_AT_SPEED = 10 * CV.KPH_TO_MS
+
+# Blindspot codes
+LEFT_BLINDSPOT = b'\x41'
+RIGHT_BLINDSPOT = b'\x42'
+
+def set_blindspot_debug_mode(lr,enable):
+  if enable:
+    m = lr + b'\x02\x10\x60\x00\x00\x00\x00'
+  else:
+    m = lr + b'\x02\x10\x01\x00\x00\x00\x00'
+  return make_can_msg(0x750, m, 0)
+
+
+def poll_blindspot_status(lr):
+  m = lr + b'\x02\x21\x69\x00\x00\x00\x00'
+  return make_can_msg(0x750, m, 0)
 
 class CarController:
   def __init__(self, dbc_name, CP, VM):
@@ -41,6 +64,29 @@ class CarController:
     self.gas = 0
     self.accel = 0
 
+    self.last_off_frame = 0
+    self.permit_braking = True
+    self.e2e_long = Params().get_bool("ExperimentalMode")
+
+    self.toyotaautolock = Params().get_bool("toyotaautolock")
+    self.toyotaautounlock = Params().get_bool("toyotaautounlock")
+    self.last_gear = GearShifter.park
+    self.lock_once = False
+    self._reverse_acc_change = Params().get_bool("ReverseAccChange")
+    self.topsng = Params().get_bool("topsng")
+    self.toyota_bsm = Params().get_bool("toyota_bsm")
+
+
+    self.blindspot_debug_enabled_left = False
+    self.blindspot_debug_enabled_right = False
+    self.blindspot_frame = 0
+    if self.CP.carFingerprint in TSS2_CAR: # tss2 can do higher hz then tss1 and can be on at all speed/standstill
+      self.blindspot_rate = 2
+      self.blindspot_always_on = True
+    else:
+      self.blindspot_rate = 20
+      self.blindspot_always_on = False
+
   def update(self, CC, CS, now_nanos):
     actuators = CC.actuators
     hud_control = CC.hudControl
@@ -50,22 +96,86 @@ class CarController:
     # *** control msgs ***
     can_sends = []
 
+    # dp - door auto lock / unlock logic
+    # thanks to AlexandreSato & cydia2020
+    # https://github.com/AlexandreSato/openpilot/blob/personal/doors.py
+    if self.toyotaautolock or self.toyotaautounlock:
+      gear = CS.out.gearShifter
+      if self.last_gear != gear and gear == GearShifter.park:
+        if self.toyotaautounlock:
+          can_sends.append(make_can_msg(0x750, UNLOCK_CMD, 0))
+        if self.toyotaautolock:
+          self.lock_once = False
+      elif self.toyotaautolock and not CS.out.doorOpen and gear == GearShifter.drive and not self.lock_once and CS.out.vEgo >= LOCK_AT_SPEED:
+        can_sends.append(make_can_msg(0x750, LOCK_CMD, 0))
+        self.lock_once = True
+      self.last_gear = gear
+
+    # Enable blindspot debug mode once (@arne182)
+    # let's keep all the commented out code for easy debug purpose for future.
+    if self.toyota_bsm:
+      if self.frame > 2000:
+        #left bsm
+        if not self.blindspot_debug_enabled_left:
+          if (self.blindspot_always_on or (CS.out.leftBlinker and CS.out.vEgo > 6)): # eagle eye camera will stop working if right bsm is switched on under 6m/s
+            can_sends.append(set_blindspot_debug_mode(LEFT_BLINDSPOT, True))
+            self.blindspot_debug_enabled_left = True
+            # print("bsm debug left, on")
+        else:
+          if not self.blindspot_always_on and not CS.out.leftBlinker and self.frame - self.blindspot_frame > 500:
+            can_sends.append(set_blindspot_debug_mode(LEFT_BLINDSPOT, False))
+            self.blindspot_debug_enabled_left = False
+            # print("bsm debug left, off")
+          if self.frame % self.blindspot_rate == 0:
+            can_sends.append(poll_blindspot_status(LEFT_BLINDSPOT))
+            if CS.out.leftBlinker:
+              self.blindspot_frame = self.frame
+              # print(self.blindspot_frame)
+            # print("bsm poll left")
+        #right bsm
+        if not self.blindspot_debug_enabled_right:
+          if (self.blindspot_always_on or (CS.out.rightBlinker and CS.out.vEgo > 6)): # eagle eye camera will stop working if right bsm is switched on under 6m/s
+            can_sends.append(set_blindspot_debug_mode(RIGHT_BLINDSPOT, True))
+            self.blindspot_debug_enabled_right = True
+            # print("bsm debug right, on")
+        else:
+          if not self.blindspot_always_on and not CS.out.rightBlinker and self.frame - self.blindspot_frame > 500:
+            can_sends.append(set_blindspot_debug_mode(RIGHT_BLINDSPOT, False))
+            self.blindspot_debug_enabled_right = False
+            # print("bsm debug right, off")
+          if self.frame % self.blindspot_rate == self.blindspot_rate/2:
+            can_sends.append(poll_blindspot_status(RIGHT_BLINDSPOT))
+            if CS.out.rightBlinker:
+              self.blindspot_frame = self.frame
+              # print(self.blindspot_frame)
+            # print("bsm poll right")
+
     # *** steer torque ***
     new_steer = int(round(actuators.steer * self.params.STEER_MAX))
     apply_steer = apply_meas_steer_torque_limits(new_steer, self.last_steer, CS.out.steeringTorqueEps, self.params)
 
-    # >100 degree/sec steering fault prevention
-    self.steer_rate_counter, apply_steer_req = common_fault_avoidance(abs(CS.out.steeringRateDeg) >= MAX_STEER_RATE, CC.latActive,
-                                                                      self.steer_rate_counter, MAX_STEER_RATE_FRAMES)
+    # Count up to MAX_STEER_RATE_FRAMES, at which point we need to cut torque to avoid a steering fault
+    if lat_active and abs(CS.out.steeringRateDeg) >= MAX_STEER_RATE:
+      self.steer_rate_counter += 1
+    else:
+      self.steer_rate_counter = 0
 
-    if not CC.latActive:
+    apply_steer_req = 1
+    if not lat_active:
       apply_steer = 0
+      apply_steer_req = 0
+    elif self.steer_rate_counter > MAX_STEER_RATE_FRAMES:
+      apply_steer_req = 0
+      self.steer_rate_counter = 0
+
+    lead_vehicle_stopped = (hud_control.leadVelocity < 0.5 and hud_control.leadVisible) and not self.e2e_long
+    # lead_vehicle_stopped = hud_control.leadVelocity < 0.5 and hud_control.leadVisible  # Give radar some room for error
 
     # *** steer angle ***
     if self.CP.steerControlType == SteerControlType.angle:
       # If using LTA control, disable LKA and set steering angle command
       apply_steer = 0
-      apply_steer_req = False
+      apply_steer_req = 0
       if self.frame % 2 == 0:
         # EPS uses the torque sensor angle to control with, offset to compensate
         apply_angle = actuators.steeringAngleDeg + CS.out.steeringAngleOffsetDeg
@@ -107,21 +217,40 @@ class CarController:
       interceptor_gas_cmd = clip(pedal_command, 0., MAX_INTERCEPTOR_GAS)
     else:
       interceptor_gas_cmd = 0.
-    pcm_accel_cmd = clip(actuators.accel, self.params.ACCEL_MIN, self.params.ACCEL_MAX)
+    pid_accel_limits = CarInterface.get_pid_accel_limits(self.CP, CS.out.vEgo, None)  # Need to get cruise speed from somewhere
+    pcm_accel_cmd = clip(actuators.accel, pid_accel_limits[0], pid_accel_limits[1])
 
     # TODO: probably can delete this. CS.pcm_acc_status uses a different signal
     # than CS.cruiseState.enabled. confirm they're not meaningfully different
-    if not CC.enabled and CS.pcm_acc_status:
+    if not (CC.enabled and CS.out.cruiseState.enabled) and CS.pcm_acc_status:
       pcm_cancel_cmd = 1
 
+    # resume request
     # on entering standstill, send standstill request
-    if CS.out.standstill and not self.last_standstill and (self.CP.carFingerprint not in NO_STOP_TIMER_CAR or self.CP.enableGasInterceptor):
+    if CS.out.standstill and lead_vehicle_stopped and not self.last_standstill and (self.CP.carFingerprint not in NO_STOP_TIMER_CAR or self.CP.enableGasInterceptor):
       self.standstill_req = True
     if CS.pcm_acc_status != 8:
       # pcm entered standstill or it's disabled
       self.standstill_req = False
+    if self.topsng and (self.CP.flags & ToyotaFlags.HYBRID.value) and (self.CP.flags & ToyotaFlags.SMART_DSU.value):
+      self.standstill_req = False
 
     self.last_standstill = CS.out.standstill
+
+    # record frames
+    if not CC.enabled:
+      self.last_off_frame = self.frame
+
+    # cydia2020 - PERMIT_BRAKING commands the PCM to allow openpilot to engage the friction brakes
+    # and engine brake on your vehicle, it does not affect regen braking as far as I can tell
+    # setting PERMIT_BRAKING to 1 prevents the vehicle from coasting at low speed with low accel
+    # allow the vehicle to coast when the speed is below 6m/s for improved SnG smoothness
+    permit_braking_accel = interp(CS.out.vEgo, [0.0, 6., 10.], [0., 0.0, 0.35])
+    # Handle permit braking logic
+    if (actuators.accel > permit_braking_accel) or not CC.enabled:
+      self.permit_braking = False
+    else:
+      self.permit_braking = True
 
     # handle UI messages
     fcw_alert = hud_control.visualAlert == VisualAlert.fcw
@@ -130,15 +259,16 @@ class CarController:
     # we can spam can to cancel the system even if we are using lat only control
     if (self.frame % 3 == 0 and self.CP.openpilotLongitudinalControl) or pcm_cancel_cmd:
       lead = hud_control.leadVisible or CS.out.vEgo < 12.  # at low speed we always assume the lead is present so ACC can be engaged
+      reverse_acc = 2 if self._reverse_acc_change else 1
 
       # Lexus IS uses a different cancellation message
       if pcm_cancel_cmd and self.CP.carFingerprint in UNSUPPORTED_DSU_CAR:
         can_sends.append(toyotacan.create_acc_cancel_command(self.packer))
       elif self.CP.openpilotLongitudinalControl:
-        can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, pcm_cancel_cmd, self.standstill_req, lead, CS.acc_type, fcw_alert))
+        can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, pcm_cancel_cmd, self.standstill_req, lead, CS.acc_type, fcw_alert, CS.distance_btn, self.permit_braking, lead_vehicle_stopped, reverse_acc))
         self.accel = pcm_accel_cmd
       else:
-        can_sends.append(toyotacan.create_accel_command(self.packer, 0, pcm_cancel_cmd, False, lead, CS.acc_type, False))
+        can_sends.append(toyotacan.create_accel_command(self.packer, 0, pcm_cancel_cmd, False, lead, CS.acc_type, False, CS.distance_btn, False, False, reverse_acc))
 
     if self.frame % 2 == 0 and self.CP.enableGasInterceptor and self.CP.openpilotLongitudinalControl:
       # send exactly zero if gas cmd is zero. Interceptor will send the max between read value and gas cmd.

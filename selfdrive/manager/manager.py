@@ -25,13 +25,15 @@ from openpilot.system.version import is_dirty, get_commit, get_version, get_orig
                            is_tested_branch, is_release_branch
 
 
+sys.path.append(os.path.join(BASEDIR, "third_party/mapd"))
 
 def manager_init() -> None:
   # update system time from panda
   set_time(cloudlog)
 
   # save boot log
-  subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "system/loggerd"))
+  if not Params().get_bool("dp_jetson"):
+    subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "system/loggerd"))
 
   params = Params()
   params.clear_all(ParamKeyType.CLEAR_ON_MANAGER_START)
@@ -39,13 +41,41 @@ def manager_init() -> None:
   params.clear_all(ParamKeyType.CLEAR_ON_OFFROAD_TRANSITION)
 
   default_params: List[Tuple[str, Union[str, bytes]]] = [
+    ("CarModel", ""),
     ("CompletedTrainingVersion", "0"),
     ("DisengageOnAccelerator", "0"),
+    ("DrivingPersonalitiesUIWheel", "1"),
     ("GsmMetered", "1"),
     ("HasAcceptedTerms", "0"),
+    ("IsLdwEnabled", "1"),
+    ("IsMetric", "1"),
     ("LanguageSetting", "main_en"),
-    ("OpenpilotEnabledToggle", "1"),
     ("LongitudinalPersonality", str(log.LongitudinalPersonality.standard)),
+    ("NudgelessLaneChange", "0"),
+    ("NavSettingTime24h", "1"),
+    ("OpenpilotEnabledToggle", "1"),
+
+    ("DistanceBasedCurvature", "1"),
+    ("PrimeAd", "1"),
+    ("RecordFront", "0"),
+    ("TurnVisionControl", "1"),
+    ("e2e_link", "1"),
+    ("toyotaautolock", "1"),
+    ("toyotaautounlock", "1"),
+    ("toyota_bsm", "0"),
+    ("dynamic_lane", "0"),
+    ("dp_atl", "0"),
+    ("TimSignals", "1"),
+    ("ReverseAccChange", "1"),
+    ("dp_jetson", "0"),
+    ("NNFF", "0"),
+
+    ("dp_nav_gmap_enable", "0"),
+    ("dp_nav", "1"),
+    ("dp_otisserv", "1"),
+    ("dp_gpxd", "1"),
+    ("dp_mapd", "1"),
+    ("opwebd", "0"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.utcnow().isoformat().encode('utf8')))
@@ -131,11 +161,23 @@ def manager_thread() -> None:
   params = Params()
 
   ignore: List[str] = []
+  dp_nav = params.get_bool('dp_nav')
+  dp_otisserv = dp_nav and params.get_bool('dp_otisserv')
+  dp_jetson = params.get_bool('dp_jetson')
+  ignore += ['dmonitoringmodeld', 'dmonitoringd'] if dp_jetson else []
+  ignore += ['navd', 'mapsd'] if not dp_nav else []
+  ignore += ['otisserv'] if not dp_nav or not dp_otisserv else []
+  dp_mapd = params.get_bool('dp_mapd')
+  ignore += ['mapd'] if not dp_mapd else []
+  ignore += ['gpxd'] if not dp_otisserv and not dp_mapd and not params.get_bool('dp_gpxd') else []
+  ignore += ['uploader'] if params.get_bool('dp_jetson') else []
   if params.get("DongleId", encoding='utf8') in (None, UNREGISTERED_DONGLE_ID):
     ignore += ["manage_athenad", "uploader"]
   if os.getenv("NOBOARD") is not None:
     ignore.append("pandad")
   ignore += [x for x in os.getenv("BLOCK", "").split(",") if len(x) > 0]
+  if not params.get_bool("opwebd"):
+    ignore += ["opwebd"]
 
   sm = messaging.SubMaster(['deviceState', 'carParams'], poll=['deviceState'])
   pm = messaging.PubMaster(['managerState'])
