@@ -77,6 +77,7 @@ class LatControlTorque(LatControl):
 
   def update(self, active, CS, VM, params, last_actuators, steer_limited, desired_curvature, desired_curvature_rate, llk, lat_plan=None, model_data=None):
     pid_log = log.ControlsState.LateralTorqueState.new_message()
+    nn_log = None
 
     if not active:
       output_torque = 0.0
@@ -168,7 +169,7 @@ class LatControlTorque(LatControl):
       pid_log.actualLateralAccel = actual_lateral_accel
       pid_log.desiredLateralAccel = desired_lateral_accel
       pid_log.saturated = self._check_saturation(self.steer_max - abs(output_torque) < 1e-3, CS, steer_limited)
-      if self.use_nn:
+      if nn_log is not None:
         pid_log.nnLog = nn_log
 
     # TODO left is positive in this convention
