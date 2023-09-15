@@ -1,3 +1,4 @@
+import math
 import time
 import numpy as np
 from openpilot.common.conversions import Conversions as CV
@@ -16,13 +17,13 @@ from cereal import log
 
 PATH_COST = 1.0
 LATERAL_MOTION_COST = 0.11
-LATERAL_ACCEL_COST = 0.0
+LATERAL_ACCEL_COST = 1.0
 LATERAL_JERK_COST = 0.04
 # Extreme steering rate is unpleasant, even
 # when it does not cause bad jerk.
 # TODO this cost should be lowered when low
 # speed lateral control is stable on all cars
-STEERING_RATE_COST = 700.0
+STEERING_RATE_COST = 8.0
 
 
 class LateralPlanner:
@@ -42,12 +43,13 @@ class LateralPlanner:
     self.plan_yaw = np.zeros((TRAJECTORY_SIZE,))
     self.plan_yaw_rate = np.zeros((TRAJECTORY_SIZE,))
     self.t_idxs = np.arange(TRAJECTORY_SIZE)
-    self.d_path_w_lines_xyz = np.zeros((TRAJECTORY_SIZE, 3))
     self.y_pts = np.zeros((TRAJECTORY_SIZE,))
     self.v_plan = np.zeros((TRAJECTORY_SIZE,))
     self.v_ego = 0.0
     self.l_lane_change_prob = 0.0
     self.r_lane_change_prob = 0.0
+    self.d_path_w_lines_xyz = np.zeros((TRAJECTORY_SIZE, 3))
+    self.vcurv = 0.0
 
     self.debug_mode = debug
 
@@ -93,13 +95,14 @@ class LateralPlanner:
 
     # Turn off lanes during lane change
     if self.DH.desire == log.LateralPlan.Desire.laneChangeRight or self.DH.desire == log.LateralPlan.Desire.laneChangeLeft:
-      self.LP.lll_prob *= self.DH.lane_change_ll_prob
-      self.LP.rll_prob *= self.DH.lane_change_ll_prob
+      self.LP.lane_change_multiplier = self.DH.lane_change_ll_prob
+    else:
+      self.LP.lane_change_multiplier = 1.0
 
     low_speed = v_ego_car < 10 * CV.MPH_TO_MS
 
     if not self.get_dynamic_lane_profile() and not low_speed:
-      d_path_xyz = self.LP.get_d_path(self.v_ego, self.t_idxs, self.path_xyz)
+      d_path_xyz = self.LP.get_d_path(self.v_ego, self.t_idxs, self.path_xyz, self.vcurv)
       self.dynamic_lane_profile_status = False
     else:
       d_path_xyz = self.path_xyz
@@ -174,6 +177,18 @@ class LateralPlanner:
 
     lateralPlan.curvatures = (self.lat_mpc.x_sol[0:CONTROL_N, 3]/self.v_ego).tolist()
     lateralPlan.curvatureRates = [float(x.item() / self.v_ego) for x in self.lat_mpc.u_sol[0:CONTROL_N - 1]] + [0.0]
+
+    # get biggest upcoming curve value, ignoring the curve we are currently on (so we plan ahead better)
+    curv_len = len(lateralPlan.curvatures)
+    biggest_curve = 0.0
+    if curv_len > 0:
+      curv_middle = math.floor((curv_len - 1)/2)
+      for x in range(curv_middle, curv_len):
+        acurval = abs(lateralPlan.curvatures[x])
+        if acurval > biggest_curve:
+          biggest_curve = acurval
+          self.vcurv = lateralPlan.curvatures[x] * 100
+
     lateralPlan.lProb = float(self.LP.lll_prob)
     lateralPlan.rProb = float(self.LP.rll_prob)
     lateralPlan.dProb = float(self.LP.d_prob)
