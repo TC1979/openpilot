@@ -52,8 +52,8 @@ class RouteEngine:
       self.mapbox_token = self.params.get("dp_nav_mapbox_token_pk", encoding='utf8')
       self.mapbox_host = "https://api.mapbox.com"
     elif "MAPBOX_TOKEN" in os.environ:
-      self.params.put("MapboxPublicKey", "")
-      self.params.put("MapboxSecretKey", "")
+      self.params.put("dp_nav_mapbox_token_pk", "")
+      self.params.put("dp_nav_mapbox_token_sk", "")
       self.mapbox_token = os.environ["MAPBOX_TOKEN"]
       self.mapbox_host = "https://api.mapbox.com"
     else:
