@@ -323,7 +323,7 @@
     <name>ForceCarRecognition</name>
     <message>
         <source>Back</source>
-        <translation type="unfinished">返回</translation>
+        <translation>返回</translation>
     </message>
     <message>
         <source>[-Not selected-]</source>

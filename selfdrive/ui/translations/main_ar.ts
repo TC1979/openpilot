@@ -323,7 +323,7 @@
     <name>ForceCarRecognition</name>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>خلف</translation>
     </message>
     <message>
         <source>[-Not selected-]</source>
@@ -379,6 +379,10 @@
     <message>
         <source>Manage at connect.comma.ai</source>
         <translation>إدارة في Connect.comma.ai</translation>
+    </message>
+    <message>
+        <source>Manage at %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -585,8 +589,8 @@
         <translation>dashcam</translation>
     </message>
     <message>
-        <source>openpilot</source>
-        <translation>openpilot</translation>
+        <source>T.O.P</source>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>%n minute(s) ago</source>
