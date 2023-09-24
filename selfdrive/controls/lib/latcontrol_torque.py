@@ -126,10 +126,11 @@ class LatControlTorque(LatControl):
         future_errors = future_error_func(self.nn_future_times_np).tolist()
 
         desired_lateral_jerk = (future_planned_lateral_accels[0] - desired_lateral_accel) / self.nn_future_times[0]
-        lateral_jerk_error = 0.1 * (desired_lateral_jerk - actual_lateral_jerk)
 
         # compute NN error response
-        nn_error_input = [CS.vEgo, error, 0.25 * error + lateral_jerk_error, 0.0] \
+        lateral_jerk_error = 0.05 * (desired_lateral_jerk - actual_lateral_jerk)
+        friction_input = 0.5 * error + lateral_jerk_error
+        nn_error_input = [CS.vEgo, error, friction_input, 0.0] \
                               + past_errors + future_errors
         pid_log.error = self.torque_from_nn(nn_error_input)
         if self.nn_friction_override:
@@ -138,7 +139,8 @@ class LatControlTorque(LatControl):
                                             lateral_accel_deadzone, friction_compensation=True)
 
         # compute feedforward (same as nn setpoint output)
-        nn_input = [CS.vEgo, desired_lateral_accel, desired_lateral_jerk, roll] \
+
+        nn_input = [CS.vEgo, desired_lateral_accel, 0.5 * desired_lateral_jerk, roll] \
                               + past_lateral_accels_desired + future_planned_lateral_accels \
                               + past_rolls + future_rolls
         ff = self.torque_from_nn(nn_input)
