@@ -1,5 +1,4 @@
 #!/usr/bin/env python3.8
-#pylint: skip-file
 # The MIT License
 #
 # Copyright (c) 2019-, Rick Lan, dragonpilot community, and a number of other of contributors.
@@ -23,13 +22,15 @@
 # THE SOFTWARE.
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from cgi import parse_header
+from cgi import parse_header, parse_multipart
 from urllib.parse import parse_qs, unquote
 import json
 import requests
 import math
 from openpilot.common.basedir import BASEDIR
 from openpilot.common.params import Params
+from openpilot.common.realtime import set_core_affinity
+from openpilot.system.swaglog import cloudlog
 params = Params()
 
 hostName = ""
@@ -173,6 +174,31 @@ class OtisServ(BaseHTTPRequestHandler):
           lng, lat = self.gcj02towgs84(lng, lat)
         params.put('NavDestination', "{\"latitude\": %f, \"longitude\": %f, \"place_name\": \"%s\"}" % (lat, lng, name))
         self.to_json(lat, lng, save_type, name)
+      # favorites
+      if not use_gmap and "fav_val" in postvars:
+        addr = postvars.get("fav_val")[0]
+        real_addr = None
+        lon = None
+        lat = None
+        if addr != "favorites":
+          val = params.get("ApiCache_NavDestinations", encoding='utf8')
+          if val is not None:
+            val = val.rstrip('\x00')
+            dests = json.loads(val)
+            for item in dests:
+              if "label" in item and item["label"] == addr:
+                lat = item["latitude"]
+                lon = item["longitude"]
+                real_addr = item["place_name"]
+                break
+            else:
+              real_addr = None
+          if real_addr is not None:
+            self.display_page_nav_confirmation(real_addr, lon, lat)
+            return
+          else:
+            self.display_page_addr_input("Place Not Found")
+            return
       # search
       if not use_gmap and "addr_val" in postvars:
         addr = postvars.get("addr_val")[0]
@@ -359,7 +385,7 @@ class OtisServ(BaseHTTPRequestHandler):
     dests = [] if val is None else json.loads(val)
 
     # type idx
-    type_label_ids = {"home": None, "work": None, "recent": []}
+    type_label_ids = {"home": None, "work": None, "fav1": None, "fav2": None, "fav3": None, "recent": []}
     idx = 0
     for d in dests:
       if d["save_type"] == "favorite":
@@ -383,6 +409,10 @@ class OtisServ(BaseHTTPRequestHandler):
     params.put("ApiCache_NavDestinations", json.dumps(dests).rstrip("\n\r"))
 
 def main():
+  try:
+    set_core_affinity([0, 1, 2, 3])
+  except Exception:
+    cloudlog.exception("otisserv: failed to set core affinity")
   webServer = HTTPServer((hostName, serverPort), OtisServ)
 
   try:
