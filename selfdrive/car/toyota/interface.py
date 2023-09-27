@@ -343,6 +343,10 @@ class CarInterface(CarInterfaceBase):
         Params().put_bool("LateralAllowed", False)
       self.prev_atl = ret.cruiseState.available
 
+    if self.CS.brakehold_governor:
+      events.add(EventName.automaticBrakehold)
+
+
     ret.events = events.to_msg()
 
     return ret

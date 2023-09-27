@@ -55,6 +55,7 @@ def manager_init() -> None:
     ("NavSettingTime24h", "1"),
     ("OpenpilotEnabledToggle", "1"),
 
+    ("AleSato_AutomaticBrakeHold", "1"),
     ("DistanceBasedCurvature", "1"),
     ("PrimeAd", "1"),
     ("RecordFront", "0"),

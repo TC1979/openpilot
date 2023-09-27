@@ -1000,6 +1000,14 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
   EventName.torqueNNLoad: {
     ET.PERMANENT: torque_nn_load_alert,
   },
+
+  EventName.automaticBrakehold: {
+    ET.PERMANENT: Alert(
+      "已啟動自動煞車",
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOWEST, VisualAlert.none, AudibleAlert.engageBrakehold, .1,),
+  },  
 }
 
 
