@@ -1223,14 +1223,14 @@ void AnnotatedCameraWidget::drawDrivingPersonalities(QPainter &p) {
 
 void AnnotatedCameraWidget::drawTimSignals(QPainter &p) {
   // Declare the turn signal size
-  constexpr int signalHeight = 480;
-  constexpr int signalWidth = 360;
+  constexpr int signalHeight = 177;
+  constexpr int signalWidth = 177;
 
   // Calculate the vertical position for the turn signals
-  const int baseYPosition = (height() - signalHeight) / 2 + 300;
+  const int baseYPosition = 300;
   // Calculate the x-coordinates for the turn signals
-  int leftSignalXPosition = 75 + width() - signalWidth - 300 * (blindSpotLeft ? 0 : animationFrameIndex);
-  int rightSignalXPosition = -75 + 300 * (blindSpotRight ? 0 : animationFrameIndex);
+  int leftSignalXPosition = 75 + width() / 2 - signalWidth - 300 * (blindSpotLeft ? 0 : 1);
+  int rightSignalXPosition = -75 - width() / 2 + 300 * (blindSpotRight ? 0 : 1);
 
   // Enable Antialiasing
   p.setRenderHint(QPainter::Antialiasing);
