@@ -351,9 +351,8 @@ class CarState(CarStateBase):
 
     # KRKeegan - Add support for toyota distance button
     if CP.flags & ToyotaFlags.SMART_DSU.value:
-      messages += [
-        ("SDSU", 0),
-      ]
+      messages.append(("SDSU", 0))
+
 
     return CANParser(DBC[CP.carFingerprint]["pt"], messages, 0)
 
