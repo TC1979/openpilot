@@ -119,6 +119,7 @@ selfdrive/car/tests/test_car_interfaces.py
 selfdrive/car/torque_data/params.yaml
 selfdrive/car/torque_data/substitute.yaml
 selfdrive/car/torque_data/override.yaml
+selfdrive/car/torque_data/lat_models/*
 selfdrive/car/top_tmp/*
 
 selfdrive/car/body/*.py
