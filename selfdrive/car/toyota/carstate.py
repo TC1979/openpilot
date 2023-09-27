@@ -78,6 +78,7 @@ class CarState(CarStateBase):
     self.reset_brakehold = False    
     self.prev_brakePressed = True
     self.brakehold_governor = False
+    self.auto_brake_hold = Params().get_bool("AleSato_AutomaticBrakeHold")
 
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
@@ -269,7 +270,7 @@ class CarState(CarStateBase):
     ret.steeringWheelCar = True if self.CP.carName == "toyota" else False
 
     # Automatic BrakeHold
-    if self.CP.carFingerprint in TSS2_CAR:
+    if self.auto_brake_hold and self.CP.carFingerprint in TSS2_CAR:
       self.stock_aeb = copy.copy(cp_cam.vl["PRE_COLLISION_2"])
       self.brakehold_condition_satisfied =  (ret.standstill and ret.cruiseState.available and not ret.gasPressed and \
                                             not ret.cruiseState.enabled and not (ret.gearShifter in (self.GearShifter.reverse,\

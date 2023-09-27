@@ -1097,6 +1097,14 @@ Speed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Automatic Brake Hold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Activates the car's brakes after 3 seconds stopped. (Only support on Toyota TSS2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Fix Toyota BSM Signal</source>
         <translation type="unfinished"></translation>
     </message>

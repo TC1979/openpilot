@@ -1129,6 +1129,14 @@ You will need to apply your own google map api key. Enter your key detail in web
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Automatic Brake Hold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Activates the car's brakes after 3 seconds stopped. (Only support on Toyota TSS2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Fix Toyota BSM Signal</source>
         <translation type="unfinished"></translation>
     </message>
