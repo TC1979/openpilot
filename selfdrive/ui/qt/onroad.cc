@@ -1221,8 +1221,8 @@ void AnnotatedCameraWidget::drawDrivingPersonalities(QPainter &p) {
 
 void AnnotatedCameraWidget::drawTimSignals(QPainter &p) {
   // Declare the turn signal size
-  constexpr int signalHeight = 177;
-  constexpr int signalWidth = 177;
+  constexpr int signalHeight = 89;
+  constexpr int signalWidth = 89;
 
   // Calculate the vertical position for the turn signals
   const int baseYPosition = 100;
