@@ -124,7 +124,7 @@ private:
   int animationFrameIndex;
   int personalityProfile;
   QVector<std::pair<QPixmap, QString>> profile_data;
-  static constexpr int totalFrames = 8;
+  static constexpr int totalFrames = 2;
   std::vector<QPixmap> signalImgVector;
 
   int status = STATUS_DISENGAGED;
