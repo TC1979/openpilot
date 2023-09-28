@@ -356,7 +356,7 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
     animationFrameIndex = (animationFrameIndex + 1) % totalFrames;
     update();
   });
-  animationTimer->start(totalFrames * 2); // 11 * totalFrames (88) milliseconds per frame
+  animationTimer->start(totalFrames * 500);
 }
 
 static float vc_speed;
@@ -1227,7 +1227,7 @@ void AnnotatedCameraWidget::drawTimSignals(QPainter &p) {
   // Calculate the vertical position for the turn signals
   const int baseYPosition = 100;
   // Calculate the x-coordinates for the turn signals
-  int leftSignalXPosition = width() / 2 - signalWidth * (blindSpotLeft ? 0 : 1);
+  int leftSignalXPosition = 75 + width() / 2 - signalWidth * (blindSpotLeft ? 0 : 1);
   int rightSignalXPosition = width() / 2 + signalWidth * (blindSpotRight ? 0 : 1);
 
   // Enable Antialiasing
