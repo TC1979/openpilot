@@ -356,7 +356,7 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
     animationFrameIndex = (animationFrameIndex + 1) % totalFrames;
     update();
   });
-  animationTimer->start(totalFrames * 80);
+  animationTimer->start(totalFrames * 100);
 }
 
 static float vc_speed;
