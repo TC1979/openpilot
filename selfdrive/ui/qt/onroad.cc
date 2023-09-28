@@ -339,9 +339,7 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
   // Turn signal images
   const QStringList imagePaths = {
     "../assets/images/tim_turn_signal_1.png",
-    "../assets/images/tim_turn_signal_2.png",
-    "../assets/images/tim_turn_signal_3.png",
-    "../assets/images/tim_turn_signal_4.png"
+    "../assets/images/tim_turn_signal_2.png"
   };
   signalImgVector.reserve(2 * imagePaths.size() + 1);
   for (int i = 0; i < 2; ++i) {
@@ -358,7 +356,7 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
     animationFrameIndex = (animationFrameIndex + 1) % totalFrames;
     update();
   });
-  animationTimer->start(totalFrames * 2); // 11 * totalFrames (88) milliseconds per frame
+  animationTimer->start(totalFrames * 11); // 11 * totalFrames (88) milliseconds per frame
 }
 
 static float vc_speed;
