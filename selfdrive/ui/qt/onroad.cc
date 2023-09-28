@@ -1227,8 +1227,8 @@ void AnnotatedCameraWidget::drawTimSignals(QPainter &p) {
   // Calculate the vertical position for the turn signals
   const int baseYPosition = 100;
   // Calculate the x-coordinates for the turn signals
-  int leftSignalXPosition = 75 + width() / 2 - signalWidth - 300 * (blindSpotLeft ? 0 : animationFrameIndex);
-  int rightSignalXPosition = 102 + width() / 2 + 300 * (blindSpotRight ? 0 : animationFrameIndex);
+  int leftSignalXPosition = width() / 2 - signalWidth * (blindSpotLeft ? 0 : 1);
+  int rightSignalXPosition = width() / 2 + signalWidth * (blindSpotRight ? 0 : 1);
 
   // Enable Antialiasing
   p.setRenderHint(QPainter::Antialiasing);
