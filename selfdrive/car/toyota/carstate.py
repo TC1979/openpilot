@@ -75,7 +75,7 @@ class CarState(CarStateBase):
     self.stock_aeb = {}
     self.brakehold_condition_satisfied = False
     self.brakehold_condition_counter = 0
-    self.reset_brakehold = False    
+    self.reset_brakehold = False
     self.prev_brakePressed = True
     self.brakehold_governor = False
     self.auto_brake_hold = Params().get_bool("AleSato_AutomaticBrakeHold")
@@ -273,8 +273,8 @@ class CarState(CarStateBase):
     if self.auto_brake_hold and self.CP.carFingerprint in TSS2_CAR:
       self.stock_aeb = copy.copy(cp_cam.vl["PRE_COLLISION_2"])
       self.brakehold_condition_satisfied =  (ret.standstill and ret.cruiseState.available and not ret.gasPressed and \
-                                            not ret.cruiseState.enabled and not (ret.gearShifter in (self.GearShifter.reverse,\
-                                            self.GearShifter.park)) and self.params.get_bool('AleSato_AutomaticBrakeHold'))
+                                            not ret.cruiseState.enabled and ret.gearShifter not in (self.GearShifter.reverse,\
+                                            self.GearShifter.park)) and self.params.get_bool('AleSato_AutomaticBrakeHold')
       if self.brakehold_condition_satisfied:
         if self.brakehold_condition_counter > self.time_to_brakehold and not self.reset_brakehold:
           self.brakehold_governor = True
@@ -286,7 +286,7 @@ class CarState(CarStateBase):
       else:
         self.brakehold_governor = False
         self.reset_brakehold = False
-        self.brakehold_condition_counter = 0  
+        self.brakehold_condition_counter = 0
       self.prev_brakePressed = ret.brakePressed
 
     if self.CP.carFingerprint != CAR.PRIUS_V:

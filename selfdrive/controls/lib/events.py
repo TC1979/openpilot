@@ -1007,7 +1007,7 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
       "",
       AlertStatus.normal, AlertSize.small,
       Priority.LOWEST, VisualAlert.none, AudibleAlert.engageBrakehold, .1,),
-  },  
+  },
 }
 
 

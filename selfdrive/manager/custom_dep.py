@@ -151,7 +151,7 @@ if __name__ == "__main__":
     except Exception:
       command = f'rm -rf {THIRD_PARTY_DIR}'
       process = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-      import selfdrive.sentry as sentry
+      import openpilot.selfdrive.sentry as sentry
       sentry.init(sentry.SentryProject.SELFDRIVE)
       traceback.print_exc()
       sentry.capture_exception()
