@@ -88,7 +88,7 @@ procs = [
   PythonProcess("gpxd_uploader", "selfdrive.gpxd.gpx_uploader", always_run),
   PythonProcess("mapd", "selfdrive.mapd.mapd", only_onroad),
   PythonProcess("otisserv", "selfdrive.mapd.otisserv", always_run),
-  PythonProcess("opwebd", "selfdrive.opwebd.opwebd", always_run),
+  PythonProcess("opwebd", "selfdrive.opwebd", always_run),
 
   # debug procs
   NativeProcess("bridge", "cereal/messaging", ["./bridge"], notcar),
