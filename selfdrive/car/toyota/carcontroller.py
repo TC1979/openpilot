@@ -114,7 +114,7 @@ class CarController:
     # Enable blindspot debug mode once (@arne182)
     # let's keep all the commented out code for easy debug purpose for future.
     if self.toyota_bsm:
-      if self.frame > 2000:
+      #if self.frame > 200:
         #left bsm
         if not self.blindspot_debug_enabled_left:
           if (self.blindspot_always_on or (CS.out.leftBlinker and CS.out.vEgo > 6)): # eagle eye camera will stop working if right bsm is switched on under 6m/s
@@ -122,7 +122,7 @@ class CarController:
             self.blindspot_debug_enabled_left = True
             # print("bsm debug left, on")
         else:
-          if not self.blindspot_always_on and not CS.out.leftBlinker and self.frame - self.blindspot_frame > 500:
+          if not self.blindspot_always_on and not CS.out.leftBlinker and self.frame - self.blindspot_frame > 50:
             can_sends.append(set_blindspot_debug_mode(LEFT_BLINDSPOT, False))
             self.blindspot_debug_enabled_left = False
             # print("bsm debug left, off")
@@ -139,7 +139,7 @@ class CarController:
             self.blindspot_debug_enabled_right = True
             # print("bsm debug right, on")
         else:
-          if not self.blindspot_always_on and not CS.out.rightBlinker and self.frame - self.blindspot_frame > 500:
+          if not self.blindspot_always_on and not CS.out.rightBlinker and self.frame - self.blindspot_frame > 50:
             can_sends.append(set_blindspot_debug_mode(RIGHT_BLINDSPOT, False))
             self.blindspot_debug_enabled_right = False
             # print("bsm debug right, off")

@@ -202,7 +202,7 @@ class CarState(CarStateBase):
 
     # DP: Enable blindspot debug mode once (@arne182)
     # let's keep all the commented out code for easy debug purpose for future.
-    if self.toyota_bsm and self.frame > 1999: #self.CP.carFingerprint == CAR.PRIUS_TSS2: #not (self.CP.carFingerprint in TSS2_CAR or self.CP.carFingerprint == CAR.CAMRY or self.CP.carFingerprint == CAR.CAMRYH):
+    if self.toyota_bsm and self.frame > 199: #self.CP.carFingerprint == CAR.PRIUS_TSS2: #not (self.CP.carFingerprint in TSS2_CAR or self.CP.carFingerprint == CAR.CAMRY or self.CP.carFingerprint == CAR.CAMRYH):
       distance_1 = cp.vl["DEBUG"].get('BLINDSPOTD1')
       distance_2 = cp.vl["DEBUG"].get('BLINDSPOTD2')
       side = cp.vl["DEBUG"].get('BLINDSPOTSIDE')
@@ -228,14 +228,14 @@ class CarState(CarStateBase):
             self.right_blindspot = True
 
         if self.left_blindspot_counter > 0:
-          self.left_blindspot_counter -= 2
+          self.left_blindspot_counter -= 1
         else:
           self.left_blindspot = False
           self.left_blindspot_d1 = 0
           self.left_blindspot_d2 = 0
 
         if self.right_blindspot_counter > 0:
-          self.right_blindspot_counter -= 2
+          self.right_blindspot_counter -= 1
         else:
           self.right_blindspot = False
           self.right_blindspot_d1 = 0
@@ -243,8 +243,6 @@ class CarState(CarStateBase):
 
         ret.leftBlindspot = self.left_blindspot
         ret.rightBlindspot = self.right_blindspot
-
-    self.frame += 1
 
     # Driving personalities function
     if self.CP.carFingerprint in (TSS2_CAR | RADAR_ACC_CAR):
@@ -292,6 +290,7 @@ class CarState(CarStateBase):
     if self.CP.carFingerprint != CAR.PRIUS_V:
       self.lkas_hud = copy.copy(cp_cam.vl["LKAS_HUD"])
 
+    self.frame += 1
     return ret
 
   @staticmethod
