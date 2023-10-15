@@ -608,7 +608,4 @@ tinygrad_repo/tinygrad/nn/*
 tinygrad_repo/tinygrad/runtime/ops_gpu.py
 tinygrad_repo/tinygrad/shape/*
 tinygrad_repo/tinygrad/*.py
-selfdrive/opwebd/*.py
-selfdrive/opwebd/components/*.py
-selfdrive/opwebd/static/*
-selfdrive/opwebd/templates/**/*
+selfdrive/opwebd.py
