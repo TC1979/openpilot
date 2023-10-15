@@ -142,16 +142,11 @@ class LongitudinalPlanner:
     accel_limits_turns[0] = min(accel_limits_turns[0], self.a_desired + 0.05)
     accel_limits_turns[1] = max(accel_limits_turns[1], self.a_desired - 0.05)
 
-    # VTSC {{
-    enabled = not reset_state and self.CP.openpilotLongitudinalControl
-    vtsc.update(enabled, v_ego, self.a_desired, v_cruise, sm)
-    if vtsc.active:
-      original_v_cruise = v_cruise
-      a_target, v_cruise = vtsc.plan
-      if v_cruise < v_ego and original_v_cruise > v_cruise:
-        accel_limits_turns[0] = min(accel_limits_turns[0], a_target - 0.05)
-        accel_limits_turns[1] = min(accel_limits_turns[1], a_target)
-    # }} VTSC
+    # PFEIFER - VTSC {{
+    vtsc.update(prev_accel_constraint, v_ego, sm)
+    if vtsc.active and v_cruise > vtsc.v_target:
+      v_cruise = vtsc.v_target
+    # }} PFEIFER - VTSC
 
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)

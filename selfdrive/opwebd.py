@@ -5,7 +5,7 @@ import urllib.request
 from openpilot.common.realtime import Ratekeeper
 import stat
 
-VERSION = 'v1.0.1'
+VERSION = 'v1.1.2'
 URL = f"https://github.com/pfeiferj/opweb/releases/download/{VERSION}/opwebd"
 OPWEBD_PATH = '/data/openpilot/opwebd'
 VERSION_PATH = '/data/openpilot/opwebd_version'
