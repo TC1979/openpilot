@@ -63,7 +63,7 @@ class Controls:
     self.branch = get_short_branch("")
 
     self.params = Params()
-    self.dp_jetson = self.params.get_bool('dp_jetson')
+    self.dp_jetson = self.params.get_bool("dp_jetson")
     # Setup sockets
     self.pm = messaging.PubMaster(['sendcan', 'controlsState', 'carState',
                                    'carControl', 'carEvents', 'carParams'])
@@ -78,7 +78,7 @@ class Controls:
 
     self.log_sock = messaging.sub_sock('androidLog')
 
-    self.params = Params()
+    # self.params = Params()
     ignore = self.sensor_packets + ['testJoystick']
     if SIMULATION:
       ignore += ['driverCameraState', 'managerState']
