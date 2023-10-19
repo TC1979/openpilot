@@ -54,7 +54,6 @@ class LatControlTorque(LatControl):
       # of lat accel and roll
       # Past value is computed using previous desired lat accel and observed roll
       self.torque_from_nn = CI.get_ff_nn
-      self.nn_friction_override = CI.lat_torque_nn_model.friction_override
 
       # setup future time offsets
       self.nn_time_offset = CP.steerActuatorDelay + 0.2
@@ -89,12 +88,14 @@ class LatControlTorque(LatControl):
         if self.use_nn:
           actual_curvature_rate = -VM.calc_curvature(math.radians(CS.steeringRateDeg), CS.vEgo, 0.0)
           actual_lateral_jerk = actual_curvature_rate * CS.vEgo ** 2
+          desired_lateral_jerk = desired_curvature_rate * CS.vEgo ** 2
       else:
         actual_curvature_vm = -VM.calc_curvature(math.radians(CS.steeringAngleDeg - params.angleOffsetDeg), CS.vEgo, params.roll)
         actual_curvature_llk = llk.angularVelocityCalibrated.value[2] / CS.vEgo
         actual_curvature = interp(CS.vEgo, [2.0, 5.0], [actual_curvature_vm, actual_curvature_llk])
         curvature_deadzone = 0.0
         actual_lateral_jerk = 0.0
+        desired_lateral_jerk = 0.0
       desired_lateral_accel = desired_curvature * CS.vEgo ** 2
 
       # desired rate is the desired rate of change in the setpoint, not the absolute desired curvature
@@ -105,7 +106,7 @@ class LatControlTorque(LatControl):
       setpoint = desired_lateral_accel + low_speed_factor * desired_curvature
       measurement = actual_lateral_accel + low_speed_factor * actual_curvature
 
-      model_planner_good = None not in [lat_plan, model_data] and all(len(i) >= CONTROL_N for i in (model_data.orientation.x, lat_plan.curvatures))
+      model_planner_good = None not in [lat_plan, model_data] and all([len(i) >= CONTROL_N for i in [model_data.orientation.x, lat_plan.curvatures]])
       if self.use_nn and model_planner_good:
         # update past data
         error = setpoint - measurement
@@ -125,22 +126,14 @@ class LatControlTorque(LatControl):
         future_error_func = get_predict_error_func(past_errors + [error], self.past_times + [0.0])
         future_errors = future_error_func(self.nn_future_times_np).tolist()
 
-        desired_lateral_jerk = (future_planned_lateral_accels[0] - desired_lateral_accel) / self.nn_future_times[0]
-
         # compute NN error response
-        lateral_jerk_error = 0.05 * (desired_lateral_jerk - actual_lateral_jerk)
-        friction_input = 0.5 * error + lateral_jerk_error
-        nn_error_input = [CS.vEgo, error, friction_input, 0.0] \
+        lateral_jerk_error = 0.1 * (desired_lateral_jerk - actual_lateral_jerk)
+        nn_error_input = [CS.vEgo, error, lateral_jerk_error, 0.0] \
                               + past_errors + future_errors
         pid_log.error = self.torque_from_nn(nn_error_input)
-        if self.nn_friction_override:
-          pid_log.error += self.torque_from_lateral_accel(0.0, self.torque_params,
-                                            error,
-                                            lateral_accel_deadzone, friction_compensation=True)
 
         # compute feedforward (same as nn setpoint output)
-
-        nn_input = [CS.vEgo, desired_lateral_accel, 0.5 * desired_lateral_jerk, roll] \
+        nn_input = [CS.vEgo, desired_lateral_accel, error, roll] \
                               + past_lateral_accels_desired + future_planned_lateral_accels \
                               + past_rolls + future_rolls
         ff = self.torque_from_nn(nn_input)
