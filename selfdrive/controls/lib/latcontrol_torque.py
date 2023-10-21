@@ -8,7 +8,7 @@ from openpilot.selfdrive.controls.lib.drive_helpers import CONTROL_N
 from openpilot.selfdrive.controls.lib.latcontrol import LatControl
 from openpilot.selfdrive.controls.lib.pid import PIDController
 from openpilot.selfdrive.controls.lib.vehicle_model import ACCELERATION_DUE_TO_GRAVITY
-from openpilot.selfdrive.modeld.constants import T_IDXS
+from openpilot.selfdrive.modeld.constants import ModelConstants
 
 # At higher speeds (25+mph) we can assume:
 # Lateral acceleration achieved by a specific car correlates to
@@ -119,9 +119,9 @@ class LatControlTorque(LatControl):
         # adjust future times to account for longitudinal acceleration
         adjusted_future_times = [t + 0.5*CS.aEgo*(t/max(CS.vEgo, 1.0)) for t in self.nn_future_times]
         past_rolls = [self.roll_deque[min(len(self.roll_deque)-1, i)] for i in self.history_frame_offsets]
-        future_rolls = [interp(t, T_IDXS, model_data.orientation.x) + roll for t in adjusted_future_times]
+        future_rolls = [interp(t, ModelConstants.T_IDXS, model_data.orientation.x) + roll for t in adjusted_future_times]
         past_lateral_accels_desired = [self.lateral_accel_desired_deque[min(len(self.lateral_accel_desired_deque)-1, i)] for i in self.history_frame_offsets]
-        future_planned_lateral_accels = [interp(t, T_IDXS[:CONTROL_N], lat_plan.curvatures) * CS.vEgo ** 2 for t in adjusted_future_times]
+        future_planned_lateral_accels = [interp(t, ModelConstants.T_IDXS[:CONTROL_N], lat_plan.curvatures) * CS.vEgo ** 2 for t in adjusted_future_times]
         past_errors = [self.error_deque[min(len(self.error_deque)-1, i)] for i in self.history_frame_offsets]
         future_error_func = get_predict_error_func(past_errors + [error], self.past_times + [0.0])
         future_errors = future_error_func(self.nn_future_times_np).tolist()
