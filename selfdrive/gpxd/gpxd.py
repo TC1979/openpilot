@@ -118,10 +118,10 @@ class GpxD():
         f.write('\n'.join(lines))
 
   def _trkpt_template(self, time, lat, lon, alt):
-    return f'<trkpt lat="{lat}" lon="{lon}">\n' \
-           f'<time>{datetime.datetime.utcfromtimestamp(time).isoformat()}</time>\n' \
-           f'<ele>{alt}</ele>\n' \
-           f'</trkpt>\n'
+    return ('<trkpt lat="{}" lon="{}">\n'
+            '<time>{}</time>\n'
+            '<ele>{}</ele>\n'
+            '</trkpt>\n').format(lat, lon, datetime.datetime.utcfromtimestamp(time).isoformat(), alt)
 
 def gpxd_thread(sm=None, pm=None):
   set_core_affinity([1,])

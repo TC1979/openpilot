@@ -121,7 +121,7 @@ class FluxModel:
     return float(output_array[0, 0])
 
   def validate_layers(self):
-    for W, b, activation in self.layers:
+    for _W, _b, activation in self.layers:
       if not hasattr(self, activation):
         raise ValueError(f"Unknown activation: {activation}")
 

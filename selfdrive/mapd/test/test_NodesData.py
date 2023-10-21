@@ -200,7 +200,7 @@ class TestNodesData(unittest.TestCase):
     nodesData = NodesData(way_relations, wr_index)
 
     assert_array_almost_equal(nodesData._nodes_data, mockRouteData_02_02_single_wr._nodes_data)
-    assert_array_almost_equal(nodesData._curvature_speed_sections_data, 
+    assert_array_almost_equal(nodesData._curvature_speed_sections_data,
                               mockRouteData_02_02_single_wr._curvature_speed_sections_data)
     self.assertListEqual(nodesData._divertions, mockRouteData_02_02_single_wr._divertions)
     self.assertEqual(len(nodesData._nodes_data), len(way_relations[0].way.nodes))

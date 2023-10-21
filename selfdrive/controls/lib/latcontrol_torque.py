@@ -44,13 +44,13 @@ LAT_PLAN_MIN_IDX = 5
 def get_lookahead_value(future_vals, current_val):
   if len(future_vals) == 0:
     return current_val
-  
+
   same_sign_vals = [v for v in future_vals if sign(v) == sign(current_val)]
-  
+
   # if any future val has opposite sign of current val, return 0
   if len(same_sign_vals) < len(future_vals):
     return 0.0
-  
+
   # otherwise return the value with minimum absolute value
   min_val = min(same_sign_vals + [current_val], key=lambda x: abs(x))
   return min_val
@@ -75,7 +75,7 @@ class LatControlTorque(LatControl):
       self.nn_friction_override = CI.lat_torque_nn_model.friction_override
       self.friction_look_ahead_v = [0.3, 1.2]
       self.friction_look_ahead_bp = [9.0, 35.0]
-      
+
       # setup future time offsets
       self.nn_time_offset = CP.steerActuatorDelay + 0.2
       future_times = [0.3, 0.6, 1.0, 1.5] # seconds in the future
@@ -125,7 +125,7 @@ class LatControlTorque(LatControl):
       setpoint = desired_lateral_accel + low_speed_factor * desired_curvature
       measurement = actual_lateral_accel + low_speed_factor * actual_curvature
 
-      model_planner_good = None not in [lat_plan, model_data] and all([len(i) >= CONTROL_N for i in [model_data.orientation.x, lat_plan.curvatures]])
+      model_planner_good = None not in [lat_plan, model_data] and all(len(i) >= CONTROL_N for i in (model_data.orientation.x, lat_plan.curvatures))
       if self.use_nn and model_planner_good:
         # update past data
         error = setpoint - measurement
@@ -133,7 +133,7 @@ class LatControlTorque(LatControl):
         self.roll_deque.append(roll)
         self.lateral_accel_desired_deque.append(desired_lateral_accel)
         self.error_deque.append(error)
-        
+
         # prepare "look-ahead" desired lateral jerk
         lookahead = interp(CS.vEgo, self.friction_look_ahead_bp, self.friction_look_ahead_v)
         friction_upper_idx = next((i for i, val in enumerate(ModelConstants.T_IDXS) if val > lookahead), 16)
@@ -150,8 +150,8 @@ class LatControlTorque(LatControl):
         past_errors = [self.error_deque[min(len(self.error_deque)-1, i)] for i in self.history_frame_offsets]
         future_error_func = get_predict_error_func(past_errors + [error], self.past_times + [0.0])
         future_errors = future_error_func(self.nn_future_times_np).tolist()
-        
-        # compute NN error response        
+
+        # compute NN error response
         lat_jerk_deadzone = 0.35
         lateral_jerk_error = 0.0 if self.use_steering_angle or abs(lookahead_lateral_jerk) <= lat_jerk_deadzone else (0.1 * apply_deadzone(lookahead_lateral_jerk - actual_lateral_jerk, lat_jerk_deadzone))
 
@@ -166,7 +166,7 @@ class LatControlTorque(LatControl):
                               + past_lateral_accels_desired + future_planned_lateral_accels \
                               + past_rolls + future_rolls
         ff = self.torque_from_nn(nn_input)
-        
+
         # apply friction override for cars with low NN friction response
         if self.nn_friction_override:
           pid_log.error += self.torque_from_lateral_accel(0.0, self.torque_params,
