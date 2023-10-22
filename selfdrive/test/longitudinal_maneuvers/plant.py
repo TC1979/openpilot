@@ -15,7 +15,7 @@ class Plant:
   messaging_initialized = False
 
   def __init__(self, lead_relevancy=False, speed=0.0, distance_lead=2.0,
-               enabled=True, only_lead2=False, only_radar=False, e2e=False, force_decel=False, distance_lines=0):
+               enabled=True, only_lead2=False, only_radar=False, e2e=False, force_decel=False):
     self.rate = 1. / DT_MDL
 
     if not Plant.messaging_initialized:
@@ -31,9 +31,6 @@ class Plant:
     self.speed = speed
     self.acceleration = 0.0
     self.speeds = []
-
-    # KRKeegan allow testing distance_lines
-    self.distance_lines = distance_lines
 
     # lead car
     self.lead_relevancy = lead_relevancy
@@ -118,7 +115,6 @@ class Plant:
     control.controlsState.forceDecel = self.force_decel
     car_state.carState.vEgo = float(self.speed)
     car_state.carState.standstill = self.speed < 0.01
-    car_state.carState.distanceLines = self.distance_lines
 
     # ******** get controlsState messages for plotting ***
     sm = {'radarState': radar.radarState,

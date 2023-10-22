@@ -22,7 +22,7 @@
 # THE SOFTWARE.
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from cgi import parse_header, parse_multipart
+from cgi import parse_header
 from urllib.parse import parse_qs, unquote
 import json
 import requests
@@ -301,7 +301,9 @@ class OtisServ(BaseHTTPRequestHandler):
   def display_page_amap(self):
     self.wfile.write(bytes(self.get_parsed_template("amap/index.html", {"{{amap_key}}": self.get_amap_key(), "{{amap_key_2}}": self.get_amap_key_2()}), "utf-8"))
 
-  def get_parsed_template(self, name, replace = {}):
+  def get_parsed_template(self, name, replace=None):
+    if replace is None:
+        replace = {}
     f = open('%s/selfdrive/mapd/tpl/%s.tpl' % (BASEDIR, name), mode='r', encoding='utf-8')
     content = f.read()
     for key in replace:
@@ -368,16 +370,16 @@ class OtisServ(BaseHTTPRequestHandler):
     ret += (150.0 * math.sin(lng / 12.0 * pi) + 300.0 * math.sin(lng / 30.0 * pi)) * 2.0 / 3.0
     return ret
 
-  def to_json(self, lat, lng, type = "recent", name = ""):
+  def to_json(self, lat, lng, dest_type = "recent", name = ""):
     if name == "":
       name =  str(lat) + "," + str(lng)
     new_dest = {"latitude": float(lat), "longitude": float(lng), "place_name": name}
 
-    if type == "recent":
+    if dest_type == "recent":
       new_dest["save_type"] = "recent"
     else:
       new_dest["save_type"] = "favorite"
-      new_dest["label"] = type
+      new_dest["label"] = dest_type
 
     val = params.get("ApiCache_NavDestinations", encoding='utf8')
     if val is not None:
@@ -394,17 +396,17 @@ class OtisServ(BaseHTTPRequestHandler):
         type_label_ids["recent"].append(idx)
       idx += 1
 
-    if type == "recent":
-      id = None
+    if dest_type == "recent":
+      id_ = None
       if len(type_label_ids["recent"]) > 10:
         dests.pop(type_label_ids["recent"][-1])
     else:
-      id = type_label_ids[type]
+      id_ = type_label_ids[dest_type]
 
-    if id is None:
+    if id_ is None:
       dests.insert(0, new_dest)
     else:
-      dests[id] = new_dest
+      dests[id_] = new_dest
 
     params.put("ApiCache_NavDestinations", json.dumps(dests).rstrip("\n\r"))
 

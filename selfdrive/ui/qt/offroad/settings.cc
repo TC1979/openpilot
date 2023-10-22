@@ -586,12 +586,6 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/offroad/icon_road.png",
                                   this));
 
-  toggles.append(new ParamControl("AleSato_AutomaticBrakeHold",
-                                  tr("Automatic Brake Hold"),
-                                  tr("Activates the car's brakes after 3 seconds stopped. (Only support on Toyota TSS2)"),
-                                  "../assets/offroad/icon_road.png",
-                                  this));
-
   toggles.append(new ParamControl("toyota_bsm",
                                   tr("Fix Toyota BSM Signal"),
                                   tr("Enhance BSM function for some Toyota vehicles that openpilot currently does not support."),

@@ -66,7 +66,6 @@ class CarController:
 
     self.last_off_frame = 0
     self.permit_braking = True
-    self.e2e_long = Params().get_bool("ExperimentalMode")
 
     self.toyotaautolock = Params().get_bool("toyotaautolock")
     self.toyotaautounlock = Params().get_bool("toyotaautounlock")
@@ -161,9 +160,6 @@ class CarController:
     if not CC.latActive:
       apply_steer = 0
 
-    lead_vehicle_stopped = (hud_control.leadVelocity < 0.5 and hud_control.leadVisible) and not self.e2e_long
-    # lead_vehicle_stopped = hud_control.leadVelocity < 0.5 and hud_control.leadVisible  # Give radar some room for error
-
     # *** steer angle ***
     if self.CP.steerControlType == SteerControlType.angle:
       # If using LTA control, disable LKA and set steering angle command
@@ -218,9 +214,8 @@ class CarController:
     if not CC.enabled and CS.pcm_acc_status:
       pcm_cancel_cmd = 1
 
-    # resume request
     # on entering standstill, send standstill request
-    if CS.out.standstill and lead_vehicle_stopped and not self.last_standstill and (self.CP.carFingerprint not in NO_STOP_TIMER_CAR or self.CP.enableGasInterceptor):
+    if CS.out.standstill and not self.last_standstill and (self.CP.carFingerprint not in NO_STOP_TIMER_CAR or self.CP.enableGasInterceptor):
       self.standstill_req = True
     if CS.pcm_acc_status != 8:
       # pcm entered standstill or it's disabled
@@ -245,13 +240,6 @@ class CarController:
     else:
       self.permit_braking = True
 
-    # AleSato's Automatic Brake Hold
-    if self.frame % 2 == 0:
-      if CS.brakehold_governor:
-        can_sends.append(toyotacan.create_brakehold_command(self.packer, {}, True if self.frame % 730 < 727 else False))
-      else:
-        can_sends.append(toyotacan.create_brakehold_command(self.packer, CS.stock_aeb, False))
-
     # handle UI messages
     fcw_alert = hud_control.visualAlert == VisualAlert.fcw
     steer_alert = hud_control.visualAlert in (VisualAlert.steerRequired, VisualAlert.ldw)
@@ -265,10 +253,10 @@ class CarController:
       if pcm_cancel_cmd and self.CP.carFingerprint in UNSUPPORTED_DSU_CAR:
         can_sends.append(toyotacan.create_acc_cancel_command(self.packer))
       elif self.CP.openpilotLongitudinalControl:
-        can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, pcm_cancel_cmd, self.standstill_req, lead, CS.acc_type, fcw_alert, CS.distance_btn, self.permit_braking, lead_vehicle_stopped, reverse_acc))
+        can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, pcm_cancel_cmd, self.standstill_req, lead, CS.acc_type, fcw_alert, CS.distance_btn, self.permit_braking, reverse_acc))
         self.accel = pcm_accel_cmd
       else:
-        can_sends.append(toyotacan.create_accel_command(self.packer, 0, pcm_cancel_cmd, False, lead, CS.acc_type, False, CS.distance_btn, False, False, reverse_acc))
+        can_sends.append(toyotacan.create_accel_command(self.packer, 0, pcm_cancel_cmd, False, lead, CS.acc_type, False, CS.distance_btn, False, reverse_acc))
 
     if self.frame % 2 == 0 and self.CP.enableGasInterceptor and self.CP.openpilotLongitudinalControl:
       # send exactly zero if gas cmd is zero. Interceptor will send the max between read value and gas cmd.

@@ -92,8 +92,8 @@ def install_dep(spinner):
     if os.path.exists(f'{THIRD_PARTY_DIR}/bin'):
       shutil.rmtree(f'{THIRD_PARTY_DIR}/bin')
 
-  dup = f'cp -rf {THIRD_PARTY_DIR} {THIRD_PARTY_DIR_TOP}'
-  process_dup = subprocess.Popen(dup, stdout=subprocess.PIPE, shell=True)
+  # dup = f'cp -rf {THIRD_PARTY_DIR} {THIRD_PARTY_DIR_TOP}'
+  # process_dup = subprocess.Popen(dup, stdout=subprocess.PIPE, shell=True)
 
 
 if __name__ == "__main__":

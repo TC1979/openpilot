@@ -54,8 +54,6 @@ def manager_init() -> None:
     ("NudgelessLaneChange", "0"),
     ("NavSettingTime24h", "1"),
     ("OpenpilotEnabledToggle", "1"),
-
-    ("AleSato_AutomaticBrakeHold", "0"),
     ("DistanceBasedCurvature", "1"),
     ("PrimeAd", "1"),
     ("RecordFront", "0"),
@@ -162,15 +160,15 @@ def manager_thread() -> None:
   params = Params()
 
   ignore: List[str] = []
-  dp_nav = params.get_bool('dp_nav')
-  dp_otisserv = dp_nav and params.get_bool('dp_otisserv')
-  dp_jetson = params.get_bool('dp_jetson')
+  dp_nav = params.get_bool("dp_nav")
+  dp_otisserv = dp_nav and params.get_bool("dp_otisserv")
+  dp_jetson = params.get_bool("dp_jetson")
   ignore += ['dmonitoringmodeld', 'dmonitoringd'] if dp_jetson else []
   ignore += ['navd', 'mapsd'] if not dp_nav else []
   ignore += ['otisserv'] if not dp_nav or not dp_otisserv else []
-  dp_mapd = params.get_bool('dp_mapd')
+  dp_mapd = params.get_bool("dp_mapd")
   ignore += ['mapd'] if not dp_mapd else []
-  ignore += ['gpxd'] if not dp_otisserv and not dp_mapd and not params.get_bool('dp_gpxd') else []
+  ignore += ['gpxd'] if not dp_otisserv and not dp_mapd and not params.get_bool("dp_gpxd") else []
   if dp_jetson:
     ignore += ['logcatd', 'proclogd', 'loggerd', 'logmessaged', 'encoderd', 'uploader']
 

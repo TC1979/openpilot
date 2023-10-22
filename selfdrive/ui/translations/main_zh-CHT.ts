@@ -1069,14 +1069,6 @@ Speed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above
         <translation>啟用此功能後，當檔位進到P檔時將自動解鎖車門。僅適用於某些Toyota車款。</translation>
     </message>
     <message>
-        <source>Automatic Brake Hold</source>
-        <translation>自動煞停維持</translation>
-    </message>
-    <message>
-        <source>Activates the car&apos;s brakes after 3 seconds stopped. (Only support on Toyota TSS2)</source>
-        <translation>踩煞車踏板3秒後，啟動自動煞停維持功能。(僅適用於 Toyota TSS2 車款)</translation>
-    </message>
-    <message>
         <source>Fix Toyota BSM Signal</source>
         <translation>修正Toyota盲點偵測訊號</translation>
     </message>

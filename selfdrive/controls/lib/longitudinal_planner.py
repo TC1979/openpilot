@@ -20,13 +20,13 @@ from openpilot.selfdrive.controls.vtsc import vtsc
 
 LON_MPC_STEP = 0.2  # first step is 0.2s
 A_CRUISE_MIN = -1.2
-A_CRUISE_MIN_VALS_TOYOTA = [-0.5, -0.5, -0.2, -0.3, -0.4, -0.5, -0.64, -0.52, -0.4,  -0.35]
-A_CRUISE_MIN_BP_TOYOTA =   [0.,    0.3,  0.35, 3.,   6.,   8.3,  14,    20.,  30.,   55.]
+A_CRUISE_MIN_VALS_TOYOTA = [-0.5, -0.5, -0.2, -0.3, -0.4, -0.45, -0.5, -1.2, -0.4,  -0.35]
+A_CRUISE_MIN_BP_TOYOTA =   [0.,    0.3,  0.35, 3.,   6.,   8.3,   14,   20.,   30.,   55.]
 A_CRUISE_MAX_VALS = [1.6, 1.2, 0.8, 0.6]
 A_CRUISE_MAX_BP = [0., 10.0, 25., 40.]
-A_CRUISE_MAX_VALS_TOYOTA = [2.2, 2.0, 1.6, 1.12, 0.77, 0.70, 0.58, 0.4,  0.31, 0.11]  # Sets the limits of the planner accel, PID may exceed
+A_CRUISE_MAX_VALS_TOYOTA = [2.2, 1.8, 1.45, 0.9, 0.77, 0.70, 0.58, 0.4,  0.31, 0.11]  # Sets the limits of the planner accel, PID may exceed
 # CRUISE_MAX_BP in kmh =   [0.,  10,  20,  30,   40,  53,   72,   90,   107,  150]
-A_CRUISE_MAX_BP_TOYOTA =   [0.,  3,   6.,  8.,  11., 15.,  20.,  25.,  30.,  55.]
+A_CRUISE_MAX_BP_TOYOTA =   [0.,  3,   6.,   8.,  11., 15.,  20.,  25.,  30.,  55.]
 
 # Lookup table for turns
 _A_TOTAL_MAX_V = [1.7, 3.2]
@@ -148,10 +148,15 @@ class LongitudinalPlanner:
       v_cruise = vtsc.v_target
     # }} PFEIFER - VTSC
 
+    lead_xv_0 = self.mpc.process_lead(sm['radarState'].leadOne)
+    lead_xv_1 = self.mpc.process_lead(sm['radarState'].leadTwo)
+    v_lead0 = lead_xv_0[0,1]
+    v_lead1 = lead_xv_1[0,1]
+    self.mpc.set_weights(prev_accel_constraint, personality=self.personality, v_lead0=v_lead0, v_lead1=v_lead1)
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
     x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error)
-    self.mpc.update(sm['carState'], sm['radarState'], v_cruise, x, v, a, j, prev_accel_constraint, personality=self.personality)
+    self.mpc.update(sm['carState'], sm['radarState'], v_cruise, x, v, a, j, personality=self.personality)
 
     self.v_desired_trajectory_full = np.interp(ModelConstants.T_IDXS, T_IDXS_MPC, self.mpc.v_solution)
     self.a_desired_trajectory_full = np.interp(ModelConstants.T_IDXS, T_IDXS_MPC, self.mpc.a_solution)
