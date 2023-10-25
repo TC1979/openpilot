@@ -90,7 +90,6 @@ numpy = "*"
 onnx = ">=1.14.0"
 onnxruntime = { version = ">=1.15.1", platform = "linux", markers = "platform_machine == 'aarch64'" }
 onnxruntime-gpu = { version = ">=1.15.1", platform = "linux", markers = "platform_machine == 'x86_64'" }
-overpy = "==0.6"
 psutil = "*"
 pyaudio = "*"
 pycapnp = "*"

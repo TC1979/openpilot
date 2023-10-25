@@ -57,8 +57,8 @@ T_IDXS_LST = [index_function(idx, max_val=MAX_T, max_idx=N) for idx in range(N+1
 T_IDXS = np.array(T_IDXS_LST)
 FCW_IDXS = T_IDXS < 5.0
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
-COMFORT_BRAKE = 2.2
-STOP_DISTANCE = 4.5
+COMFORT_BRAKE = 2.3
+STOP_DISTANCE = 5.5
 
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
@@ -81,16 +81,6 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
-def get_STOP_DISTANCE(personality=log.LongitudinalPersonality.standard):
-  if personality==log.LongitudinalPersonality.relaxed:
-    return 5.5
-  elif personality==log.LongitudinalPersonality.standard:
-    return 4.5
-  elif personality==log.LongitudinalPersonality.aggressive:
-    return 3.5
-  else:
-    raise NotImplementedError("Longitudinal personality not supported")
-
 def get_stopped_equivalence_factor(v_lead, v_ego):
   # KRKeegan this offset rapidly decreases the following distance when the lead pulls
   # away, resulting in an early demand for acceleration.
@@ -109,11 +99,9 @@ def get_stopped_equivalence_factor(v_lead, v_ego):
 def get_safe_obstacle_distance(v_ego, t_follow, stop_distance):
   return (v_ego**2) / (2 * COMFORT_BRAKE) + t_follow * v_ego + stop_distance
 
-def desired_follow_distance(v_ego, v_lead, t_follow=None, stop_distance=None):
+def desired_follow_distance(v_ego, v_lead, t_follow=None, stop_distance=STOP_DISTANCE):
   if t_follow is None:
     t_follow = get_T_FOLLOW()
-  if stop_distance is None:
-    stop_distance = get_STOP_DISTANCE()
   return get_safe_obstacle_distance(v_ego, t_follow, stop_distance) - get_stopped_equivalence_factor(v_lead, v_ego)
 
 
@@ -212,8 +200,7 @@ def gen_long_ocp():
 
   x0 = np.zeros(X_DIM)
   ocp.constraints.x0 = x0
-  ocp.parameter_values = np.array([-1.2, 1.2, 0.0, 0.0, get_T_FOLLOW(), LEAD_DANGER_FACTOR, get_STOP_DISTANCE()])
-
+  ocp.parameter_values = np.array([-1.2, 1.2, 0.0, 0.0, get_T_FOLLOW(), LEAD_DANGER_FACTOR, STOP_DISTANCE])
 
   # We put all constraint cost weights to 0 and only set them at runtime
   cost_weights = np.zeros(CONSTR_DIM)
@@ -397,10 +384,9 @@ class LongitudinalMpc:
       elif profile_key == 3: # Let You Cut In
         put_nonblocking('LongitudinalPersonality', str(2))
 
-  def update(self, carstate, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard):
+  def update(self, carstate, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, stop_distance=STOP_DISTANCE):
     t_follow = get_T_FOLLOW(personality)
     v_ego = self.x0[1]
-    stop_distance = get_STOP_DISTANCE(personality)
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
