@@ -36,7 +36,7 @@ SignalModel::SignalModel(QObject *parent) : root(new Item), QAbstractItemModel(p
 void SignalModel::insertItem(SignalModel::Item *parent_item, int pos, const cabana::Signal *sig) {
   Item *item = new Item{.sig = sig, .parent = parent_item, .title = sig->name, .type = Item::Sig};
   parent_item->children.insert(pos, item);
-  QString titles[]{"Name", "Size", "Node", "Little Endian", "Signed", "Offset", "Factor", "Type", "Multiplex Value", "Extra Info",
+  QString titles[]{"Name", "Size", "Receiver Nodes", "Little Endian", "Signed", "Offset", "Factor", "Type", "Multiplex Value", "Extra Info",
                    "Unit", "Comment", "Minimum Value", "Maximum Value", "Value Descriptions"};
   for (int i = 0; i < std::size(titles); ++i) {
     item->children.push_back(new Item{.sig = sig, .parent = item, .title = titles[i], .type = (Item::Type)(i + Item::Name)});
@@ -504,7 +504,7 @@ SignalView::SignalView(ChartsWidget *charts, QWidget *parent) : charts(charts), 
   QObject::connect(can, &AbstractStream::msgsReceived, this, &SignalView::updateState);
   QObject::connect(tree->header(), &QHeaderView::sectionResized, [this](int logicalIndex, int oldSize, int newSize) {
     if (logicalIndex == 1) {
-      value_column_width = newSize - delegate->button_size.width();
+      value_column_width = newSize;
       updateState();
     }
   });
@@ -645,8 +645,9 @@ void SignalView::updateState(const QHash<MessageId, CanData> *msgs) {
     }
 
     const static int min_max_width = QFontMetrics(delegate->minmax_font).width("-000.00") + 5;
-    int value_width = std::min<int>(max_value_width + min_max_width, value_column_width / 2);
-    QSize size(value_column_width - value_width,
+    int available_width = value_column_width - delegate->button_size.width();
+    int value_width = std::min<int>(max_value_width + min_max_width, available_width / 2);
+    QSize size(available_width - value_width,
                delegate->button_size.height() - style()->pixelMetric(QStyle::PM_FocusFrameVMargin) * 2);
     QFutureSynchronizer<void> synchronizer;
     for (int i = first_visible_row; i <= last_visible_row; ++i) {
