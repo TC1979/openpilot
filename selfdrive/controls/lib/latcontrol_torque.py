@@ -109,12 +109,14 @@ class LatControlTorque(LatControl):
         if self.use_nn:
           actual_curvature_rate = -VM.calc_curvature(math.radians(CS.steeringRateDeg), CS.vEgo, 0.0)
           actual_lateral_jerk = actual_curvature_rate * CS.vEgo ** 2
+          desired_lateral_jerk = desired_curvature_rate * CS.vEgo ** 2
       else:
         actual_curvature_vm = -VM.calc_curvature(math.radians(CS.steeringAngleDeg - params.angleOffsetDeg), CS.vEgo, params.roll)
         actual_curvature_llk = llk.angularVelocityCalibrated.value[2] / CS.vEgo
         actual_curvature = interp(CS.vEgo, [2.0, 5.0], [actual_curvature_vm, actual_curvature_llk])
         curvature_deadzone = 0.0
         actual_lateral_jerk = 0.0
+        desired_lateral_jerk = 0.0
       desired_lateral_accel = desired_curvature * CS.vEgo ** 2
 
       # desired rate is the desired rate of change in the setpoint, not the absolute desired curvature
@@ -155,7 +157,7 @@ class LatControlTorque(LatControl):
         lat_jerk_deadzone = 0.35
         lateral_jerk_error = 0.0 if self.use_steering_angle or abs(lookahead_lateral_jerk) <= lat_jerk_deadzone else (0.1 * apply_deadzone(lookahead_lateral_jerk - actual_lateral_jerk, lat_jerk_deadzone))
 
-        friction_input = 0.5 * error + lateral_jerk_error
+        friction_input = error + lateral_jerk_error
         nn_error_input = [CS.vEgo, error, friction_input, 0.0] \
                               + past_errors + future_errors
         pid_log.error = self.torque_from_nn(nn_error_input)
