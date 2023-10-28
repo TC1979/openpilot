@@ -9,6 +9,7 @@ from openpilot.selfdrive.controls.lib.latcontrol import LatControl
 from openpilot.selfdrive.controls.lib.pid import PIDController
 from openpilot.selfdrive.controls.lib.vehicle_model import ACCELERATION_DUE_TO_GRAVITY
 from openpilot.selfdrive.modeld.constants import ModelConstants
+from openpilot.selfdrive.controls.lib.lateral_planner import LateralPlanner
 
 # At higher speeds (25+mph) we can assume:
 # Lateral acceleration achieved by a specific car correlates to
@@ -55,6 +56,9 @@ def get_lookahead_value(future_vals, current_val):
   min_val = min(same_sign_vals + [current_val], key=lambda x: abs(x))
   return min_val
 
+def roll_grade_adjust(roll, pitch):
+  return float(np.sin(roll) * np.cos(pitch))
+
 class LatControlTorque(LatControl):
   def __init__(self, CP, CI):
     super().__init__(CP, CI)
@@ -95,9 +99,11 @@ class LatControlTorque(LatControl):
     self.torque_params.latAccelOffset = latAccelOffset
     self.torque_params.friction = friction
 
-  def update(self, active, CS, VM, params, last_actuators, steer_limited, desired_curvature, desired_curvature_rate, llk, lat_plan=None, model_data=None):
+  def update(self, active, CS, VM, params, last_actuators, steer_limited, desired_curvature, desired_curvature_rate, lateral_planner, llk, lat_plan=None, model_data=None):
     pid_log = log.ControlsState.LateralTorqueState.new_message()
     nn_log = None
+    voro = orientation if lateral_planner.dynamic_lane_profile_status else velocity
+
 
     if not active:
       output_torque = 0.0
@@ -127,11 +133,13 @@ class LatControlTorque(LatControl):
       setpoint = desired_lateral_accel + low_speed_factor * desired_curvature
       measurement = actual_lateral_accel + low_speed_factor * actual_curvature
 
-      model_planner_good = None not in [lat_plan, model_data] and all(len(i) >= CONTROL_N for i in (model_data.orientation.x, lat_plan.curvatures))
+      model_planner_good = None not in [lat_plan, model_data] and all(len(i) >= CONTROL_N for i in (model_data.voro.x, lat_plan.curvatures))
       if self.use_nn and model_planner_good:
         # update past data
         error = setpoint - measurement
         roll = params.roll
+        pitch = llk.orientationNED.value[1]
+        roll = roll_grade_adjust(roll, pitch)
         self.roll_deque.append(roll)
         self.lateral_accel_desired_deque.append(desired_lateral_accel)
         self.error_deque.append(error)
@@ -146,7 +154,7 @@ class LatControlTorque(LatControl):
         # adjust future times to account for longitudinal acceleration
         adjusted_future_times = [t + 0.5*CS.aEgo*(t/max(CS.vEgo, 1.0)) for t in self.nn_future_times]
         past_rolls = [self.roll_deque[min(len(self.roll_deque)-1, i)] for i in self.history_frame_offsets]
-        future_rolls = [interp(t, ModelConstants.T_IDXS, model_data.orientation.x) + roll for t in adjusted_future_times]
+        future_rolls = [roll_grade_adjust(interp(t, ModelConstants.T_IDXS, model_data.voro.x) + roll, interp(t, ModelConstants.T_IDXS, model_data.voro.y) + pitch) for t in adjusted_future_times]
         past_lateral_accels_desired = [self.lateral_accel_desired_deque[min(len(self.lateral_accel_desired_deque)-1, i)] for i in self.history_frame_offsets]
         future_planned_lateral_accels = [interp(t, ModelConstants.T_IDXS[:CONTROL_N], lat_plan.curvatures) * CS.vEgo ** 2 for t in adjusted_future_times]
         past_errors = [self.error_deque[min(len(self.error_deque)-1, i)] for i in self.history_frame_offsets]
