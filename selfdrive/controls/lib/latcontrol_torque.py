@@ -56,8 +56,13 @@ def get_lookahead_value(future_vals, current_val):
   min_val = min(same_sign_vals + [current_val], key=lambda x: abs(x))
   return min_val
 
-def roll_grade_adjust(roll, pitch):
-  return float(np.sin(roll) * np.cos(pitch))
+# At a given roll, if pitch magnitude increases, the
+# gravitational acceleration component starts pointing
+# in the longitudinal direction, decreasing the lateral
+# acceleration component. Here we do the same thing
+# to the roll value itself, then passed to nnff.
+def roll_pitch_adjust(roll, pitch):
+  return roll * float(np.cos(pitch))
 
 class LatControlTorque(LatControl):
   def __init__(self, CP, CI):
@@ -139,7 +144,7 @@ class LatControlTorque(LatControl):
         error = setpoint - measurement
         roll = params.roll
         pitch = llk.orientationNED.value[1]
-        roll = roll_grade_adjust(roll, pitch)
+        roll = roll_pitch_adjust(roll, pitch)
         self.roll_deque.append(roll)
         self.lateral_accel_desired_deque.append(desired_lateral_accel)
         self.error_deque.append(error)
@@ -154,7 +159,7 @@ class LatControlTorque(LatControl):
         # adjust future times to account for longitudinal acceleration
         adjusted_future_times = [t + 0.5*CS.aEgo*(t/max(CS.vEgo, 1.0)) for t in self.nn_future_times]
         past_rolls = [self.roll_deque[min(len(self.roll_deque)-1, i)] for i in self.history_frame_offsets]
-        future_rolls = [roll_grade_adjust(interp(t, ModelConstants.T_IDXS, model_data.voro.x) + roll, interp(t, ModelConstants.T_IDXS, model_data.voro.y) + pitch) for t in adjusted_future_times]
+        future_rolls = [roll_pitch_adjust(interp(t, ModelConstants.T_IDXS, model_data.voro.x) + roll, interp(t, ModelConstants.T_IDXS, model_data.voro.y) + pitch) for t in adjusted_future_times]
         past_lateral_accels_desired = [self.lateral_accel_desired_deque[min(len(self.lateral_accel_desired_deque)-1, i)] for i in self.history_frame_offsets]
         future_planned_lateral_accels = [interp(t, ModelConstants.T_IDXS[:CONTROL_N], lat_plan.curvatures) * CS.vEgo ** 2 for t in adjusted_future_times]
         past_errors = [self.error_deque[min(len(self.error_deque)-1, i)] for i in self.history_frame_offsets]
