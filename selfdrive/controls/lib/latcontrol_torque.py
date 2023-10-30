@@ -107,7 +107,7 @@ class LatControlTorque(LatControl):
       setpoint = desired_lateral_accel + low_speed_factor * desired_curvature
       measurement = actual_lateral_accel + low_speed_factor * actual_curvature
 
-      model_planner_good = None not in [lat_plan, model_data] and all(len(i) >= CONTROL_N for i in (model_data.voro.x, lat_plan.curvatures))
+      model_planner_good = None not in [lat_plan, model_data] and all(len(i) >= CONTROL_N for i in (model_data.orientation.x, lat_plan.curvatures))
       if self.use_nn and model_planner_good:
         # update past data
         error = setpoint - measurement
