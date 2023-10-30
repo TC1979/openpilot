@@ -582,7 +582,7 @@ class Controls:
     if self.active:
       self.current_alert_types.append(ET.WARNING)
 
-  def state_control(self, CS):
+  def state_control(self, CS, llk):
     """Given the state, this function returns a CarControl packet"""
 
     # Update VehicleModel
