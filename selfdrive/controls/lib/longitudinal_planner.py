@@ -20,8 +20,8 @@ from openpilot.selfdrive.controls.vtsc import vtsc
 
 LON_MPC_STEP = 0.2  # first step is 0.2s
 A_CRUISE_MIN = -1.2
-A_CRUISE_MIN_VALS_TOYOTA = [-0.5, -0.5, -0.2, -0.3, -0.4, -0.45, -0.5, -1.2, -0.4,  -0.35]
-A_CRUISE_MIN_BP_TOYOTA =   [0.,    0.3,  0.35, 3.,   6.,   8.3,   14,   20.,   30.,   55.]
+A_CRUISE_MIN_VALS_TOYOTA = [-0.10, -0.01,   -0.05,   -0.32, -0.32, -0.32, -0.27]
+A_CRUISE_MIN_BP_TOYOTA =   [0.,    0.02,    0.05,    14,    20.,   30.,   55.]
 A_CRUISE_MAX_VALS = [1.6, 1.2, 0.8, 0.6]
 A_CRUISE_MAX_BP = [0., 10.0, 25., 40.]
 A_CRUISE_MAX_VALS_TOYOTA = [2.2, 1.8, 1.4, 0.85, 0.77, 0.70, 0.58, 0.4,  0.31, 0.11]  # Sets the limits of the planner accel, PID may exceed
