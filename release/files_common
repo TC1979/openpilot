@@ -179,7 +179,6 @@ common/i2c.h
 
 selfdrive/controls/__init__.py
 selfdrive/controls/controlsd.py
-selfdrive/controls/distance_based_curvature.py
 selfdrive/controls/plannerd.py
 selfdrive/controls/radard.py
 selfdrive/controls/vtsc.py

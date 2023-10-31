@@ -212,8 +212,6 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"CarModel", PERSISTENT},
     {"dp_atl", PERSISTENT},
     {"dp_jetson", PERSISTENT},
-    {"DistanceBasedCurvature", PERSISTENT},
-    {"Distances", PERSISTENT},
     {"DrivingPersonalitiesUIWheel", PERSISTENT},
     {"dynamic_lane", PERSISTENT},
     {"e2e_link", PERSISTENT},
