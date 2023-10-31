@@ -271,8 +271,8 @@ class CarInterface(CarInterfaceBase):
     tune.deadzoneV = [.0, .15]
     tune.kpBP = [0., 5., 20.]
     tune.kpV = [1.3, 1.0, 0.7]
-    tune.kiBP = [0.,   1.,   5.,  12.,  20.,  27., 40.]
-    tune.kiV = [.205, .22,  .21, .21,  .17,  .10, .01]
+    tune.kiBP = [0.,   1.,   5.,   8.3,   12.,  20.,  27., 40.]
+    tune.kiV = [.20,  .205,  .21,  .213,  .21,  .17,  .10, .01]
     #tune.kiBP = [0.,   1.,    2.,    3.,   4.,   5.,    12.,  20.,  27., 40.]
     #tune.kiV = [.348, .3361, .3168, .2831, .2571, .226, .198, .17,  .10, .01]
     if candidate in TSS2_CAR:

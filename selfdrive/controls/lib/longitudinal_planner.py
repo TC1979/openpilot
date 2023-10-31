@@ -24,9 +24,9 @@ A_CRUISE_MIN_VALS_TOYOTA = [-0.01, -0.0002, -0.0001,  -0.14, -0.28, -0.30, -0.25
 A_CRUISE_MIN_BP_TOYOTA =   [0.,    0.01,    0.03,     8.33,  12,    20.,   30.,   55.]
 A_CRUISE_MAX_VALS = [1.6, 1.2, 0.8, 0.6]
 A_CRUISE_MAX_BP = [0., 10.0, 25., 40.]
-A_CRUISE_MAX_VALS_TOYOTA = [2.2, 1.8, 1.4, 0.85, 0.77, 0.70, 0.58, 0.4,  0.31, 0.11]  # Sets the limits of the planner accel, PID may exceed
-# CRUISE_MAX_BP in kmh =   [0.,  10,  20,  30,   40,   53,   72,   90,   107,  150]
-A_CRUISE_MAX_BP_TOYOTA =   [0.,  3,   6.,  8.,   11.,  15.,  20.,  25.,  30.,  55.]
+A_CRUISE_MAX_VALS_TOYOTA = [2.2, 1.75, 1.3, 0.85, 0.77, 0.70, 0.58, 0.4,  0.31, 0.11]  # Sets the limits of the planner accel, PID may exceed
+# CRUISE_MAX_BP in kmh =   [0.,  10,   20,  30,   40,   53,   72,   90,   107,  150]
+A_CRUISE_MAX_BP_TOYOTA =   [0.,  3,    6.,  8.,   11.,  15.,  20.,  25.,  30.,  55.]
 
 # Lookup table for turns
 _A_TOTAL_MAX_V = [1.7, 3.2]
