@@ -110,7 +110,7 @@ class LatControlTorque(LatControl):
       self.friction_look_ahead_bp = [9.0, 35.0] # corresponding speeds in m/s in [0, ~40]
       # Additionally, we use a deadzone to make sure that we only put additional torque
       # when the jerk is large enough to be significant.
-      self.lat_jerk_deadzone = 0.6 # m/s^3 in [0, ¡Û]
+      self.lat_jerk_deadzone = 0.6 # m/s^3 in [0, âˆž]
       # Finally, lateral jerk error is downscaled so it doesn't dominate the friction error
       # term.
       self.lat_jerk_friction_factor = 0.1 # in [0, 1]
@@ -121,7 +121,7 @@ class LatControlTorque(LatControl):
       # of "a", the faster the error is assumed to converge to 0, and less NNFF will
       # respond to that predicted future error. Too high a value will result in overcorrection/
       # oscillation, too low a value will make correct error less proactively than it could.
-      self.error_predict_a = 1.5 # in [0, ¡Û], where 0 is no correction and ¡Û is instant correction
+      self.error_predict_a = 1.5 # in [0, âˆž], where 0 is no correction and âˆž is instant correction
 
   def update_live_torque_params(self, latAccelFactor, latAccelOffset, friction):
     self.torque_params.latAccelFactor = latAccelFactor
