@@ -117,7 +117,7 @@ class LatControlTorque(LatControl):
 
       # Error predicted correction factor. The `get_predict_error_func` function is used
       # to predict the error at future times based on the past/present error. The assumed
-      # rate of error correction is determined by the "a" parameter. The higher the value 
+      # rate of error correction is determined by the "a" parameter. The higher the value
       # of "a", the faster the error is assumed to converge to 0, and less NNFF will
       # respond to that predicted future error. Too high a value will result in overcorrection/
       # oscillation, too low a value will make correct error less proactively than it could.
@@ -149,7 +149,6 @@ class LatControlTorque(LatControl):
         actual_curvature = interp(CS.vEgo, [2.0, 5.0], [actual_curvature_vm, actual_curvature_llk])
         curvature_deadzone = 0.0
         actual_lateral_jerk = 0.0
-        desired_lateral_jerk = 0.0
       desired_lateral_accel = desired_curvature * CS.vEgo ** 2
 
       # desired rate is the desired rate of change in the setpoint, not the absolute desired curvature
