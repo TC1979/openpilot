@@ -221,6 +221,7 @@ class CarController:
     if not CC.enabled and CS.pcm_acc_status:
       pcm_cancel_cmd = 1
 
+    # resume request
     # on entering standstill, send standstill request
     if CS.out.standstill and not self.last_standstill and (self.CP.carFingerprint not in NO_STOP_TIMER_CAR or self.CP.enableGasInterceptor):
       self.standstill_req = True
@@ -246,6 +247,13 @@ class CarController:
       self.permit_braking = False
     else:
       self.permit_braking = True
+
+    # AleSato's Automatic Brake Hold
+    if self.frame % 2 == 0:
+      if CS.brakehold_governor:
+        can_sends.append(toyotacan.create_brakehold_command(self.packer, {}, True if self.frame % 730 < 727 else False))
+      else:
+        can_sends.append(toyotacan.create_brakehold_command(self.packer, CS.stock_aeb, False))
 
     # handle UI messages
     fcw_alert = hud_control.visualAlert == VisualAlert.fcw

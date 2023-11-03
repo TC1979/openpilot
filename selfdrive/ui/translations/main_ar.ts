@@ -1086,6 +1086,14 @@ Speed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Automatic Brake Hold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Activates the car&apos;s brakes after 3 seconds stopped. (Only support on Toyota TSS2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Fix Toyota BSM Signal</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1146,7 +1154,7 @@ Internet access from mobile phone (tethering) is required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A webserver for accessing openpilot data and files. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:5050*.</source>
+        <source>A webserver for accessing openpilot data and files. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:3000*.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

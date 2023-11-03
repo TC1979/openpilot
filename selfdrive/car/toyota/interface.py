@@ -296,7 +296,7 @@ class CarInterface(CarInterfaceBase):
     self.dp_atl = Params().get_bool("dp_atl")
 
     # low speed re-write (dp)
-    self.cruise_speed_override = True # change this to False if you want to disable cruise speed override
+    self.cruise_speed_override = True if (self.CP.flags & ToyotaFlags.SMART_DSU) else False # change this to False if you want to disable cruise speed override
     if ret.cruiseState.enabled and ret.cruiseState.speed < 45 * CV.KPH_TO_MS and self.CP.openpilotLongitudinalControl:
       if self.cruise_speed_override:
         if self.low_cruise_speed == 0.:
@@ -304,7 +304,7 @@ class CarInterface(CarInterfaceBase):
         else:
           ret.cruiseState.speed = ret.cruiseState.speedCluster = self.low_cruise_speed
       else:
-        ret.cruiseState.speed = ret.cruiseState.speedCluster = 24 * CV.KPH_TO_MS
+        pass
     else:
       self.low_cruise_speed = 0.
 
@@ -338,6 +338,10 @@ class CarInterface(CarInterfaceBase):
         events.add(EventName.atlDisengageSound)
         Params().put_bool("LateralAllowed", False)
       self.prev_atl = ret.cruiseState.available
+
+    if self.CS.brakehold_governor:
+      events.add(EventName.automaticBrakehold)
+
 
     ret.events = events.to_msg()
 

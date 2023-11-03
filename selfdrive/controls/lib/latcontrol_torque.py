@@ -165,7 +165,7 @@ class LatControlTorque(LatControl):
         future_errors = future_error_func(self.nn_future_times_np).tolist()
 
         # compute NN error response
-        lat_jerk_deadzone = 0.5
+        lat_jerk_deadzone = 0.6
         lateral_jerk_error = 0.0 if self.use_steering_angle or abs(lookahead_lateral_jerk) <= lat_jerk_deadzone else (0.1 * apply_deadzone(lookahead_lateral_jerk - actual_lateral_jerk, lat_jerk_deadzone))
 
         friction_input = error + lateral_jerk_error

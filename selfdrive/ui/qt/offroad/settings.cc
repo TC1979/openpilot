@@ -570,7 +570,7 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
 
   toggles.append(new ParamControl("opwebd",
                                   tr("Enable Local File Server"),
-                                  tr("A webserver for accessing openpilot data and files. Use web interface to control it: *http://&lt;device_ip&gt;:5050*."),
+                                  tr("A webserver for accessing openpilot data and files. Use web interface to control it: *http://&lt;device_ip&gt;:3000*."),
                                   "../assets/offroad/icon_road.png",
                                   this));
 
@@ -583,6 +583,12 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
   toggles.append(new ParamControl("toyotaautounlock",
                                   tr("Enable Door Auto Unlock"),
                                   tr("Enabled this to unlock doors when shift to gear P. Only work on some Toyota vehicles."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("AleSato_AutomaticBrakeHold",
+                                  tr("Automatic Brake Hold"),
+                                  tr("Activates the car's brakes after 3 seconds stopped. (Only support on Toyota TSS2)"),
                                   "../assets/offroad/icon_road.png",
                                   this));
 

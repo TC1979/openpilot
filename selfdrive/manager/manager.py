@@ -54,6 +54,8 @@ def manager_init() -> None:
     ("NudgelessLaneChange", "0"),
     ("NavSettingTime24h", "1"),
     ("OpenpilotEnabledToggle", "1"),
+
+    ("AleSato_AutomaticBrakeHold", "0"),
     ("PrimeAd", "1"),
     ("RecordFront", "0"),
     ("TurnVisionControl", "1"),

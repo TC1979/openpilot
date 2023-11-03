@@ -260,7 +260,6 @@ def no_gps_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.SubMaster, m
 
 def torque_nn_load_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.SubMaster, metric: bool, soft_disable_time: int) -> Alert:
   model_name = CP.lateralTuning.torque.nnModelName
-  fuzzy = CP.lateralTuning.torque.nnModelFuzzyMatch
   if model_name == "":
     return Alert(
       "NN 扭矩控制器未載入",
@@ -268,20 +267,11 @@ def torque_nn_load_alert(CP: car.CarParams, CS: car.CarState, sm: messaging.SubM
       AlertStatus.userPrompt, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.prompt, 6.0)
   else:
-    if 'b\'' in model_name:
-      car, eps = model_name.split('b\'')
-      eps = 'b\'' + eps
-      return Alert(
-        f"NN 扭矩控制器 ({fuzzy = }): {car}",
-        f"eps: {eps}",
-        AlertStatus.userPrompt, AlertSize.mid,
-        Priority.LOW, VisualAlert.none, AudibleAlert.prompt, 6.0)
-    else:
-      return Alert(
-        f"NN 扭矩控制器已載入 ({fuzzy = })",
-        model_name,
-        AlertStatus.userPrompt, AlertSize.mid,
-        Priority.LOW, VisualAlert.none, AudibleAlert.prompt, 6.0)
+    return Alert(
+      "NN 扭矩控制器已載入",
+      model_name,
+      AlertStatus.userPrompt, AlertSize.mid,
+      Priority.LOW, VisualAlert.none, AudibleAlert.engage, 5.0)
 
 # *** debug alerts ***
 
@@ -999,6 +989,14 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
 
   EventName.torqueNNLoad: {
     ET.PERMANENT: torque_nn_load_alert,
+  },
+
+  EventName.automaticBrakehold: {
+    ET.PERMANENT: Alert(
+      "已啟動自動煞車",
+      "",
+      AlertStatus.normal, AlertSize.small,
+      Priority.LOWEST, VisualAlert.none, AudibleAlert.engageBrakehold, .1,),
   },
 }
 

@@ -1069,6 +1069,14 @@ Speed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above
         <translation>啟用此功能後，當檔位進到P檔時將自動解鎖車門。僅適用於某些Toyota車款。</translation>
     </message>
     <message>
+        <source>Automatic Brake Hold</source>
+        <translation>自動煞停維持</translation>
+    </message>
+    <message>
+        <source>Activates the car&apos;s brakes after 3 seconds stopped. (Only support on Toyota TSS2)</source>
+        <translation>踩煞車踏板3秒後，啟動自動煞停維持功能。(僅適用於 Toyota TSS2 車款)</translation>
+    </message>
+    <message>
         <source>Fix Toyota BSM Signal</source>
         <translation>修正Toyota盲點偵測訊號</translation>
     </message>
@@ -1137,8 +1145,8 @@ Internet access from mobile phone (tethering) is required.</source>
         <translation>開啟本地檔案服務器</translation>
     </message>
     <message>
-        <source>A webserver for accessing openpilot data and files. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:5050*.</source>
-        <translation>以本地檔案服務器存取 openpilot 的資料及檔案。使用瀏覽器的Web界面連結下面網址以存取檔案： *http://&lt;device_ip&gt;:5050*.</translation>
+        <source>A webserver for accessing openpilot data and files. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:3000*.</source>
+        <translation>以本地檔案服務器存取 openpilot 的資料及檔案。使用瀏覽器的Web界面連結下面網址以存取檔案： *http://&lt;device_ip&gt;:3000*.</translation>
     </message>
 </context>
 <context>
