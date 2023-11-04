@@ -62,7 +62,7 @@ def get_lookahead_value(future_vals, current_val):
 # acceleration component. Here we do the same thing
 # to the roll value itself, then passed to nnff.
 def roll_pitch_adjust(roll, pitch):
-  return roll * float(np.cos(pitch))
+  return roll * math.cos(pitch)
 
 class LatControlTorque(LatControl):
   def __init__(self, CP, CI):
@@ -73,6 +73,7 @@ class LatControlTorque(LatControl):
     self.torque_from_lateral_accel = CI.torque_from_lateral_accel()
     self.use_steering_angle = self.torque_params.useSteeringAngle
     self.steering_angle_deadzone_deg = self.torque_params.steeringAngleDeadzoneDeg
+    self.lowspeed_factor_factor = 0.0 # in [0, 1] in 0.1 increments.
 
     # Twilsonco's Lateral Neural Network Feedforward
     self.use_nn = CI.has_lateral_torque_nn
@@ -106,14 +107,18 @@ class LatControlTorque(LatControl):
       # Note that LAT_PLAN_MIN_IDX is defined above and is used in order to prevent
       # using a "future" value that is actually planned to occur before the "current" desired
       # value, which is offset by the steerActuatorDelay.
-      self.friction_look_ahead_v = [0.3, 1.2] # how many seconds in the future to look ahead in [0, ~2.1]
-      self.friction_look_ahead_bp = [9.0, 35.0] # corresponding speeds in m/s in [0, ~40]
+      self.friction_look_ahead_v = [0.6, 1.2] # how many seconds in the future to look ahead in [0, ~2.1] in 0.1 increments
+      self.friction_look_ahead_bp = [9.0, 35.0] # corresponding speeds in m/s in [0, ~40] in 1.0 increments
       # Additionally, we use a deadzone to make sure that we only put additional torque
       # when the jerk is large enough to be significant.
-      self.lat_jerk_deadzone = 0.6 # m/s^3 in [0, ∞]
+      self.lat_jerk_deadzone = 0.6 # m/s^3 in [0, ∞] in 0.05 increments
       # Finally, lateral jerk error is downscaled so it doesn't dominate the friction error
       # term.
-      self.lat_jerk_friction_factor = 0.1 # in [0, 1]
+      self.lat_jerk_friction_factor = 0.05 # in [0, 1] in 0.01 increments
+
+      # Scaling the lateral acceleration "friction response" could be helpful for some.
+      # Increase for a stronger response, decrease for a weaker response.
+      self.lat_accel_friction_factor = 1.0 # in [0, 5], in 0.05 increments. 5 is arbitrary safety limit
 
       # Error predicted correction factor. The `get_predict_error_func` function is used
       # to predict the error at future times based on the past/present error. The assumed
@@ -121,7 +126,7 @@ class LatControlTorque(LatControl):
       # of "a", the faster the error is assumed to converge to 0, and less NNFF will
       # respond to that predicted future error. Too high a value will result in overcorrection/
       # oscillation, too low a value will make correct error less proactively than it could.
-      self.error_predict_a = 1.5 # in [0, ∞], where 0 is no correction and ∞ is instant correction
+      self.error_predict_a = 1.5 # in [0, ∞], in 0.1 increments, where 0 assumes no correction and ∞ assumes instant correction
 
   def update_live_torque_params(self, latAccelFactor, latAccelOffset, friction):
     self.torque_params.latAccelFactor = latAccelFactor
@@ -154,7 +159,7 @@ class LatControlTorque(LatControl):
       actual_lateral_accel = actual_curvature * CS.vEgo ** 2
       lateral_accel_deadzone = curvature_deadzone * CS.vEgo ** 2
 
-      low_speed_factor = interp(CS.vEgo, LOW_SPEED_X, LOW_SPEED_Y if not self.use_nn else LOW_SPEED_Y_NN)**2
+      low_speed_factor = (self.lowspeed_factor_factor * interp(CS.vEgo, LOW_SPEED_X, LOW_SPEED_Y if not self.use_nn else LOW_SPEED_Y_NN))**2
       setpoint = desired_lateral_accel + low_speed_factor * desired_curvature
       measurement = actual_lateral_accel + low_speed_factor * actual_curvature
 
@@ -193,7 +198,7 @@ class LatControlTorque(LatControl):
           # when desired jerk magnitude is low, don't consider jerk error at all
           lateral_jerk_error = 0.0
 
-        friction_input = error + lateral_jerk_error
+        friction_input = self.lat_accel_friction_factor * error + lateral_jerk_error
         nn_error_input = [CS.vEgo, error, friction_input, 0.0] \
                               + past_errors + future_errors
         pid_log.error = self.torque_from_nn(nn_error_input)
