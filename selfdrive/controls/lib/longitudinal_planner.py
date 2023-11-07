@@ -158,8 +158,8 @@ class LongitudinalPlanner:
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
     x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error)
-    stop_distance = interp(sm['carState'].vEgo, [0., 1., 2., 3., 6., 8., 11., 20., 30.], [3.5, 3.6, 3.75, 4.0, 4.25, 4.5, 4.75, 5.0, 5.5])
-    self.mpc.update(sm['carState'], sm['radarState'], v_cruise, x, v, a, j, personality=self.personality, dynamic_follow=self.dynamic_follow, stop_distance=stop_distance)
+    # stop_distance = interp(sm['carState'].vEgo, [0., 1., 2., 3., 6., 8., 11., 20., 30.], [3.5, 3.6, 3.75, 4.0, 4.25, 4.5, 4.75, 5.0, 5.5])
+    self.mpc.update(sm['carState'], sm['radarState'], v_cruise, x, v, a, j, personality=self.personality, dynamic_follow=self.dynamic_follow)
 
     self.v_desired_trajectory_full = np.interp(ModelConstants.T_IDXS, T_IDXS_MPC, self.mpc.v_solution)
     self.a_desired_trajectory_full = np.interp(ModelConstants.T_IDXS, T_IDXS_MPC, self.mpc.a_solution)
