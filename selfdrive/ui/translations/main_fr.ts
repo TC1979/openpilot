@@ -1035,6 +1035,14 @@ Cela peut prendre jusqu&apos;à une minute.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Dynamic Distance Adjustment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The distance to the lead car will no longer be a fixed reaction time, but will be dynamically adjusted based on the speed of the vehicle. (Fine-tuned by Marc - cgw1968-5779)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Blinker Lane Change</source>
         <translation type="unfinished"></translation>
     </message>

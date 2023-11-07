@@ -181,7 +181,7 @@ class CarState(CarStateBase):
       # ignore standstill in hybrid vehicles, since pcm allows to restart without
       # receiving any special command. Also if interceptor is detected
       ret.cruiseState.standstill = False
-    elif self.CP.carFingerprint not in (NO_STOP_TIMER_CAR - TSS2_CAR):
+    elif not self.topsng and self.CP.carFingerprint not in (NO_STOP_TIMER_CAR - TSS2_CAR):
       # ignore standstill state in certain vehicles, since pcm allows to restart with just an acceleration request
       ret.cruiseState.standstill = self.pcm_acc_status == 7
     ret.cruiseState.enabled = bool(cp.vl["PCM_CRUISE"]["CRUISE_ACTIVE"])

@@ -56,6 +56,7 @@ def manager_init() -> None:
     ("OpenpilotEnabledToggle", "1"),
 
     ("AleSato_AutomaticBrakeHold", "0"),
+    ("Marc_Dynamic_Follow", "0"),
     ("PrimeAd", "1"),
     ("RecordFront", "0"),
     ("TurnVisionControl", "1"),

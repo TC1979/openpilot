@@ -1031,6 +1031,14 @@ This may take up to a minute.</source>
         <translation>自動切換Lane及Landless模式，此功能可以改善過彎時過度向左或向右的偏移。</translation>
     </message>
     <message>
+        <source>Dynamic Distance Adjustment</source>
+        <translation>動態距離調整</translation>
+    </message>
+    <message>
+        <source>The distance to the lead car will no longer be a fixed reaction time, but will be dynamically adjusted based on the speed of the vehicle. (Fine-tuned by Marc - cgw1968-5779)</source>
+        <translation>開啟此功能後，與前車的距離調整將不再是固定的反應時間，而是會依據車速作動態的距離調整。(由 Marc - cgw1968-5779 所微調)</translation>
+    </message>
+    <message>
         <source>Blinker Lane Change</source>
         <translation>開啟方向燈自動變換車道</translation>
     </message>

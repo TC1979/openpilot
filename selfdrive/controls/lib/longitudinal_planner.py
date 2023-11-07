@@ -74,6 +74,7 @@ class LongitudinalPlanner:
     self.param_read_counter = 0
     self.read_param()
     self.personality = log.LongitudinalPersonality.standard
+    self.dynamic_follow = False
 
   def read_param(self):
     try:
@@ -81,6 +82,7 @@ class LongitudinalPlanner:
     except (ValueError, TypeError):
       self.personality = log.LongitudinalPersonality.standard
 
+    self.dynamic_follow = self.params.get_bool("Marc_Dynamic_Follow")
   @staticmethod
   def parse_model(model_msg, model_error):
     if (len(model_msg.position.x) == 33 and
@@ -157,7 +159,7 @@ class LongitudinalPlanner:
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
     x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error)
     stop_distance = interp(sm['carState'].vEgo, [0., 1., 2., 3., 6., 8., 11., 20., 30.], [3.5, 3.6, 3.75, 4.0, 4.25, 4.5, 4.75, 5.0, 5.5])
-    self.mpc.update(sm['carState'], sm['radarState'], v_cruise, x, v, a, j, personality=self.personality, stop_distance=stop_distance)
+    self.mpc.update(sm['carState'], sm['radarState'], v_cruise, x, v, a, j, personality=self.personality, dynamic_follow=self.dynamic_follow, stop_distance=stop_distance)
 
     self.v_desired_trajectory_full = np.interp(ModelConstants.T_IDXS, T_IDXS_MPC, self.mpc.v_solution)
     self.a_desired_trajectory_full = np.interp(ModelConstants.T_IDXS, T_IDXS_MPC, self.mpc.a_solution)

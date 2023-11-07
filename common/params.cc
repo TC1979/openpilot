@@ -210,6 +210,7 @@ std::unordered_map<std::string, uint32_t> keys = {
 
     // TOP
     {"AleSato_AutomaticBrakeHold", PERSISTENT},
+    {"Marc_Dynamic_Follow", PERSISTENT},
     {"CarModel", PERSISTENT},
     {"dp_atl", PERSISTENT},
     {"dp_jetson", PERSISTENT},

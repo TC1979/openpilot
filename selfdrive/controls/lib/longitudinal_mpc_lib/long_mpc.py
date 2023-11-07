@@ -63,9 +63,9 @@ def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
     return 1.0
   elif personality==log.LongitudinalPersonality.standard:
-    return 1.0
-  elif personality==log.LongitudinalPersonality.aggressive:
     return 0.5
+  elif personality==log.LongitudinalPersonality.aggressive:
+    return 0.222
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
@@ -74,11 +74,26 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
     return 1.8
   elif personality==log.LongitudinalPersonality.standard:
-    return 1.35
+    return 1.3
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 0.85
+    return 0.9
   else:
     raise NotImplementedError("Longitudinal personality not supported")
+
+def get_dynamic_follow(v_ego, personality=log.LongitudinalPersonality.standard):
+  # The Dynamic follow function is adjusted by Marc(cgw1968-5779)
+  if personality==log.LongitudinalPersonality.relaxed:
+    x_vel =  [0.0,  3.0,  3.01,  8.33,  8.34,  13.89, 13.90,  19.99, 20,    25,   40]
+    y_dist = [1.2,  1.3,  1.40,  1.40,  1.50,  1.50,  1.6,    1.6,   1.85,  1.85, 2.0]
+  elif personality==log.LongitudinalPersonality.standard:
+    x_vel =  [0.0,  3.0,  3.01,  8.33,  8.34,  13.89, 13.90,  19.99, 20,    25,   40]
+    y_dist = [1.1,  1.2,  1.3,   1.3,   1.3,   1.3,   1.40,   1.40,  1.45,  1.45, 1.5]
+  elif personality==log.LongitudinalPersonality.aggressive:
+    x_vel =  [0.0,  3.0,  3.01,  8.33,  8.34,  13.89, 13.90,  19.99, 20,    25,   40]
+    y_dist = [1.0,  1.0,  1.0,   0.91,  0.95,  0.95,  0.99,   0.99,  1.10,  1.11, 1.2]
+  else:
+    raise NotImplementedError("Dynamic Follow personality not supported")
+  return np.interp(v_ego, x_vel, y_dist)
 
 def get_stopped_equivalence_factor(v_lead, v_ego):
   # KRKeegan this offset rapidly decreases the following distance when the lead pulls
@@ -383,9 +398,10 @@ class LongitudinalMpc:
       elif profile_key == 3: # Let You Cut In
         put_nonblocking('LongitudinalPersonality', str(2))
 
-  def update(self, carstate, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, stop_distance=STOP_DISTANCE):
-    t_follow = get_T_FOLLOW(personality)
+  def update(self, carstate, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, dynamic_follow=False, stop_distance=STOP_DISTANCE):
+    # t_follow = get_T_FOLLOW(personality)
     v_ego = self.x0[1]
+    t_follow = get_T_FOLLOW(personality) if not dynamic_follow else get_dynamic_follow(v_ego, personality)
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)

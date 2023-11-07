@@ -73,11 +73,12 @@ class LatControlTorque(LatControl):
     self.torque_from_lateral_accel = CI.torque_from_lateral_accel()
     self.use_steering_angle = self.torque_params.useSteeringAngle
     self.steering_angle_deadzone_deg = self.torque_params.steeringAngleDeadzoneDeg
-    self.lowspeed_factor_factor = 0.0 # in [0, 1] in 0.1 increments.
+    self.lowspeed_factor_factor = 1.0 # in [0, 1] in 0.1 increments.
 
     # Twilsonco's Lateral Neural Network Feedforward
     self.use_nn = CI.has_lateral_torque_nn
     if self.use_nn:
+      self.lowspeed_factor_factor = 0.0 # in [0, 1] in 0.1 increments.
       # NN model takes current v_ego, lateral_accel, lat accel/jerk error, roll, and past/future/planned data
       # of lat accel and roll
       # Past value is computed using previous desired lat accel and observed roll
@@ -107,14 +108,14 @@ class LatControlTorque(LatControl):
       # Note that LAT_PLAN_MIN_IDX is defined above and is used in order to prevent
       # using a "future" value that is actually planned to occur before the "current" desired
       # value, which is offset by the steerActuatorDelay.
-      self.friction_look_ahead_v = [0.6, 1.2] # how many seconds in the future to look ahead in [0, ~2.1] in 0.1 increments
+      self.friction_look_ahead_v = [0.3, 1.2] # how many seconds in the future to look ahead in [0, ~2.1] in 0.1 increments
       self.friction_look_ahead_bp = [9.0, 35.0] # corresponding speeds in m/s in [0, ~40] in 1.0 increments
       # Additionally, we use a deadzone to make sure that we only put additional torque
       # when the jerk is large enough to be significant.
       self.lat_jerk_deadzone = 0.6 # m/s^3 in [0, ∞] in 0.05 increments
       # Finally, lateral jerk error is downscaled so it doesn't dominate the friction error
       # term.
-      self.lat_jerk_friction_factor = 0.05 # in [0, 1] in 0.01 increments
+      self.lat_jerk_friction_factor = 0.1 # in [0, 1] in 0.01 increments
 
       # Scaling the lateral acceleration "friction response" could be helpful for some.
       # Increase for a stronger response, decrease for a weaker response.

@@ -297,16 +297,14 @@ class CarInterface(CarInterfaceBase):
 
     # low speed re-write (dp)
     self.cruise_speed_override = True if (self.CP.flags & ToyotaFlags.SMART_DSU) else False # change this to False if you want to disable cruise speed override
-    if ret.cruiseState.enabled and ret.cruiseState.speed < 45 * CV.KPH_TO_MS and self.CP.openpilotLongitudinalControl:
-      if self.cruise_speed_override:
+    if self.cruise_speed_override:
+      if ret.cruiseState.enabled and ret.cruiseState.speed < 45 * CV.KPH_TO_MS and self.CP.openpilotLongitudinalControl:
         if self.low_cruise_speed == 0.:
-          ret.cruiseState.speed = ret.cruiseState.speedCluster = self.low_cruise_speed = max(24 * CV.KPH_TO_MS, ret.vEgo)
+          self.low_cruise_speed = self.low_cruise_speed = max(24 * CV.KPH_TO_MS, ret.vEgo)
         else:
           ret.cruiseState.speed = ret.cruiseState.speedCluster = self.low_cruise_speed
       else:
-        pass
-    else:
-      self.low_cruise_speed = 0.
+        self.low_cruise_speed = 0.
 
     # events
     events = self.create_common_events(ret, extra_gears=[GearShifter.sport])
