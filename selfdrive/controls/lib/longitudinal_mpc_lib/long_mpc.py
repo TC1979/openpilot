@@ -85,13 +85,13 @@ def get_dynamic_follow(v_ego, personality=log.LongitudinalPersonality.standard):
   # The Dynamic follow function is adjusted by Marc(cgw1968-5779)
   if personality==log.LongitudinalPersonality.relaxed:
     x_vel =  [0.0,  3.0,  3.01,  8.33,  8.34,  13.89, 13.90,  19.99, 20,    25,   40]
-    y_dist = [0.9,  1.0,  1.30,  1.30,  1.50,  1.50,  1.6,    1.6,   1.85,  1.85, 2.0]
+    y_dist = [1.2,  1.3,  1.40,  1.40,  1.50,  1.50,  1.6,    1.6,   1.85,  1.85, 2.0]
   elif personality==log.LongitudinalPersonality.standard:
     x_vel =  [0.0,  3.0,  3.01,  8.33,  8.34,  13.89, 13.90,  19.99, 20,    25,   40]
-    y_dist = [0.85, 0.95, 1.2,   1.2,   1.3,   1.3,   1.40,   1.40,  1.45,  1.45, 1.5]
+    y_dist = [1.1,  1.2,  1.3,   1.3,   1.3,   1.3,   1.40,   1.40,  1.45,  1.45, 1.5]
   elif personality==log.LongitudinalPersonality.aggressive:
     x_vel =  [0.0,  3.0,  3.01,  8.33,  8.34,  13.89, 13.90,  19.99, 20,    25,   40]
-    y_dist = [0.80, 0.87, 0.89,  0.89,  0.93,  0.93,  0.99,   0.99,  1.10,  1.11, 1.2]
+    y_dist = [1.0,  1.0,  1.0,   0.91,  0.95,  0.95,  0.99,   0.99,  1.10,  1.11, 1.2]
   else:
     raise NotImplementedError("Dynamic Follow personality not supported")
   return np.interp(v_ego, x_vel, y_dist)
@@ -106,11 +106,12 @@ def get_STOP_DISTANCE(personality=log.LongitudinalPersonality.standard):
     return 3.5
   else:
     raise NotImplementedError("Longitudinal personality not supported")
-
+  print(f"The stop distance is {stop_distance} for {personality} personality.")
+  return stop_distance
 
 def get_dynamic_stop_distance(v_ego):
-  x_vel =  [0.,  1.,  2.,   3.,  6.,   8.,  11.,  20., 30.]
-  y_dist = [3.5, 3.6, 3.75, 4.0, 4.25, 4.5, 4.75, 5.0, 5.5]
+  x_vel =  [0.,  1.,  2.,   3.,  6.,  8.,   11., 15., 20., 30.]
+  y_dist = [3.5, 3.6, 3.75, 4.0, 4.5, 4.75, 5.0, 4.5, 5.0, 5.5]
   return np.interp(v_ego, x_vel, y_dist)
 
 
