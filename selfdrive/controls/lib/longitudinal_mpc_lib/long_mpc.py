@@ -56,7 +56,7 @@ T_IDXS_LST = [index_function(idx, max_val=MAX_T, max_idx=N) for idx in range(N+1
 T_IDXS = np.array(T_IDXS_LST)
 FCW_IDXS = T_IDXS < 5.0
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
-COMFORT_BRAKE = 2.3
+COMFORT_BRAKE = 2.2
 STOP_DISTANCE = 5.5
 
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
@@ -99,19 +99,20 @@ def get_dynamic_follow(v_ego, personality=log.LongitudinalPersonality.standard):
 
 def get_STOP_DISTANCE(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
-    return 5.5
     print("Stop distance relaxed: 5.5")
+    return 5.5
   elif personality==log.LongitudinalPersonality.standard:
-    return 4.5
     print("Stop distance standard: 4.5")
+    return 4.5
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 3.5
     print("Stop distance aggressive: 3.5")
+    return 3.5
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
 
 def get_dynamic_stop_distance(v_ego):
+  print("Dynamic stop distance")
   x_vel =  [0.,  1.,  2.,   3.,  6.,  8.,   11., 15., 20., 30.]
   y_dist = [3.5, 3.6, 3.75, 4.0, 4.5, 4.75, 5.0, 4.5, 5.0, 5.5]
   return np.interp(v_ego, x_vel, y_dist)
