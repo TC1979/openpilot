@@ -24,7 +24,7 @@ from openpilot.selfdrive.modeld.constants import ModelConstants
 
 LOW_SPEED_X = [0, 10, 20, 30]
 LOW_SPEED_Y = [15, 13, 10, 5]
-LOW_SPEED_Y_NN = [8, 3, 1, 0]
+LOW_SPEED_Y_NN = [12, 3, 1, 0]
 
 # Pitch component of roll compensation
 PITCH_DEADZONE = 0.01 # [radians] 0.01 ≈ 1% grade
