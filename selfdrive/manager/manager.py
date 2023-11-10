@@ -57,6 +57,7 @@ def manager_init() -> None:
 
     ("AleSato_AutomaticBrakeHold", "0"),
     ("Marc_Dynamic_Follow", "0"),
+    ("DistanceBasedCurvature", "1"),
     ("PrimeAd", "1"),
     ("RecordFront", "0"),
     ("TurnVisionControl", "1"),

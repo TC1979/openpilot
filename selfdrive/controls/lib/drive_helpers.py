@@ -6,6 +6,7 @@ from openpilot.common.numpy_fast import clip, interp
 from openpilot.common.realtime import DT_MDL
 from openpilot.selfdrive.modeld.constants import ModelConstants
 
+from openpilot.selfdrive.controls.distance_based_curvature import dbc
 # WARNING: this value was determined based on the model's training distribution,
 #          model predictions above this speed can be unpredictable
 # V_CRUISE's are in kph
@@ -183,6 +184,7 @@ def get_lag_adjusted_curvature(CP, v_ego, psis, curvatures, curvature_rates):
   current_curvature_desired = curvatures[0]
   psi = interp(delay, ModelConstants.T_IDXS[:CONTROL_N], psis)
   average_curvature_desired = psi / (v_ego * delay)
+  average_curvature_desired = dbc.average_curvature_desired(psi, v_ego, delay)
   desired_curvature = 2 * average_curvature_desired - current_curvature_desired
 
   # This is the "desired rate of the setpoint" not an actual desired rate
