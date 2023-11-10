@@ -133,15 +133,13 @@ class GpxUploader():
           os.remove(file)
       else:
         for file in files:
-          # use the file name instead of the file object
-          file_name = file.name
-          if self._do_upload(file_name):
+          if self._do_upload(file):
             if self._delete_after_upload:
               _debug("run - _delete_after_upload")
-              os.remove(file_name)
+              os.remove(file)
             else:
               _debug("run - set_is_uploaded")
-              self._set_is_uploaded(file_name)
+              self._set_is_uploaded(file)
       time.sleep(60)
 
 def gpx_uploader_thread():
@@ -154,9 +152,9 @@ def main():
 if __name__ == "__main__":
   main()
 
-def _do_upload(self, file_name):
+def _do_upload(self, file):
     # use with statement to open and close the file automatically
-    with open(file_name, "rb") as _:
+    with open(file, "rb") as _:
       # do the upload logic here
       # ...
       # return True or False based on the upload result
