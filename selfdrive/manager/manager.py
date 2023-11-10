@@ -74,7 +74,6 @@ def manager_init() -> None:
     ("dp_nav_gmap_enable", "0"),
     ("dp_nav", "1"),
     ("dp_otisserv", "1"),
-    ("dp_gpxd", "1"),
     ("dp_mapd", "1"),
     ("opwebd", "0"),
   ]
@@ -170,7 +169,6 @@ def manager_thread() -> None:
   ignore += ['otisserv'] if not dp_nav or not dp_otisserv else []
   dp_mapd = params.get_bool("dp_mapd")
   ignore += ['mapd'] if not dp_mapd else []
-  ignore += ['gpxd'] if not dp_otisserv and not dp_mapd and not params.get_bool("dp_gpxd") else []
   if dp_jetson:
     ignore += ['logcatd', 'proclogd', 'loggerd', 'logmessaged', 'encoderd', 'uploader']
 
