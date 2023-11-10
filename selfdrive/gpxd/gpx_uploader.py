@@ -24,13 +24,14 @@
 import os
 import time
 from openpilot.common.params import Params
-from openpilot.system.version import get_version
+from openpilot.system.version import get_version, get_branch
+# from openpilot.common.realtime import set_core_affinity, set_realtime_priority
 
 # for uploader
 from openpilot.system.loggerd.xattr_cache import getxattr, setxattr
 import glob
 import requests
-import json
+# import json
 
 # customisable values
 GPX_LOG_PATH = '/data/media/0/gpx_logs/'
@@ -55,24 +56,23 @@ def _debug(msg):
 
 class GpxUploader():
   def __init__(self):
-    self.param_s = Params()
-
     self._delete_after_upload =  True #self.param_s.get_bool('GpxDeleteAfterUpload')
-    self._car_model = "Unknown Vehicle"
+    # self._car_model = "Unknown Vehicle"
+    self._version = get_version()
+    self._branch = get_branch()
 
   def _identify_vehicle(self):
     # read model from LiveParameters
-    params = self.param_s.get("LiveParameters")
-    if params is not None:
-      params = json.loads(params)
-      self._car_model = params.get('carFingerprint', self._car_model)
-    self._top_version = get_version()
+    # params = Params().get("LiveParameters")
+    # if params is not None:
+    #   params = json.loads(params)
+    #   self._car_model = params.get('carFingerprint', self._car_model)
     _debug("GpxUploader init - _delete_after_upload = %s" % self._delete_after_upload)
-    _debug("GpxUploader init - _car_model = %s" % self._car_model)
+    # _debug("GpxUploader init - _car_model = %s" % self._car_model)
 
   def _is_online(self):
     try:
-      r = requests.get(VERSION_URL, headers=API_HEADER, timeout=5)
+      r = requests.get(VERSION_URL, headers=API_HEADER)
       _debug("is_online? status_code = %s" % r.status_code)
       return r.status_code >= 200
     except Exception:
@@ -101,14 +101,14 @@ class GpxUploader():
   def _do_upload(self, filename):
     fn = os.path.basename(filename)
     data = {
-      'description': "Routes from top %s (%s)." % (self._top_version, self._car_model),
+      'description': f"Routes from TOP {self._branch} / {self._version}.",
       'visibility': 'identifiable'
     }
     files = {
       "file": (fn, open(filename, 'rb'))
     }
     try:
-      r = requests.post(UPLOAD_URL, files=files, data=data, headers=API_HEADER, timeout=5)
+      r = requests.post(UPLOAD_URL, files=files, data=data, headers=API_HEADER)
       _debug("do_upload - %s - %s" % (filename, r.status_code))
       return r.status_code == 200
     except Exception:
@@ -151,11 +151,3 @@ def main():
 
 if __name__ == "__main__":
   main()
-
-def _do_upload(self, file):
-    # use with statement to open and close the file automatically
-    with open(file, "rb") as _:
-      # do the upload logic here
-      # ...
-      # return True or False based on the upload result
-      return True
