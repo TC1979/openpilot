@@ -156,7 +156,7 @@ if __name__ == "__main__":
 
 def _do_upload(self, file_name):
     # use with statement to open and close the file automatically
-    with open(file_name, "rb") as file:
+    with open(file_name, "rb") as _:
       # do the upload logic here
       # ...
       # return True or False based on the upload result
