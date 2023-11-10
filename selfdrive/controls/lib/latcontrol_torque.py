@@ -24,24 +24,7 @@ from openpilot.selfdrive.modeld.constants import ModelConstants
 
 LOW_SPEED_X = [0, 10, 20, 30]
 LOW_SPEED_Y = [15, 13, 10, 5]
-LOW_SPEED_Y_NN = [12, 3, 1, 0]
-
-# Pitch component of roll compensation
-PITCH_DEADZONE = 0.01 # [radians] 0.01 ≈ 1% grade
-PITCH_MAX_DELTA = math.radians(10.0) * 0.01  # each frame = 10°/s, checked at 100Hz
-PITCH_MIN, PITCH_MAX = math.radians(-19), math.radians(19) # steepest roads in US are ~18°
-
-# Takes past errors (v) and associated relative times (t) and returns a function
-# that can be used to predict future errors. The function takes a time (t) and
-# returns the predicted error at that time, assuming the error will converge to 0.
-def get_predict_error_func(v, t, a=1.5):
-  A = np.vstack([t, np.ones(len(t))]).T
-  m, c = np.linalg.lstsq(A, v, rcond=1e-10)[0]
-
-  def error(t):
-    return np.exp(-a * t) * (m * t + c)
-
-  return error
+LOW_SPEED_Y_NN = [12, 4, 1, 0]
 
 def sign(x):
   return 1.0 if x > 0.0 else (-1.0 if x < 0.0 else 0.0)
@@ -78,13 +61,11 @@ class LatControlTorque(LatControl):
     self.torque_from_lateral_accel = CI.torque_from_lateral_accel()
     self.use_steering_angle = self.torque_params.useSteeringAngle
     self.steering_angle_deadzone_deg = self.torque_params.steeringAngleDeadzoneDeg
-    self.lowspeed_factor_factor = 1.0 # in [0, 1] in 0.1 increments.
 
     # Twilsonco's Lateral Neural Network Feedforward
     self.use_nn = CI.has_lateral_torque_nn
     if self.use_nn:
       self.pitch = FirstOrderFilter(0.0, 0.5, 0.01)
-      self.lowspeed_factor_factor = 1.0
       # NN model takes current v_ego, lateral_accel, lat accel/jerk error, roll, and past/future/planned data
       # of lat accel and roll
       # Past value is computed using previous desired lat accel and observed roll
@@ -103,7 +84,6 @@ class LatControlTorque(LatControl):
       self.history_frame_offsets = [history_check_frames[0] - i for i in history_check_frames]
       self.lateral_accel_desired_deque = deque(maxlen=history_check_frames[0])
       self.roll_deque = deque(maxlen=history_check_frames[0])
-      self.error_deque = deque(maxlen=history_check_frames[0])
       self.past_future_len = len(self.past_times) + len(self.nn_future_times)
 
       # Setup adjustable parameters
@@ -159,7 +139,7 @@ class LatControlTorque(LatControl):
       actual_lateral_accel = actual_curvature * CS.vEgo ** 2
       lateral_accel_deadzone = curvature_deadzone * CS.vEgo ** 2
 
-      low_speed_factor = (self.lowspeed_factor_factor * interp(CS.vEgo, LOW_SPEED_X, LOW_SPEED_Y if not self.use_nn else LOW_SPEED_Y_NN))**2
+      low_speed_factor = interp(CS.vEgo, LOW_SPEED_X, LOW_SPEED_Y if not self.use_nn else LOW_SPEED_Y_NN)**2
       setpoint = desired_lateral_accel + low_speed_factor * desired_curvature
       measurement = actual_lateral_accel + low_speed_factor * actual_curvature
 
