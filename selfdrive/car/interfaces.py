@@ -215,7 +215,7 @@ class CarInterfaceBase(ABC):
   def get_params(cls, candidate: str, fingerprint: Dict[int, Dict[int, int]], car_fw: List[car.CarParams.CarFw], experimental_long: bool, docs: bool):
     ret = CarInterfaceBase.get_std_params(candidate)
     ret = cls._get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs)
-    
+
     # Enable torque controller for all cars (except angle cars)
     if ret.steerControlType != car.CarParams.SteerControlType.angle:
       CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning)
