@@ -532,12 +532,6 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/offroad/icon_road.png",
                                   this));
 
-  toggles.append(new ParamControl("dynamic_lane",
-                                  tr("Enabled Dynamic Lane"),
-                                  tr("Auto switch between Lane and Landless modes, this function can improve excessive left or right deviation when cornering."),
-                                  "../assets/offroad/icon_road.png",
-                                  this));
-
   toggles.append(new ParamControl("Marc_Dynamic_Follow",
                                   tr("Dynamic Distance Adjustment"),
                                   tr("The distance to the lead car will no longer be a fixed reaction time, but will be dynamically adjusted based on the speed of the vehicle. (Fine-tuned by Marc - cgw1968-5779)"),

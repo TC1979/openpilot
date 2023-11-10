@@ -1043,14 +1043,6 @@ This may take up to a minute.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enabled Dynamic Lane</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Auto switch between Lane and Landless modes, this function can improve excessive left or right deviation when cornering.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Dynamic Distance Adjustment</source>
         <translation type="unfinished"></translation>
     </message>

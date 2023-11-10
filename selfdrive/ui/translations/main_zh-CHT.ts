@@ -1023,14 +1023,6 @@ This may take up to a minute.</source>
         <translation>啟用Stop And Go 功能，讓車輛跟車到停並進入auto hold。</translation>
     </message>
     <message>
-        <source>Enabled Dynamic Lane</source>
-        <translation>開啟動態線道模式</translation>
-    </message>
-    <message>
-        <source>Auto switch between Lane and Landless modes, this function can improve excessive left or right deviation when cornering.</source>
-        <translation>自動切換Lane及Landless模式，此功能可以改善過彎時過度向左或向右的偏移。</translation>
-    </message>
-    <message>
         <source>Dynamic Distance Adjustment</source>
         <translation>動態距離調整</translation>
     </message>

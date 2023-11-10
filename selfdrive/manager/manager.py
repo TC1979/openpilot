@@ -65,7 +65,6 @@ def manager_init() -> None:
     ("toyotaautolock", "1"),
     ("toyotaautounlock", "1"),
     ("toyota_bsm", "0"),
-    ("dynamic_lane", "0"),
     ("dp_atl", "0"),
     ("TimSignals", "1"),
     ("ReverseAccChange", "1"),
