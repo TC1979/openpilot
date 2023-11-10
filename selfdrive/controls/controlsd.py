@@ -192,6 +192,7 @@ class Controls:
     self.nn_alert_shown = False
     self.reverse_acc_change = False
 
+    self.live_torque = self.params.get_bool("NNFF")
     # TODO: no longer necessary, aside from process replay
     self.sm['liveParameters'].valid = True
     self.can_log_mono_time = 0
@@ -598,7 +599,7 @@ class Controls:
     # Update Torque Params
     if self.CP.lateralTuning.which() == 'torque':
       torque_params = self.sm['liveTorqueParameters']
-      if self.sm.all_checks(['liveTorqueParameters']) and torque_params.useParams:
+      if self.sm.all_checks(['liveTorqueParameters']) and (torque_params.useParams or self.live_torque):
         self.LaC.update_live_torque_params(torque_params.latAccelFactorFiltered, torque_params.latAccelOffsetFiltered,
                                            torque_params.frictionCoefficientFiltered)
 

@@ -215,10 +215,10 @@ class CarInterfaceBase(ABC):
   def get_params(cls, candidate: str, fingerprint: Dict[int, Dict[int, int]], car_fw: List[car.CarParams.CarFw], experimental_long: bool, docs: bool):
     ret = CarInterfaceBase.get_std_params(candidate)
     ret = cls._get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs)
+    if Params().get_bool("NNFF") and ret.steerControlType != car.CarParams.SteerControlType.angle:
+      ret = CarInterfaceBase.top_configure_torque_tune(candidate, ret)
 
-    # Enable torque controller for all cars (except angle cars)
-    if ret.steerControlType != car.CarParams.SteerControlType.angle:
-      CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning)
+    if ret.lateralTuning.which() == 'torque':
       eps_firmware = str(next((fw.fwVersion for fw in car_fw if fw.ecu == "eps"), ""))
       model, similarity_score = get_nn_model_path(candidate, eps_firmware)
       if model is not None:
@@ -317,6 +317,11 @@ class CarInterfaceBase(ABC):
     tune.torque.latAccelFactor = params['LAT_ACCEL_FACTOR']
     tune.torque.latAccelOffset = 0.0
     tune.torque.steeringAngleDeadzoneDeg = steering_angle_deadzone_deg
+
+  @staticmethod
+  def top_configure_torque_tune(candidate, ret):
+    CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning)
+    return ret
 
   @abstractmethod
   def _update(self, c: car.CarControl) -> car.CarState:
