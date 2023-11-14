@@ -370,7 +370,6 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
   const auto cs = sm["controlsState"].getControlsState();
   const auto car_state = sm["carState"].getCarState();
   const auto nav_instruction = sm["navInstruction"].getNavInstruction();
-  const QString roadName = QString::fromStdString(paramsMemory.get("RoadName"));
 
   // Handle older routes where vCruiseCluster is not set
   float v_cruise =  cs.getVCruiseCluster() == 0.0 ? cs.getVCruise() : cs.getVCruiseCluster();
@@ -454,6 +453,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   int top_radius = 32;
   int bottom_radius = has_eu_speed_limit ? 100 : 32;
 
+  const QString roadName = QString::fromStdString(paramsMemory.get("RoadName"));
   QRect set_speed_rect(QPoint(60 + (default_size.width() - set_speed_size.width()) / 2, roadName.isEmpty() ? 45 : 70), set_speed_size);
   p.setPen(QPen(whiteColor(75), 6));
   p.setBrush(blackColor(166));
