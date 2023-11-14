@@ -47,7 +47,6 @@ private:
   void changeMode();
 
   Params params;
-  Params paramsMemory{"/dev/shm/params"};
   QPixmap engage_img;
   QPixmap experimental_img;
   bool experimental_mode;
@@ -175,7 +174,6 @@ private:
   QWidget *map = nullptr;
   QHBoxLayout* split;
 
-  Params paramsMemory{"/dev/shm/params"};
 private slots:
   void offroadTransition(bool offroad);
   void primeChanged(bool prime);
