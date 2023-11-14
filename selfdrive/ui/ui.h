@@ -222,6 +222,7 @@ private:
   QTimer *timer;
   bool started_prev = false;
   PrimeType prime_type = PrimeType::UNKNOWN;
+  Params paramsMemory{"/dev/shm/params"};
 };
 
 UIState *uiState();

@@ -218,6 +218,9 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"DistanceBasedCurvature", PERSISTENT},
     {"Distances", PERSISTENT},
     {"DrivingPersonalitiesUIWheel", PERSISTENT},
+    {"MapSelected", PERSISTENT},
+    {"OSM", PERSISTENT},
+    {"OSMDownloadLocations", PERSISTENT},
     {"e2e_link", PERSISTENT},
     {"LateralAllowed", CLEAR_ON_MANAGER_START | CLEAR_ON_ONROAD_TRANSITION},
     {"NNFF", PERSISTENT},
@@ -239,10 +242,10 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"dp_nav_mapbox_token_sk", PERSISTENT},
     {"dp_nav_gmap_enable", PERSISTENT},
     {"dp_nav_gmap_key", PERSISTENT},
+    {"RoadName", PERSISTENT},
     {"dp_nav_amap_enable", PERSISTENT},
     {"dp_nav_amap_key", PERSISTENT},
     {"dp_nav_amap_key_2", PERSISTENT},
-    {"dp_mapd", PERSISTENT},
     {"opwebd", PERSISTENT},
 };
 
