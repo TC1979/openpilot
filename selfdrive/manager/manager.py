@@ -25,7 +25,6 @@ from openpilot.system.version import is_dirty, get_commit, get_version, get_orig
                            is_tested_branch, is_release_branch
 
 
-sys.path.append(os.path.join(BASEDIR, "third_party/mapd"))
 
 def manager_init() -> None:
   # update system time from panda
@@ -70,11 +69,9 @@ def manager_init() -> None:
     ("ReverseAccChange", "1"),
     ("dp_jetson", "0"),
     ("NNFF", "0"),
-
+    ("RoadNameUI", "1"),
     ("dp_nav_gmap_enable", "0"),
-    ("dp_nav", "1"),
     ("dp_otisserv", "1"),
-    ("dp_mapd", "1"),
     ("opwebd", "0"),
   ]
   if not PC:
@@ -161,14 +158,12 @@ def manager_thread() -> None:
   params = Params()
 
   ignore: List[str] = []
-  dp_nav = params.get_bool("dp_nav")
-  dp_otisserv = dp_nav and params.get_bool("dp_otisserv")
+  dp_otisserv = params.get_bool("dp_otisserv")
   dp_jetson = params.get_bool("dp_jetson")
   ignore += ['dmonitoringmodeld', 'dmonitoringd'] if dp_jetson else []
-  ignore += ['navd', 'mapsd'] if not dp_nav else []
-  ignore += ['otisserv'] if not dp_nav or not dp_otisserv else []
-  dp_mapd = params.get_bool("dp_mapd")
-  ignore += ['mapd'] if not dp_mapd else []
+  ignore += ['otisserv'] if not dp_otisserv else []
+  uimapd = params.get_bool("RoadNameUI")
+  ignore += ['mapd'] if not uimapd else []
   if dp_jetson:
     ignore += ['logcatd', 'proclogd', 'loggerd', 'logmessaged', 'encoderd', 'uploader']
 

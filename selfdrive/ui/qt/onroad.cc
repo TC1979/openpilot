@@ -413,8 +413,7 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
     main_layout->setAlignment(map_settings_btn, (rightHandDM ? Qt::AlignLeft : Qt::AlignRight) | Qt::AlignBottom);
   }
 
-  const auto lmd = sm["liveMapData"].getLiveMapData();
-  setProperty("roadName", QString::fromStdString(lmd.getCurrentRoadName()));
+  setProperty("roadName", QString::fromStdString(paramsMemory.get("RoadName")));
   setProperty("blindSpotLeft", s.scene.blind_spot_left);
   setProperty("blindSpotRight", s.scene.blind_spot_right);
   setProperty("drivingPersonalitiesUIWheel", s.scene.driving_personalities_ui_wheel);

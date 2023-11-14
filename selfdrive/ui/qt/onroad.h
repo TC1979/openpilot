@@ -79,7 +79,6 @@ class AnnotatedCameraWidget : public CameraWidget {
   Q_PROPERTY(bool muteDM MEMBER muteDM);
   Q_PROPERTY(bool turnSignalLeft MEMBER turnSignalLeft);
   Q_PROPERTY(bool turnSignalRight MEMBER turnSignalRight);
-  Q_PROPERTY(QString roadName MEMBER roadName);
   Q_PROPERTY(int personalityProfile MEMBER personalityProfile);
 
 public:
@@ -133,7 +132,6 @@ private:
   int skip_frame_count = 0;
   bool wide_cam_requested = false;
 
-  QString roadName;
 
 
 protected:

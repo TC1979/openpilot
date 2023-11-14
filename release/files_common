@@ -348,7 +348,6 @@ system/camerad/imgproc/utils.h
 
 selfdrive/manager/__init__.py
 selfdrive/manager/build.py
-selfdrive/manager/custom_dep.py
 selfdrive/manager/helpers.py
 selfdrive/manager/manager.py
 selfdrive/manager/process_config.py
