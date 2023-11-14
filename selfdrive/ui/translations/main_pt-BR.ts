@@ -910,6 +910,14 @@ Isso pode levar até um minuto.</translation>
         <source>never</source>
         <translation>nunca</translation>
     </message>
+    <message>
+        <source>Offline Maps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a location to download</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SshControl</name>
