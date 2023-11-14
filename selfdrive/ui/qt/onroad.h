@@ -47,6 +47,7 @@ private:
   void changeMode();
 
   Params params;
+  Params paramsMemory{"/dev/shm/params"};
   QPixmap engage_img;
   QPixmap experimental_img;
   bool experimental_mode;

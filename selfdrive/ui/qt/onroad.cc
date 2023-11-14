@@ -370,6 +370,7 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
   const auto cs = sm["controlsState"].getControlsState();
   const auto car_state = sm["carState"].getCarState();
   const auto nav_instruction = sm["navInstruction"].getNavInstruction();
+  const QString roadName = QString::fromStdString(paramsMemory.get("RoadName"));
 
   // Handle older routes where vCruiseCluster is not set
   float v_cruise =  cs.getVCruiseCluster() == 0.0 ? cs.getVCruise() : cs.getVCruiseCluster();
@@ -413,7 +414,6 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
     main_layout->setAlignment(map_settings_btn, (rightHandDM ? Qt::AlignLeft : Qt::AlignRight) | Qt::AlignBottom);
   }
 
-  setProperty("roadName", QString::fromStdString(paramsMemory.get("RoadName")));
   setProperty("blindSpotLeft", s.scene.blind_spot_left);
   setProperty("blindSpotRight", s.scene.blind_spot_right);
   setProperty("drivingPersonalitiesUIWheel", s.scene.driving_personalities_ui_wheel);
