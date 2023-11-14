@@ -904,6 +904,14 @@ This may take up to a minute.</source>
         <source>up to date, last checked %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Offline Maps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a location to download</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SshControl</name>

@@ -906,6 +906,14 @@ This may take up to a minute.</source>
         <source>never</source>
         <translation>從未更新</translation>
     </message>
+    <message>
+        <source>Offline Maps</source>
+        <translation>離線地圖</translation>
+    </message>
+    <message>
+        <source>Select a location to download</source>
+        <translation>選擇下載地區</translation>
+    </message>
 </context>
 <context>
     <name>SshControl</name>

@@ -906,6 +906,14 @@ This may take up to a minute.</source>
         <source>never</source>
         <translation>업데이트 안함</translation>
     </message>
+    <message>
+        <source>Offline Maps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a location to download</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SshControl</name>

@@ -910,6 +910,14 @@ Cela peut prendre jusqu&apos;à une minute.</translation>
         <source>up to date, last checked %1</source>
         <translation>à jour, dernière vérification %1</translation>
     </message>
+    <message>
+        <source>Offline Maps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a location to download</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SshControl</name>
