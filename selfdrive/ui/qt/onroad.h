@@ -112,6 +112,7 @@ private:
   bool has_us_speed_limit = false;
   bool has_eu_speed_limit = false;
   bool v_ego_cluster_seen = false;
+  Params paramsMemory{"/dev/shm/params"};
   bool blindSpotLeft;
   bool blindSpotRight;
   bool drivingPersonalitiesUIWheel;
@@ -174,6 +175,7 @@ private:
   QWidget *map = nullptr;
   QHBoxLayout* split;
 
+  Params paramsMemory{"/dev/shm/params"};
 private slots:
   void offroadTransition(bool offroad);
   void primeChanged(bool prime);
