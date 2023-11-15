@@ -109,10 +109,10 @@ def get_STOP_DISTANCE(personality=log.LongitudinalPersonality.standard):
     raise NotImplementedError("Longitudinal personality not supported")
 
 
-def get_dynamic_stop_distance(v_ego):
-  x_vel =  [0.,  1.,  2.,   3.,  6.,  8.,   11., 15., 20., 30.]
-  y_dist = [3.5, 3.6, 3.75, 4.0, 4.5, 4.75, 5.0, 4.5, 5.0, 5.5]
-  return np.interp(v_ego, x_vel, y_dist)
+# def get_dynamic_stop_distance(v_ego):
+  # x_vel =  [0.,  1.,  2.,   3.,  6.,  8.,   11., 15., 20., 30.]
+  # y_dist = [3.5, 3.6, 3.75, 4.0, 4.5, 4.75, 5.0, 4.5, 5.0, 5.5]
+  # return np.interp(v_ego, x_vel, y_dist)
 
 
 def get_stopped_equivalence_factor(v_lead, v_ego):
@@ -424,7 +424,9 @@ class LongitudinalMpc:
     # t_follow = get_T_FOLLOW(personality)
     v_ego = self.x0[1]
     t_follow = get_T_FOLLOW(personality) if not dynamic_follow else get_dynamic_follow(v_ego, personality)
-    stop_distance = get_dynamic_stop_distance(v_ego) if not dynamic_follow else get_STOP_DISTANCE(personality)
+    # stop_distance = get_dynamic_stop_distance(v_ego) if not dynamic_follow else get_STOP_DISTANCE(personality)
+    stop_distance = get_STOP_DISTANCE(personality)
+
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
