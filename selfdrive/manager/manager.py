@@ -72,7 +72,6 @@ def manager_init() -> None:
     ("NNFF", "0"),
 
     ("dp_nav_gmap_enable", "0"),
-    ("dp_nav", "1"),
     ("dp_otisserv", "1"),
     ("dp_mapd", "1"),
     ("opwebd", "0"),
@@ -161,12 +160,10 @@ def manager_thread() -> None:
   params = Params()
 
   ignore: List[str] = []
-  dp_nav = params.get_bool("dp_nav")
-  dp_otisserv = dp_nav and params.get_bool("dp_otisserv")
+  dp_otisserv = params.get_bool("dp_otisserv")
   dp_jetson = params.get_bool("dp_jetson")
   ignore += ['dmonitoringmodeld', 'dmonitoringd'] if dp_jetson else []
-  ignore += ['navd', 'mapsd'] if not dp_nav else []
-  ignore += ['otisserv'] if not dp_nav or not dp_otisserv else []
+  ignore += ['otisserv'] if not dp_otisserv else []
   dp_mapd = params.get_bool("dp_mapd")
   ignore += ['mapd'] if not dp_mapd else []
   if dp_jetson:

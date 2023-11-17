@@ -83,7 +83,7 @@ procs = [
   PythonProcess("statsd", "selfdrive.statsd", always_run),
 
   PythonProcess("mapd", "selfdrive.mapd.mapd", only_onroad),
-  PythonProcess("otisserv", "selfdrive.mapd.otisserv", always_run),
+  PythonProcess("otisserv", "selfdrive.navd.otisserv", always_run),
   PythonProcess("opwebd", "selfdrive.opwebd", always_run),
 
   # debug procs

@@ -304,7 +304,7 @@ class OtisServ(BaseHTTPRequestHandler):
   def get_parsed_template(self, name, replace=None):
     if replace is None:
         replace = {}
-    f = open('%s/selfdrive/mapd/tpl/%s.tpl' % (BASEDIR, name), mode='r', encoding='utf-8')
+    f = open('%s/selfdrive/navd/tpl/%s.tpl' % (BASEDIR, name), mode='r', encoding='utf-8')
     content = f.read()
     for key in replace:
       content = content.replace(key, str(replace[key]))
