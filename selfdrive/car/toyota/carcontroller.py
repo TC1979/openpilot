@@ -3,7 +3,7 @@ from openpilot.common.numpy_fast import clip, interp
 from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, \
                           create_gas_interceptor_command, make_can_msg
 from openpilot.selfdrive.car.toyota import toyotacan
-from openpilot.selfdrive.car.toyota.values import CAR, STATIC_DSU_MSGS, NO_STOP_TIMER_CAR, TSS2_CAR, \
+from openpilot.selfdrive.car.toyota.values import CAR, STATIC_DSU_MSGS, NO_STOP_TIMER_CAR, TSS2_CAR, RADAR_ACC_CAR, \
                                         MIN_ACC_SPEED, PEDAL_TRANSITION, CarControllerParams, ToyotaFlags, \
                                         UNSUPPORTED_DSU_CAR
 from openpilot.selfdrive.car.toyota.interface import CarInterface
@@ -223,12 +223,11 @@ class CarController:
 
     # resume request
     # on entering standstill, send standstill request
-    if CS.out.standstill and not self.last_standstill and (self.CP.carFingerprint not in NO_STOP_TIMER_CAR or self.CP.enableGasInterceptor):
+    if CS.out.standstill and not self.last_standstill and (self.CP.carFingerprint not in NO_STOP_TIMER_CAR or self.CP.enableGasInterceptor) and \
+      not self.topsng:
       self.standstill_req = True
     if CS.pcm_acc_status != 8:
       # pcm entered standstill or it's disabled
-      self.standstill_req = False
-    if self.topsng and (self.CP.flags & ToyotaFlags.HYBRID.value) and (self.CP.flags & ToyotaFlags.SMART_DSU.value):
       self.standstill_req = False
 
     self.last_standstill = CS.out.standstill
@@ -249,7 +248,7 @@ class CarController:
       self.permit_braking = True
 
     # AleSato's Automatic Brake Hold
-    if self.frame % 2 == 0:
+    if Params().get_bool("AleSato_AutomaticBrakeHold") and self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR) and self.frame % 2 == 0:
       if CS.brakehold_governor:
         can_sends.append(toyotacan.create_brakehold_command(self.packer, {}, True if self.frame % 730 < 727 else False))
       else:

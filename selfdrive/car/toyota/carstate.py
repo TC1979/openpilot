@@ -265,11 +265,11 @@ class CarState(CarStateBase):
     ret.steeringWheelCar = True if self.CP.carName == "toyota" else False
 
     # Automatic BrakeHold
-    if self.CP.carFingerprint in TSS2_CAR:
+    if self.params.get_bool("AleSato_AutomaticBrakeHold") and self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
       self.stock_aeb = copy.copy(cp_cam.vl["PRE_COLLISION_2"])
-      self.brakehold_condition_satisfied =  (ret.standstill and ret.cruiseState.available and not ret.gasPressed and \
+      self.brakehold_condition_satisfied =  ret.standstill and ret.cruiseState.available and not ret.gasPressed and \
                                             not ret.cruiseState.enabled and (ret.gearShifter not in (self.GearShifter.reverse,\
-                                            self.GearShifter.park)) and self.params.get_bool('AleSato_AutomaticBrakeHold'))
+                                            self.GearShifter.park))
       if self.brakehold_condition_satisfied:
         if self.brakehold_condition_counter > self.time_to_brakehold and not self.reset_brakehold:
           self.brakehold_governor = True
@@ -365,7 +365,7 @@ class CarState(CarStateBase):
       ]
 
     # AleSato
-    if CP.carFingerprint in TSS2_CAR:
+    if CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
       messages += [
         ("PRE_COLLISION_2", 33),
       ]
