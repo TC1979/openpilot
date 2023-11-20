@@ -137,11 +137,6 @@ static std::map<cereal::ControlsState::AlertStatus, QColor> alert_colors = {
   {cereal::ControlsState::AlertStatus::CRITICAL, QColor(0xC9, 0x22, 0x31, 0xf1)},
 };
 
-typedef struct {
-  QPointF v[TRAJECTORY_SIZE * 2];
-  int cnt;
-} line_vertices_data;
-
 typedef struct UIScene {
   bool calibration_valid = false;
   bool calibration_wide_valid  = false;
