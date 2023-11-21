@@ -125,7 +125,7 @@ class LongitudinalPlanner:
     prev_accel_constraint = not (reset_state or sm['carState'].standstill)
 
     if self.mpc.mode == 'acc':
-	  if self.dynamic_follow:
+      if self.dynamic_follow:
         accel_limits = [get_min_accel(v_ego), get_max_accel_df(v_ego)]
       elif not self.dynamic_follow and self.CP.carName == "toyota":
         accel_limits = [get_min_accel(v_ego), get_max_accel_toyota(v_ego)]
