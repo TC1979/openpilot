@@ -281,10 +281,10 @@ class CarInterface(CarInterfaceBase):
     tune.kiV = [.35, .326, .303, .281, .260, .24, .17, .10, .005, .001]
     # tune.kiV = [.20,  .205,  .21,  .213,  .21,  .17,  .10, .01]
     if candidate in TSS2_CAR:
-      ret.vEgoStopping = 0.1         # car is near 0.1 to 0.2 when car starts requesting stopping accel
-      ret.vEgoStarting = 0.1         # needs to be > or == vEgoStopping
-      ret.stopAccel = -0.4           # Toyota requests -0.4 when stopped
-      ret.stoppingDecelRate = 0.12   # reach stopping target smoothly
+      ret.vEgoStopping = 0.15         # car is near 0.1 to 0.2 when car starts requesting stopping accel
+      ret.vEgoStarting = 0.15         # needs to be > or == vEgoStopping
+      ret.stopAccel = -0.3         # Toyota requests -0.4 when stopped
+      ret.stoppingDecelRate = 0.4   # reach stopping target smoothly
 
     return ret
 
