@@ -111,7 +111,6 @@ private:
   bool has_us_speed_limit = false;
   bool has_eu_speed_limit = false;
   bool v_ego_cluster_seen = false;
-  Params paramsMemory{"/dev/shm/params"};
   bool blindSpotLeft;
   bool blindSpotRight;
   bool drivingPersonalitiesUIWheel;
@@ -132,8 +131,6 @@ private:
 
   int skip_frame_count = 0;
   bool wide_cam_requested = false;
-
-
 
 protected:
   void paintGL() override;
