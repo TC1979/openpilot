@@ -69,6 +69,7 @@ def manager_init() -> None:
     ("ReverseAccChange", "1"),
     ("dp_jetson", "0"),
     ("NNFF", "0"),
+
     ("dp_nav_gmap_enable", "0"),
     ("dp_otisserv", "1"),
     ("opwebd", "0"),
