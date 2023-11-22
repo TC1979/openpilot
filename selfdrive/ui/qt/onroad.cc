@@ -413,6 +413,7 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
     main_layout->setAlignment(map_settings_btn, (rightHandDM ? Qt::AlignLeft : Qt::AlignRight) | Qt::AlignBottom);
   }
 
+  const QString roadName =  QString::fromStdString(Params("/dev/shm/params").get("RoadName"));
   setProperty("blindSpotLeft", s.scene.blind_spot_left);
   setProperty("blindSpotRight", s.scene.blind_spot_right);
   setProperty("drivingPersonalitiesUIWheel", s.scene.driving_personalities_ui_wheel);
@@ -453,7 +454,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   int top_radius = 32;
   int bottom_radius = has_eu_speed_limit ? 100 : 32;
 
-  QRect set_speed_rect(QPoint(60 + (default_size.width() - set_speed_size.width()) / 2, 45), set_speed_size);
+  QRect set_speed_rect(QPoint(60 + (default_size.width() - set_speed_size.width()) / 2, roadName.isEmpty() ? 45 : 70), set_speed_size);
   p.setPen(QPen(whiteColor(75), 6));
   p.setBrush(blackColor(166));
   drawRoundedRect(p, set_speed_rect, top_radius, top_radius, bottom_radius, bottom_radius);
@@ -520,12 +521,14 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   drawText(p, rect().center().x(), 290, speedUnit, 200);
 
   // Bottom bar road name
-  const QRect currentRect = rect();
-  const QRect statusBarRect(currentRect.left() - 1, currentRect.bottom() - 50, currentRect.width() + 2, 100);
-  const QString roadName =  QString::fromStdString(Params("/dev/shm/params").get("RoadName"));
-  QRect textRect = p.fontMetrics().boundingRect(statusBarRect, Qt::AlignCenter | Qt::TextWordWrap, roadName);
-  textRect.moveBottom(statusBarRect.bottom() - 50);
-  p.drawText(textRect, Qt::AlignCenter | Qt::TextWordWrap, roadName);
+  if (!roadName.isEmpty()) {
+    const int h = 60;
+    QRect bar_rc(rect().left(), rect().top(), rect().width(), h);
+    p.setBrush(QColor(0, 0, 0, 100));
+    p.drawRect(bar_rc);
+    p.setFont(InterFont(50, QFont::DemiBold));
+    drawCenteredText(p, bar_rc.center().x(), bar_rc.center().y(), roadName, QColor(255, 255, 255, 200));
+  }
   p.restore();
 
   // Driving personalities button
