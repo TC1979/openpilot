@@ -13,6 +13,10 @@ from openpilot.selfdrive.test.longitudinal_maneuvers.maneuver import Maneuver
 def create_maneuvers(kwargs, self):
   params = Params()
   params.put("LongitudinalPersonality", str(self.personality))
+  @parameterized_class(("personality"), itertools.product(
+                        [log.LongitudinalPersonality.relaxed, # personality
+                         log.LongitudinalPersonality.standard,
+                         log.LongitudinalPersonality.aggressive],))
   maneuvers = [
     Maneuver(
       'approach stopped car at 25m/s, initial distance: 120m',
