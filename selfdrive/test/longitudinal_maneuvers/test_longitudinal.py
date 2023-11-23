@@ -138,7 +138,7 @@ def create_maneuvers(kwargs, self):
       duration=20.,
       initial_speed=0.,
       lead_relevancy=True,
-      initial_distance_lead=get_STOP_DISTANCE(personality),
+      initial_distance_lead=get_STOP_DISTANCE(self.personality),
       speed_lead_values=[0., 0., 2.],
       breakpoints=[1., 10., 15.],
       ensure_start=True,
@@ -163,8 +163,8 @@ class LongitudinalControl(unittest.TestCase):
     params.put_bool("Passive", bool(os.getenv("PASSIVE")))
     params.put_bool("OpenpilotEnabledToggle", True)
 
-  def test_maneuver:
-    for maneuver in create_maneuvers({"e2e": self.e2e, "force_decel": self.force_decel}):
+  def test_maneuver(self):
+    for maneuver in create_maneuvers({"e2e": self.e2e, "force_decel": self.force_decel}, self):
       with self.subTest(title=maneuver.title, e2e=maneuver.e2e, force_decel=maneuver.force_decel):
         print(maneuver.title, f'in {"e2e" if maneuver.e2e else "acc"} mode')
         valid, _ = maneuver.evaluate()
