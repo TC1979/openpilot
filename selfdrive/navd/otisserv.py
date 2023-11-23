@@ -50,9 +50,18 @@ class OtisServ(BaseHTTPRequestHandler):
     if self.path == '/logo.png':
       self.get_logo()
       return
+    if self.path == '/navdirections.json':
+      self.get_navdirections()
+      return
+    if self.path == '/CurrentStep.json':
+      self.get_currentstep()
+      return
     if self.path == '/?reset=1':
       params.put("NavDestination", "")
-    if use_amap:
+    if self.path == '/locations':
+      self.get_locations()
+      return
+    elif use_amap:
       if self.path == '/style.css':
         self.send_response(200)
         self.send_header("Content-type", "text/css")
@@ -110,16 +119,27 @@ class OtisServ(BaseHTTPRequestHandler):
       if self.get_app_token() is None:
         self.display_page_app_token()
         return
-      self.display_page_addr_input()
+      if params.get("NavDestination") is not None:
+        self.display_nav_directions()
+      elif self.path != '/locations':
+        self.display_page_addr_input()
 
   def do_POST(self):
     use_amap = params.get_bool('dp_nav_amap_enable')
     use_gmap = not use_amap and params.get_bool('dp_nav_gmap_enable')
 
     postvars = self.parse_POST()
-    self.send_response(200)
-    self.send_header("Content-type", "text/html")
-    self.end_headers()
+    # set_destination endpoint
+    if self.path == '/set_destination':
+      self.send_response(200)
+      self.send_header("Content-type", "application/json")
+      self.end_headers()
+      response_data = {'success': True}
+      self.wfile.write(json.dumps(response_data).encode('utf-8'))
+    else:
+      self.send_response(200)
+      self.send_header("Content-type", "text/html")
+      self.end_headers()
 
     if use_amap:
       # amap token
@@ -210,18 +230,30 @@ class OtisServ(BaseHTTPRequestHandler):
           else:
             self.display_page_addr_input("Place Not Found")
             return
-    if use_amap:
-      self.display_page_amap()
-    elif use_gmap:
-      self.display_page_gmap()
-    else:
-      self.display_page_addr_input()
+    if self.path != '/set_destination':
+      if use_amap:
+        self.display_page_amap()
+      elif use_gmap:
+        self.display_page_gmap()
+      else:
+        if params.get("NavDestination") is not None:
+          self.display_nav_directions()
+        else:
+          self.display_page_addr_input()
 
   def get_logo(self):
     self.send_response(200)
     self.send_header('Content-type','image/png')
     self.end_headers()
     f = open("%s/selfdrive/assets/img_spinner_comma.png" % BASEDIR, "rb")
+  def get_locations(self):
+    self.send_response(200)
+    self.send_header('Content-type','application/json')
+    self.end_headers()
+    val = params.get("ApiCache_NavDestinations", encoding='utf-8')
+    if val is not None:
+      self.wfile.write(val.encode('utf-8'))
+
     self.wfile.write(f.read())
     f.close()
 
@@ -339,6 +371,14 @@ class OtisServ(BaseHTTPRequestHandler):
       postvars = parse_qs(
         self.rfile.read(length).decode('utf-8'),
         keep_blank_values=1)
+    elif ctype == 'application/json':
+      length = int(self.headers['content-length'])
+      post_data = self.rfile.read(length).decode('utf-8')
+      try:
+        postvars = json.loads(post_data)
+      except json.JSONDecodeError:
+        self.send_error(400, 'Invalid JSON data')
+        return None
     else:
       postvars = {}
     return postvars
