@@ -16,7 +16,7 @@ def create_maneuvers(kwargs, self):
   @parameterized_class(("personality"), itertools.product(
                         [log.LongitudinalPersonality.relaxed, # personality
                          log.LongitudinalPersonality.standard,
-                         log.LongitudinalPersonality.aggressive],))
+                         log.LongitudinalPersonality.aggressive]))
   maneuvers = [
     Maneuver(
       'approach stopped car at 25m/s, initial distance: 120m',
