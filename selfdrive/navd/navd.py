@@ -167,7 +167,7 @@ class RouteEngine:
 
       r = resp.json()
       r1 = resp.json()
-      # Function to remove specified keys recursively unnessary for display
+      # Function to remove specified keys recursively unnecessary for display
       def remove_keys(obj, keys_to_remove):
         if isinstance(obj, list):
           return [remove_keys(item, keys_to_remove) for item in obj]
@@ -191,12 +191,12 @@ class RouteEngine:
           self.r3['uuid'] = self.r2['uuid']
         except json.JSONDecodeError as e:
           print(f"Error decoding JSON: {e}")
-	  # Save slim json as file
+      # Save slim json as file
       with open('navdirections.json', 'w') as json_file:
         json.dump(self.r2, json_file, indent=4)
       with open('CurrentStep.json', 'w') as json_file:
         json.dump(self.r3, json_file, indent=4)
-		
+
       if len(r['routes']):
         self.route = r['routes'][0]['legs'][0]['steps']
         self.route_geometry = []
