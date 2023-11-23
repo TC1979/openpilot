@@ -10,9 +10,9 @@ from openpilot.selfdrive.test.longitudinal_maneuvers.maneuver import Maneuver
 
 
 # TODO: make new FCW tests
-def create_maneuvers(kwargs, self):
+def create_maneuvers(kwargs):
   params = Params()
-  params.put("LongitudinalPersonality", str(self.personality))
+  params.put("LongitudinalPersonality", str(personality))
   maneuvers = [
     Maneuver(
       'approach stopped car at 25m/s, initial distance: 120m',
@@ -138,7 +138,7 @@ def create_maneuvers(kwargs, self):
       duration=20.,
       initial_speed=0.,
       lead_relevancy=True,
-      initial_distance_lead=get_STOP_DISTANCE(self.personality),
+      initial_distance_lead=get_STOP_DISTANCE(personality),
       speed_lead_values=[0., 0., 2.],
       breakpoints=[1., 10., 15.],
       ensure_start=True,
