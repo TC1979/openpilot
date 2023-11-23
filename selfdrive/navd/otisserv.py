@@ -254,6 +254,19 @@ class OtisServ(BaseHTTPRequestHandler):
     if val is not None:
       self.wfile.write(val.encode('utf-8'))
 
+  def get_navdirections(self):
+    self.send_response(200)
+    self.send_header('Content-type','application/json')
+    self.end_headers()
+    f = open("%s/selfdrive/manager/navdirections.json" % BASEDIR, "rb")
+    self.wfile.write(f.read())
+    f.close()
+
+  def get_currentstep(self):
+    self.send_response(200)
+    self.send_header('Content-type','application/json')
+    self.end_headers()
+    f = open("%s/selfdrive/manager/CurrentStep.json" % BASEDIR, "rb")
     self.wfile.write(f.read())
     f.close()
 
@@ -322,9 +335,17 @@ class OtisServ(BaseHTTPRequestHandler):
 
   def display_page_addr_input(self, msg = ""):
     self.wfile.write(bytes(self.get_parsed_template("body", {"{{content}}": self.get_parsed_template("addr_input", {"{{msg}}": msg})}), "utf-8"))
+    
+  def display_nav_directions(self, msg = ""):
+    content = self.get_parsed_template("addr_input", {"{{msg}}": ""}) + self.get_parsed_template("nav_directions", {"{{msg}}": msg})
+    self.wfile.write(bytes(self.get_parsed_template("body", {"{{content}}": content }), "utf-8"))
 
   def display_page_nav_confirmation(self, addr, lon, lat):
     content = self.get_parsed_template("addr_input", {"{{msg}}": ""}) + self.get_parsed_template("nav_confirmation", {"{{token}}": self.get_public_token(), "{{lon}}": lon, "{{lat}}": lat, "{{addr}}": addr})
+    self.wfile.write(bytes(self.get_parsed_template("body", {"{{content}}": content }), "utf-8"))
+
+  def display_prime_directions(self, msg = ""):
+    content = self.get_parsed_template("nav_directions", {"{{msg}}": msg})
     self.wfile.write(bytes(self.get_parsed_template("body", {"{{content}}": content }), "utf-8"))
 
   def display_page_gmap(self):
