@@ -10,9 +10,9 @@ from openpilot.selfdrive.test.longitudinal_maneuvers.maneuver import Maneuver
 
 
 # TODO: make new FCW tests
-def create_maneuvers(kwargs):
+def create_maneuvers(kwargs, self):
   params = Params()
-  params.put("LongitudinalPersonality", str(personality))
+  params.put("LongitudinalPersonality", str(self.personality))
   maneuvers = [
     Maneuver(
       'approach stopped car at 25m/s, initial distance: 120m',
@@ -163,7 +163,7 @@ class LongitudinalControl(unittest.TestCase):
     params.put_bool("Passive", bool(os.getenv("PASSIVE")))
     params.put_bool("OpenpilotEnabledToggle", True)
 
-  def test_maneuver(self):
+  def test_maneuver:
     for maneuver in create_maneuvers({"e2e": self.e2e, "force_decel": self.force_decel}):
       with self.subTest(title=maneuver.title, e2e=maneuver.e2e, force_decel=maneuver.force_decel):
         print(maneuver.title, f'in {"e2e" if maneuver.e2e else "acc"} mode')
