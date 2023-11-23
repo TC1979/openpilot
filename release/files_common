@@ -606,4 +606,7 @@ tinygrad_repo/tinygrad/runtime/ops_disk.py
 tinygrad_repo/tinygrad/runtime/ops_gpu.py
 tinygrad_repo/tinygrad/shape/*
 tinygrad_repo/tinygrad/*.py
+selfdrive/controls/speed_limit_controller.py
+selfdrive/controls/vtsc.py
+selfdrive/controls/distance_based_curvature.py
 selfdrive/opwebd.py
