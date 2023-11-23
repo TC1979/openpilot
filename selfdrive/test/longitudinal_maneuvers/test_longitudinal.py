@@ -136,7 +136,7 @@ def create_maneuvers(kwargs):
       duration=20.,
       initial_speed=0.,
       lead_relevancy=True,
-      initial_distance_lead=STOP_DISTANCE,
+      initial_distance_lead=get_STOP_DISTANCE(self.personality),
       speed_lead_values=[0., 0., 2.],
       breakpoints=[1., 10., 15.],
       ensure_start=True,
