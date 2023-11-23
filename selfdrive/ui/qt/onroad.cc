@@ -397,12 +397,12 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
   hideBottomIcons = (cs.getAlertSize() != cereal::ControlsState::AlertSize::NONE || timSignals && (turnSignalLeft || turnSignalRight));
   status = s.status;
   // PFEIFER - SLC {{
-  if(speedLimit == 0) {
+  if (speedLimit == 0) {
     float carSpeedLimit = stof(Params("/dev/shm/params").get("CarSpeedLimitControl"));
     float mapSpeedLimit = stof(Params("/dev/shm/params").get("MapSpeedLimitControl"));
-    if(carSpeedLimit != 0 || mapSpeedLimit != 0) {
+    if (carSpeedLimit != 0 || mapSpeedLimit != 0) {
       speedLimit = mapSpeedLimit != 0 ? mapSpeedLimit : carSpeedLimit;
-      if(is_metric) {
+      if (is_metric) {
         has_eu_speed_limit = true;
         speedLimit *= MS_TO_KPH;
       } else {
