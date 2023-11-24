@@ -61,6 +61,7 @@ def manager_init() -> None:
     ("dp_otisserv", "1"),
     ("DrivingPersonalitiesUIWheel", "1"),
     ("e2e_link", "1"),
+    ("MapSpeedLimitControl", "1"),
     ("Marc_Dynamic_Follow", "0"),
     ("NudgelessLaneChange", "0"),
     ("NNFF", "0"),
