@@ -387,8 +387,7 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
   speed *= s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH;
 
   auto speed_limit_sign = nav_instruction.getSpeedLimitSign();
-  // speedLimit = nav_alive ? nav_instruction.getSpeedLimit() : 0.0;
-  speedLimit = nav_instruction.getSpeedLimit();
+  speedLimit = nav_alive ? nav_instruction.getSpeedLimit() : 0.0;
   speedLimit *= (s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
 
   has_us_speed_limit = (nav_alive && speed_limit_sign == cereal::NavInstruction::SpeedLimitSign::MUTCD);
