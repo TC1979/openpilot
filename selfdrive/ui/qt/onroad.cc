@@ -387,31 +387,16 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
   speed *= s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH;
 
   auto speed_limit_sign = nav_instruction.getSpeedLimitSign();
-  speedLimit = nav_alive ? nav_instruction.getSpeedLimit() : 0.0;
+  // speedLimit = nav_alive ? nav_instruction.getSpeedLimit() : 0.0;
+  speedLimit = nav_instruction.getSpeedLimit();
   speedLimit *= (s.scene.is_metric ? MS_TO_KPH : MS_TO_MPH);
 
-  has_us_speed_limit = (nav_alive && speed_limit_sign == cereal::NavInstruction::SpeedLimitSign::MUTCD);
-  has_eu_speed_limit = (nav_alive && speed_limit_sign == cereal::NavInstruction::SpeedLimitSign::VIENNA);
+  has_us_speed_limit = (speed_limit_sign == cereal::NavInstruction::SpeedLimitSign::MUTCD);
+  has_eu_speed_limit = (speed_limit_sign == cereal::NavInstruction::SpeedLimitSign::VIENNA);
   is_metric = s.scene.is_metric;
   speedUnit =  s.scene.is_metric ? tr("km/h") : tr("mph");
   hideBottomIcons = (cs.getAlertSize() != cereal::ControlsState::AlertSize::NONE || timSignals && (turnSignalLeft || turnSignalRight));
   status = s.status;
-  // PFEIFER - SLC {{
-  if (speedLimit == 0) {
-    float carSpeedLimit = stof(Params("/dev/shm/params").get("CarSpeedLimitControl"));
-    float mapSpeedLimit = stof(Params("/dev/shm/params").get("MapSpeedLimitControl"));
-    if (carSpeedLimit != 0 || mapSpeedLimit != 0) {
-      speedLimit = mapSpeedLimit != 0 ? mapSpeedLimit : carSpeedLimit;
-      if (is_metric) {
-        has_eu_speed_limit = true;
-        speedLimit *= MS_TO_KPH;
-      } else {
-        has_us_speed_limit = true;
-        speedLimit *= MS_TO_MPH;
-      }
-    }
-  }
-  // }} PFEIFER - SLC
 
   // update engageability/experimental mode button
   experimental_btn->updateState(s);
