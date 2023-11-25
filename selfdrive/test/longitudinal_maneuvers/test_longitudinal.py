@@ -17,6 +17,7 @@ def create_maneuvers(kwargs, self):
                         [log.LongitudinalPersonality.relaxed, # personality
                          log.LongitudinalPersonality.standard,
                          log.LongitudinalPersonality.aggressive]))
+
   maneuvers = [
     Maneuver(
       'approach stopped car at 25m/s, initial distance: 120m',
