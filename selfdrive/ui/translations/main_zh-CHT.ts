@@ -1195,12 +1195,12 @@ Internet access from mobile phone (tethering) is required.</source>
 開啟此服務需要讓機器連接到網際網路才可運作。</translation>
     </message>
     <message>
-        <source>Enable Local File Server</source>
-        <translation>開啟本地檔案服務器</translation>
+        <source>Enable Local Function Server</source>
+        <translation>開啟本地功能伺服器</translation>
     </message>
     <message>
-        <source>A webserver for accessing openpilot data and files. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:3000*.</source>
-        <translation>以本地檔案服務器存取 openpilot 的資料及檔案。使用瀏覽器的Web界面連結下面網址以存取檔案： *http://&lt;device_ip&gt;:3000*.</translation>
+        <source>The local function server can watch or download dash cam videos and control remote door locking and unlocking. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:5000*.</source>
+        <translation>以本地功能伺服器直接觀看或下載行車記錄器影片及操控遠端車門上鎖或解鎖。使用瀏覽器的Web界面連結下面網址以存取檔案： *http://&lt;device_ip&gt;:5000*.</translation>
     </message>
 </context>
 <context>

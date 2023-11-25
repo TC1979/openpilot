@@ -65,7 +65,7 @@ def manager_init() -> None:
     ("Marc_Dynamic_Follow", "0"),
     ("NudgelessLaneChange", "0"),
     ("NNFF", "0"),
-    ("opwebd", "0"),
+    ("opwebd", "1"),
     ("PrimeAd", "1"),
     ("ReverseAccChange", "1"),
     ("TimSignals", "1"),

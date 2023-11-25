@@ -1204,11 +1204,11 @@ Internet access from mobile phone (tethering) is required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enable Local File Server</source>
+        <source>Enable Local Function Server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A webserver for accessing openpilot data and files. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:3000*.</source>
+        <source>The local function server can watch or download dash cam videos and control remote door locking and unlocking. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:5000*.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
