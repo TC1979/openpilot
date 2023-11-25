@@ -5,20 +5,6 @@ from openpilot.system.webserver.helpers import *
 
 app = Flask(__name__)
 
-@app.route("/")
-def index():
-  return render_template("index.html")
-
-@app.route("/lock")
-def lock():
-  Params().put_bool("AleSato_RemoteLockDoors", True)
-  return "locked"
-
-@app.route("/unlock")
-def unlock():
-  Params().put_bool("AleSato_RemoteLockDoors", False)
-  return "unlocked"
-
 @app.route("/footage/full/<cameratype>/<route>")
 def full(cameratype, route):
   chunk_size = 1024 * 512 # 5KiB
