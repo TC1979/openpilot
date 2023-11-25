@@ -273,6 +273,22 @@
         <source>Review</source>
         <translation>回顧</translation>
     </message>
+    <message>
+        <source>Navigate on Openpilot</source>
+        <translation>NOO導航操控</translation>
+    </message>
+    <message>
+        <source>Open the destination input web page for navigation on openpilot</source>
+        <translation>開啟NOO導航操控的目的地輸入網頁</translation>
+    </message>
+    <message>
+        <source>DashCam footage</source>
+        <translation>行車記錄器</translation>
+    </message>
+    <message>
+        <source>Watch and/or download recordings from comma device cameras</source>
+        <translation>觀看或下載comma設備的行車記錄影像</translation>
+    </message>
 </context>
 <context>
     <name>DriverViewScene</name>
@@ -377,6 +393,36 @@
     <message>
         <source>Cancel</source>
         <translation>取消</translation>
+    </message>
+</context>
+<context>
+    <name>MyFootagePopup</name>
+    <message>
+        <source>Watch and/or download recordings from comma device cameras</source>
+        <translation>觀看或下載comma設備的行車記錄影像</translation>
+    </message>
+    <message>
+        <source>Connect your smartphone and comma device to the same Wi-Fi network</source>
+        <translation>請先將您的手機和comma裝置連接到同一個 Wi-Fi 網路上</translation>
+    </message>
+    <message>
+        <source>Scan the QR code on the right</source>
+        <translation>掃描右側二維碼</translation>
+    </message>
+</context>
+<context>
+    <name>MyNooPopup</name>
+    <message>
+        <source>Open the navigate on openpilot web page</source>
+        <translation>開啟NOO導航操控網頁</translation>
+    </message>
+    <message>
+        <source>Connect your smartphone and comma device to the same Wi-Fi network</source>
+        <translation>請先將您的手機和comma裝置連接到同一個 Wi-Fi 網路上</translation>
+    </message>
+    <message>
+        <source>Scan the QR code on the right</source>
+        <translation>掃描右側二維碼</translation>
     </message>
 </context>
 <context>
