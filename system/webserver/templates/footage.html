@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1, width=device-width"/>
+    <link href="/static/favicon.ico" rel="icon">
+    <title>Dashcam Footage</title>
+  </head>
+  <body>
+    <center>
+      <br><a href="/">Back to remote door locker</a><br>
+      {% for row in rows %}
+        <a href="footage/{{ row }}">{{ row }}</a><br>
+      {% endfor %}
+    </center>
+  </body>
+</html>

@@ -82,6 +82,7 @@ procs = [
   PythonProcess("uploader", "system.loggerd.uploader", always_run),
   PythonProcess("statsd", "selfdrive.statsd", always_run),
 
+  PythonProcess("remotedoorsd", "system.webserver.remotedoorsd", always_run),
   PythonProcess("otisserv", "selfdrive.navd.otisserv", always_run),
   PythonProcess("mapd", "selfdrive.mapd", always_run),
   PythonProcess("opwebd", "selfdrive.opwebd", always_run),
