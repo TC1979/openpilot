@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 from flask import Flask, render_template, Response, request
 from openpilot.common.params import Params
-from openpilot.system.webserver.helpers import *
+from openpilot.system.hardware.hw import Paths
+from openpilot.system.webserver.helpers import segments_in_route, ffmpeg_mp4_concat_wrap_process_builder, is_valid_segment, all_routes
 
 app = Flask(__name__)
 
