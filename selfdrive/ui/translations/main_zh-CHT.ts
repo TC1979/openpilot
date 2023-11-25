@@ -283,7 +283,7 @@
     </message>
     <message>
         <source>DashCam footage</source>
-        <translation>行車記錄器</translation>
+        <translation>行車記錄影像</translation>
     </message>
     <message>
         <source>Watch and/or download recordings from comma device cameras</source>
@@ -407,7 +407,7 @@
     </message>
     <message>
         <source>Scan the QR code on the right</source>
-        <translation>掃描右側二維碼</translation>
+        <translation>掃描右側行動條碼</translation>
     </message>
 </context>
 <context>
@@ -422,7 +422,7 @@
     </message>
     <message>
         <source>Scan the QR code on the right</source>
-        <translation>掃描右側二維碼</translation>
+        <translation>掃描右側行動條碼</translation>
     </message>
 </context>
 <context>
