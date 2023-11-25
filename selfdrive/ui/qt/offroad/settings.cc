@@ -586,8 +586,8 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
                                   this));
 
   toggles.append(new ParamControl("opwebd",
-                                  tr("Enable Local Function Server"),
-                                  tr("The local function server can watch or download dash cam videos and control remote door locking and unlocking. Use web interface to control it: *http://&lt;device_ip&gt;:5000*."),
+                                  tr("Enable Local File Server"),
+                                  tr("A webserver for accessing openpilot data and files. Use web interface to control it: *http://&lt;device_ip&gt;:3000*."),
                                   "../assets/offroad/icon_road.png",
                                   this));
 
