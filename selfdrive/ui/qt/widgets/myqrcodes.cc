@@ -90,7 +90,7 @@ MyNooPopup::MyNooPopup(QWidget *parent) : DialogBase(parent) {
 
     vlayout->addSpacing(30);
 
-    QLabel *title = new QLabel(tr("Watch and/or download recordings from comma device cameras"), this);
+    QLabel *title = new QLabel(tr("Open the navigate on openpilot web page"), this);
     title->setStyleSheet("font-size: 75px; color: black;");
     title->setWordWrap(true);
     vlayout->addWidget(title);

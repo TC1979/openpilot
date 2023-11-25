@@ -199,8 +199,8 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   setSpacing(50);
 
   auto nooPopup = new MyNooPopup(this);
-  auto qrcodeNooBtn = new ButtonControl(tr("NOO"), "QR-Code",
-                                        tr("AleSato keeps this fork as a hobby, keep it motivated"));
+  auto qrcodeNooBtn = new ButtonControl(tr("Navigate on Openpilot"), "QR-Code",
+                                        tr("Open the destination input web page for navigation on openpilot"));
   connect(qrcodeNooBtn, &ButtonControl::clicked, [=] {
       nooPopup->exec();
     });
