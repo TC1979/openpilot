@@ -197,6 +197,23 @@ void TogglesPanel::updateToggles() {
 
 DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   setSpacing(50);
+
+  auto nooPopup = new MyNooPopup(this);
+  auto qrcodeNooBtn = new ButtonControl(tr("NOO"), "QR-Code",
+                                        tr("AleSato keeps this fork as a hobby, keep it motivated"));
+  connect(qrcodeNooBtn, &ButtonControl::clicked, [=] {
+      nooPopup->exec();
+    });
+  addItem(qrcodeNooBtn);
+
+  auto footagePopup = new MyFootagePopup(this);
+  auto qrcodeBtn = new ButtonControl(tr("DashCam footage"), "QR-Code",
+                                     tr("Watch and/or download recordings from comma device cameras"));
+  connect(qrcodeBtn, &ButtonControl::clicked, [=] {
+      footagePopup->exec();
+    });
+  addItem(qrcodeBtn);
+
   addItem(new LabelControl(tr("Dongle ID"), getDongleId().value_or(tr("N/A"))));
   addItem(new LabelControl(tr("Serial"), params.get("HardwareSerial").c_str()));
 
@@ -499,22 +516,6 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
       background-color: #444444;
     }
   )");
-
-  auto nooPopup = new MyNooPopup(this);
-  auto qrcodeNooBtn = new ButtonControl(tr("NOO"), "QR-Code",
-                                        tr("AleSato keeps this fork as a hobby, keep it motivated"));
-  connect(qrcodeNooBtn, &ButtonControl::clicked, [=] {
-      nooPopup->exec();
-    });
-  addItem(qrcodeNooBtn);
-
-  auto footagePopup = new MyFootagePopup(this);
-  auto qrcodeBtn = new ButtonControl(tr("DashCam footage"), "QR-Code",
-                                     tr("Watch and/or download recordings from comma device cameras"));
-  connect(qrcodeBtn, &ButtonControl::clicked, [=] {
-      footagePopup->exec();
-    });
-  addItem(qrcodeBtn);
 
   QList<ParamControl*> toggles;
 
