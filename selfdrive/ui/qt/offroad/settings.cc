@@ -500,6 +500,22 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
     }
   )");
 
+  auto nooPopup = new MyNooPopup(this);
+  auto qrcodeNooBtn = new ButtonControl(tr("NOO"), "QR-Code",
+                                        tr("AleSato keeps this fork as a hobby, keep it motivated"));
+  connect(qrcodeNooBtn, &ButtonControl::clicked, [=] {
+      nooPopup->exec();
+    });
+  addItem(qrcodeNooBtn);
+
+  auto footagePopup = new MyFootagePopup(this);
+  auto qrcodeBtn = new ButtonControl(tr("DashCam footage"), "QR-Code",
+                                     tr("Watch and/or download recordings from comma device cameras"));
+  connect(qrcodeBtn, &ButtonControl::clicked, [=] {
+      footagePopup->exec();
+    });
+  addItem(qrcodeBtn);
+
   QList<ParamControl*> toggles;
 
   toggles.append(new ParamControl("QuietDrive",

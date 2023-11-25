@@ -15,6 +15,7 @@
 #include "selfdrive/ui/qt/util.h"
 #include "selfdrive/ui/qt/widgets/controls.h"
 #include "selfdrive/ui/qt/offroad/timpilot.h"
+#include "selfdrive/ui/qt/widgets/myqrcodes.h" // QrCode
 
 QFrame *horizontal_line(QWidget *parent = nullptr);
 
