@@ -7,6 +7,7 @@ import unittest
 from openpilot.common.params import Params
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import get_STOP_DISTANCE
 from openpilot.selfdrive.test.longitudinal_maneuvers.maneuver import Maneuver
+from cereal import log
 
 
 # TODO: make new FCW tests
