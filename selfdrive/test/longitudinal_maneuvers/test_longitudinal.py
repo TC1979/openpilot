@@ -10,14 +10,14 @@ from openpilot.selfdrive.test.longitudinal_maneuvers.maneuver import Maneuver
 
 
 # TODO: make new FCW tests
+@parameterized_class(("personality"), itertools.product(
+                      [log.LongitudinalPersonality.relaxed, # personality
+                       log.LongitudinalPersonality.standard,
+                       log.LongitudinalPersonality.aggressive]))
+
 def create_maneuvers(self, kwargs):
   params = Params()
   params.put("LongitudinalPersonality", str(self.personality))
-
-  @parameterized_class(("personality"), itertools.product(
-                        [log.LongitudinalPersonality.relaxed, # personality
-                         log.LongitudinalPersonality.standard,
-                         log.LongitudinalPersonality.aggressive]))
 
   maneuvers = [
     Maneuver(
