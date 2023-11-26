@@ -398,8 +398,8 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
   status = s.status;
   // PFEIFER - SLC {{
   if (speedLimit == 0) {
-    float carSpeedLimit = stof(Params("/dev/shm/params").get("CarSpeedLimitControl"));
-    float mapSpeedLimit = stof(Params("/dev/shm/params").get("MapSpeedLimitControl"));
+    float carSpeedLimit = stof(Params("/dev/shm/params").get("CarSpeedLimit"));
+    float mapSpeedLimit = stof(Params("/dev/shm/params").get("MapSpeedLimit"));
     if (carSpeedLimit != 0 || mapSpeedLimit != 0) {
       speedLimit = mapSpeedLimit != 0 ? mapSpeedLimit : carSpeedLimit;
       if (is_metric) {
