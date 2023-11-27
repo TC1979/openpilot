@@ -8,17 +8,25 @@ from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import get_S
 from openpilot.selfdrive.test.longitudinal_maneuvers.maneuver import Maneuver
 from cereal import log
 
-class MyMeta(type):
-    pass
-
-class MyClass(metaclass=MyMeta):
-    pass
 
 # TODO: make new FCW tests
+class ABCEnumMeta(type):
+  def __new__(mcls, name, bases, namespace, **kwargs):
+    cls = super().__new__(mcls, name, bases, namespace, **kwargs)
+    cls._member_names_ = []
+    cls._member_map_ = {}
+    cls._member_type_ = {}
+    for key, value in namespace.items():
+      if isinstance(value, cls):
+        cls._member_names_.append(key)
+        cls._member_map_[key] = value
+        cls._member_type_[key] = type(value)
+    return cls
+
 @parameterized_class(("personality"), itertools.product(
                       [log.LongitudinalPersonality.relaxed, # personality
                        log.LongitudinalPersonality.standard,
-                       log.LongitudinalPersonality.aggressive]))
+                       log.LongitudinalPersonality.aggressive]), metaclass=ABCEnumMeta)
 
 def create_maneuvers(self, kwargs):
   params = Params()
