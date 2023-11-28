@@ -8,165 +8,154 @@ from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import get_S
 from openpilot.selfdrive.test.longitudinal_maneuvers.maneuver import Maneuver
 from cereal import log
 
+@parameterized_class(("personality",), [
+  [log.LongitudinalPersonality.relaxed], # personality
+  [log.LongitudinalPersonality.standard],
+  [log.LongitudinalPersonality.aggressive]
+])
 
+
+class TestManeuvers:
 # TODO: make new FCW tests
-class ABCEnumMeta(type):
-  def __new__(mcls, name, bases, namespace, **kwargs):
-    cls = super().__new__(mcls, name, bases, namespace, **kwargs)
-    cls._member_names_ = []
-    cls._member_map_ = {}
-    cls._member_type_ = {}
-    for key, value in namespace.items():
-      if isinstance(value, cls):
-        cls._member_names_.append(key)
-        cls._member_map_[key] = value
-        cls._member_type_[key] = type(value)
-    return cls
+  def create_maneuvers(self, kwargs):
+    params = Params()
+    params.put("LongitudinalPersonality", str(self.personality))
 
-@parameterized_class(("personality"), itertools.product(
-                      [log.LongitudinalPersonality.relaxed, # personality
-                       log.LongitudinalPersonality.standard,
-                       log.LongitudinalPersonality.aggressive]), metaclass=ABCEnumMeta)
-
-def create_maneuvers(self, kwargs):
-  params = Params()
-  params.put("LongitudinalPersonality", str(self.personality))
-
-  maneuvers = [
-    Maneuver(
-      'approach stopped car at 25m/s, initial distance: 120m',
-      duration=20.,
-      initial_speed=25.,
-      lead_relevancy=True,
-      initial_distance_lead=120.,
-      speed_lead_values=[30., 0.],
-      breakpoints=[0., 1.],
-      **kwargs,
-    ),
-    Maneuver(
-      'approach stopped car at 20m/s, initial distance 90m',
-      duration=20.,
-      initial_speed=20.,
-      lead_relevancy=True,
-      initial_distance_lead=90.,
-      speed_lead_values=[20., 0.],
-      breakpoints=[0., 1.],
-      **kwargs,
-    ),
-    Maneuver(
-      'steady state following a car at 20m/s, then lead decel to 0mph at 1m/s^2',
-      duration=50.,
-      initial_speed=20.,
-      lead_relevancy=True,
-      initial_distance_lead=35.,
-      speed_lead_values=[20., 20., 0.],
-      breakpoints=[0., 15., 35.0],
-      **kwargs,
-    ),
-    Maneuver(
-      'steady state following a car at 20m/s, then lead decel to 0mph at 2m/s^2',
-      duration=50.,
-      initial_speed=20.,
-      lead_relevancy=True,
-      initial_distance_lead=35.,
-      speed_lead_values=[20., 20., 0.],
-      breakpoints=[0., 15., 25.0],
-      **kwargs,
-    ),
-    Maneuver(
-      'steady state following a car at 20m/s, then lead decel to 0mph at 3m/s^2',
-      duration=50.,
-      initial_speed=20.,
-      lead_relevancy=True,
-      initial_distance_lead=35.,
-      speed_lead_values=[20., 20., 0.],
-      breakpoints=[0., 15., 21.66],
-      **kwargs,
-    ),
-    Maneuver(
-      'steady state following a car at 20m/s, then lead decel to 0mph at 3+m/s^2',
-      duration=40.,
-      initial_speed=20.,
-      lead_relevancy=True,
-      initial_distance_lead=35.,
-      speed_lead_values=[20., 20., 0.],
-      prob_lead_values=[0., 1., 1.],
-      cruise_values=[20., 20., 20.],
-      breakpoints=[2., 2.01, 8.8],
-      **kwargs,
-    ),
-    Maneuver(
-      "approach stopped car at 20m/s, with prob_lead_values",
-      duration=30.,
-      initial_speed=20.,
-      lead_relevancy=True,
-      initial_distance_lead=120.,
-      speed_lead_values=[0.0, 0., 0.],
-      prob_lead_values=[0.0, 0., 1.],
-      cruise_values=[20., 20., 20.],
-      breakpoints=[0.0, 2., 2.01],
-      **kwargs,
-    ),
-    Maneuver(
-      "approach slower cut-in car at 20m/s",
-      duration=20.,
-      initial_speed=20.,
-      lead_relevancy=True,
-      initial_distance_lead=50.,
-      speed_lead_values=[15., 15.],
-      breakpoints=[1., 11.],
-      only_lead2=True,
-      **kwargs,
-    ),
-    Maneuver(
-      "stay stopped behind radar override lead",
-      duration=20.,
-      initial_speed=0.,
-      lead_relevancy=True,
-      initial_distance_lead=10.,
-      speed_lead_values=[0., 0.],
-      prob_lead_values=[0., 0.],
-      breakpoints=[1., 11.],
-      only_radar=True,
-      **kwargs,
-    ),
-    Maneuver(
-      "NaN recovery",
-      duration=30.,
-      initial_speed=15.,
-      lead_relevancy=True,
-      initial_distance_lead=60.,
-      speed_lead_values=[0., 0., 0.0],
-      breakpoints=[1., 1.01, 11.],
-      cruise_values=[float("nan"), 15., 15.],
-      **kwargs,
-    ),
-    Maneuver(
-      'cruising at 25 m/s while disabled',
-      duration=20.,
-      initial_speed=25.,
-      lead_relevancy=False,
-      enabled=False,
-      **kwargs,
-    ),
-  ]
-  if not kwargs['force_decel']:
-    # controls relies on planner commanding to move for stock-ACC resume spamming
-    maneuvers.append(Maneuver(
-      "resume from a stop",
-      duration=20.,
-      initial_speed=0.,
-      lead_relevancy=True,
-      initial_distance_lead=get_STOP_DISTANCE(self.personality),
-      speed_lead_values=[0., 0., 2.],
-      breakpoints=[1., 10., 15.],
-      ensure_start=True,
-      **kwargs,
-    ))
-  return maneuvers
+    maneuvers = [
+      Maneuver(
+        'approach stopped car at 25m/s, initial distance: 120m',
+        duration=20.,
+        initial_speed=25.,
+        lead_relevancy=True,
+        initial_distance_lead=120.,
+        speed_lead_values=[30., 0.],
+        breakpoints=[0., 1.],
+        **kwargs,
+      ),
+      Maneuver(
+        'approach stopped car at 20m/s, initial distance 90m',
+        duration=20.,
+        initial_speed=20.,
+        lead_relevancy=True,
+        initial_distance_lead=90.,
+        speed_lead_values=[20., 0.],
+        breakpoints=[0., 1.],
+        **kwargs,
+      ),
+      Maneuver(
+        'steady state following a car at 20m/s, then lead decel to 0mph at 1m/s^2',
+        duration=50.,
+        initial_speed=20.,
+        lead_relevancy=True,
+        initial_distance_lead=35.,
+        speed_lead_values=[20., 20., 0.],
+        breakpoints=[0., 15., 35.0],
+        **kwargs,
+      ),
+      Maneuver(
+        'steady state following a car at 20m/s, then lead decel to 0mph at 2m/s^2',
+        duration=50.,
+        initial_speed=20.,
+        lead_relevancy=True,
+        initial_distance_lead=35.,
+        speed_lead_values=[20., 20., 0.],
+        breakpoints=[0., 15., 25.0],
+        **kwargs,
+      ),
+      Maneuver(
+        'steady state following a car at 20m/s, then lead decel to 0mph at 3m/s^2',
+        duration=50.,
+        initial_speed=20.,
+        lead_relevancy=True,
+        initial_distance_lead=35.,
+        speed_lead_values=[20., 20., 0.],
+        breakpoints=[0., 15., 21.66],
+        **kwargs,
+      ),
+      Maneuver(
+        'steady state following a car at 20m/s, then lead decel to 0mph at 3+m/s^2',
+        duration=40.,
+        initial_speed=20.,
+        lead_relevancy=True,
+        initial_distance_lead=35.,
+        speed_lead_values=[20., 20., 0.],
+        prob_lead_values=[0., 1., 1.],
+        cruise_values=[20., 20., 20.],
+        breakpoints=[2., 2.01, 8.8],
+        **kwargs,
+      ),
+      Maneuver(
+        "approach stopped car at 20m/s, with prob_lead_values",
+        duration=30.,
+        initial_speed=20.,
+        lead_relevancy=True,
+        initial_distance_lead=120.,
+        speed_lead_values=[0.0, 0., 0.],
+        prob_lead_values=[0.0, 0., 1.],
+        cruise_values=[20., 20., 20.],
+        breakpoints=[0.0, 2., 2.01],
+        **kwargs,
+      ),
+      Maneuver(
+        "approach slower cut-in car at 20m/s",
+        duration=20.,
+        initial_speed=20.,
+        lead_relevancy=True,
+        initial_distance_lead=50.,
+        speed_lead_values=[15., 15.],
+        breakpoints=[1., 11.],
+        only_lead2=True,
+        **kwargs,
+      ),
+      Maneuver(
+        "stay stopped behind radar override lead",
+        duration=20.,
+        initial_speed=0.,
+        lead_relevancy=True,
+        initial_distance_lead=10.,
+        speed_lead_values=[0., 0.],
+        prob_lead_values=[0., 0.],
+        breakpoints=[1., 11.],
+        only_radar=True,
+        **kwargs,
+      ),
+      Maneuver(
+        "NaN recovery",
+        duration=30.,
+        initial_speed=15.,
+        lead_relevancy=True,
+        initial_distance_lead=60.,
+        speed_lead_values=[0., 0., 0.0],
+        breakpoints=[1., 1.01, 11.],
+        cruise_values=[float("nan"), 15., 15.],
+        **kwargs,
+      ),
+      Maneuver(
+        'cruising at 25 m/s while disabled',
+        duration=20.,
+        initial_speed=25.,
+        lead_relevancy=False,
+        enabled=False,
+        **kwargs,
+      ),
+   ]
+    if not kwargs['force_decel']:
+      # controls relies on planner commanding to move for stock-ACC resume spamming
+      maneuvers.append(Maneuver(
+        "resume from a stop",
+        duration=20.,
+        initial_speed=0.,
+        lead_relevancy=True,
+        initial_distance_lead=get_STOP_DISTANCE(self.personality),
+        speed_lead_values=[0., 0., 2.],
+        breakpoints=[1., 10., 15.],
+        ensure_start=True,
+        **kwargs,
+      ))
+    return maneuvers
 
 
-@parameterized_class(("e2e", "force_decel"), itertools.product([True, False], repeat=2))
+@parameterized_class(("e2e", "force_decel"), itertools.product([True, False], repeat=2), metaclass=type(unittest.TestCase))
 class LongitudinalControl(unittest.TestCase):
   e2e: bool
   force_decel: bool
@@ -183,7 +172,7 @@ class LongitudinalControl(unittest.TestCase):
     params.put_bool("OpenpilotEnabledToggle", True)
 
   def test_maneuver(self):
-    for maneuver in create_maneuvers({"e2e": self.e2e, "force_decel": self.force_decel}, self):
+    for maneuver in TestManeuvers.create_maneuvers({"e2e": self.e2e, "force_decel": self.force_decel}, self):
       with self.subTest(title=maneuver.title, e2e=maneuver.e2e, force_decel=maneuver.force_decel):
         print(maneuver.title, f'in {"e2e" if maneuver.e2e else "acc"} mode')
         valid, _ = maneuver.evaluate()

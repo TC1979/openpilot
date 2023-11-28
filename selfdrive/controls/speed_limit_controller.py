@@ -133,28 +133,33 @@ class SpeedLimitController:
     self.nav_speed_limit = json.loads(mem_params.get("NavSpeedLimit"))
     try:
       self.map_speed_limit = json.loads(mem_params.get("MapSpeedLimit"))
-    except: pass
+    except Exception:
+      pass
     try:
       next_map_speed_limit = json.loads(mem_params.get("NextMapSpeedLimit"))
       self.next_map_speed_limit = next_map_speed_limit["speedlimit"]
       self.next_map_speed_limit_lat = next_map_speed_limit["latitude"]
       self.next_map_speed_limit_lon = next_map_speed_limit["longitude"]
-    except: pass
+    except Exception:
+      pass
     try:
       position = json.loads(mem_params.get("LastGPSPosition"))
       self.lat = position["latitude"]
       self.lon = position["longitude"]
-    except: pass
+    except Exception:
+      pass
     try:
       map_advisory_limit = json.loads(mem_params.get("MapAdvisoryLimit"))
       self.map_advisory_limit = map_advisory_limit["speedlimit"]
-    except: pass
+    except Exception:
+      pass
     try:
       next_map_advisory_limit = json.loads(mem_params.get("NextMapAdvisoryLimit"))
       self.next_map_advisory_limit = next_map_advisory_limit["speedlimit"]
       self.next_map_advisory_limit_lat = next_map_advisory_limit["start_latitude"]
       self.next_map_advisory_limit_lon = next_map_advisory_limit["start_longitude"]
-    except: pass
+    except Exception:
+      pass
     self.car_speed_limit = json.loads(mem_params.get("CarSpeedLimit"))
 
     if load_persistent_enabled:
