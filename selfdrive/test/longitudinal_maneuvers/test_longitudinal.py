@@ -155,7 +155,7 @@ class TestManeuvers:
     return maneuvers
 
 
-@parameterized_class(("e2e", "force_decel"), itertools.product([True, False], repeat=2), metaclass=type(unittest.TestCase))
+@parameterized_class(("e2e", "force_decel"), itertools.product([True, False], repeat=2))
 class LongitudinalControl(unittest.TestCase):
   e2e: bool
   force_decel: bool
