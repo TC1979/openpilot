@@ -156,9 +156,11 @@ def get_nn_model_path(car, eps_firmware) -> Tuple[Union[str, None], float]:
   return model_path, max_similarity
 
 def get_nn_model(car, eps_firmware) -> Tuple[Union[FluxModel, None], float]:
-  model, similarity_score = get_nn_model_path(car, eps_firmware)
-  if model is not None:
-    model = FluxModel(model)
+  model_path, similarity_score = get_nn_model_path(car, eps_firmware)
+  if model_path is not None:
+    model = FluxModel(model_path)
+  else:
+    model = None
   return model, similarity_score
 
 # generic car and radar interfaces
