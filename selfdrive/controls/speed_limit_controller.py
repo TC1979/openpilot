@@ -62,11 +62,11 @@ class SpeedLimitController:
   @property
   def speed_limit(self) -> float:
     limit: float = 0
-    if self.map_enabled and self.next_map_advisory_limit != 0:
-      d = distance_to_point(self.lat * TO_RADIANS, self.lon * TO_RADIANS, self.next_map_advisory_limit_lat * TO_RADIANS, self.next_map_advisory_limit_lon * TO_RADIANS)
-      max_d = NEXT_SPEED_DIST * self.current_velocity
-      if d < max_d:
-        return self.next_map_advisory_limit
+    #if self.map_enabled and self.next_map_advisory_limit != 0:
+    #  d = distance_to_point(self.lat * TO_RADIANS, self.lon * TO_RADIANS, self.next_map_advisory_limit_lat * TO_RADIANS, self.next_map_advisory_limit_lon * TO_RADIANS)
+    #  max_d = NEXT_SPEED_DIST * self.current_velocity
+    #  if d < max_d:
+    #    return self.next_map_advisory_limit
 
     if self.map_enabled and "curve" in self.next_map_hazard and self.next_map_speed_limit != 0:
       d = distance_to_point(self.lat * TO_RADIANS, self.lon * TO_RADIANS, self.next_map_advisory_limit_lat * TO_RADIANS, self.next_map_advisory_limit_lon * TO_RADIANS)
@@ -84,10 +84,10 @@ class SpeedLimitController:
       limit = self.nav_speed_limit
     elif self.map_enabled and self.map_speed_limit != 0:
       limit = self.map_speed_limit
-      if self.map_advisory_limit != 0 and self.map_advisory_limit < limit:
-        limit = self.map_advisory_limit
-      elif "curve" in self.map_hazard:
-        limit = limit - 2.2
+      #if self.map_advisory_limit != 0 and self.map_advisory_limit < limit:
+      #  limit = self.map_advisory_limit
+      #elif "curve" in self.map_hazard:
+      #  limit = limit - 2.2
     elif self.car_enabled and self.car_speed_limit != 0:
       limit = self.car_speed_limit
 
