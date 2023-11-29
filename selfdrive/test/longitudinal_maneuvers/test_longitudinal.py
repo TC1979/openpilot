@@ -8,16 +8,17 @@ from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import get_S
 from openpilot.selfdrive.test.longitudinal_maneuvers.maneuver import Maneuver
 from cereal import log
 
+def stop_distance:
+
 @parameterized_class(("personality",), [
   [log.LongitudinalPersonality.relaxed], # personality
   [log.LongitudinalPersonality.standard],
   [log.LongitudinalPersonality.aggressive]
 ])
 
-
 class TestManeuvers:
 # TODO: make new FCW tests
-  def create_maneuvers(self, kwargs):
+  def create_maneuvers(self, kwargs, stop_distance):
     params = Params()
     params.put("LongitudinalPersonality", str(self.personality))
 
