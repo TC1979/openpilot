@@ -19,7 +19,6 @@
 #include "selfdrive/ui/qt/maps/map_panel.h"
 #endif
 
-#define FONT_OPEN_SANS "Inter" //"Open Sans"
 static void drawIcon(QPainter &p, const QPoint &center, const QPixmap &img, const QBrush &bg, float opacity) {
   p.setRenderHint(QPainter::Antialiasing);
   p.setOpacity(1.0);  // bg dictates opacity of ellipse

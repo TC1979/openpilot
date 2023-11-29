@@ -411,7 +411,7 @@ selfdrive/assets/assets.qrc
 selfdrive/assets/*.png
 selfdrive/assets/*.svg
 selfdrive/assets/body/*
-selfdrive/assets/fonts/*
+selfdrive/assets/fonts/*.ttf
 selfdrive/assets/icons/*
 selfdrive/assets/images/*
 selfdrive/assets/offroad/*
