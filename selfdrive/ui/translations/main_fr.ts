@@ -964,6 +964,14 @@ Cela peut prendre jusqu&apos;à une minute.</translation>
         <source>Select a location to download</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VIEW</source>
+        <translation>VOIR</translation>
+    </message>
 </context>
 <context>
     <name>SshControl</name>

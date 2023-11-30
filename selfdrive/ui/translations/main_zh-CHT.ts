@@ -960,6 +960,14 @@ This may take up to a minute.</source>
         <source>Select a location to download</source>
         <translation>選擇下載地區</translation>
     </message>
+    <message>
+        <source>Error Log</source>
+        <translation>錯誤日誌</translation>
+    </message>
+    <message>
+        <source>VIEW</source>
+        <translation>觀看</translation>
+    </message>
 </context>
 <context>
     <name>SshControl</name>

@@ -960,6 +960,14 @@ This may take up to a minute.</source>
         <source>Select a location to download</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VIEW</source>
+        <translation>ดู</translation>
+    </message>
 </context>
 <context>
     <name>SshControl</name>
