@@ -1144,7 +1144,7 @@ You will need to apply your own google map api key. Enter your key detail in web
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A webserver for accessing openpilot data and files. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:5000*.</source>
+        <source>A webserver for accessing openpilot data and files. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:5050*.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

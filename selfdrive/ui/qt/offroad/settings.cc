@@ -587,7 +587,7 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
 
   toggles.append(new ParamControl("opwebd",
                                   tr("Enable Local File Server"),
-                                  tr("A webserver for accessing openpilot data and files. Use web interface to control it: *http://&lt;device_ip&gt;:5000*."),
+                                  tr("A webserver for accessing openpilot data and files. Use web interface to control it: *http://&lt;device_ip&gt;:5050*."),
                                   "../assets/offroad/icon_road.png",
                                   this));
 

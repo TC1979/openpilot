@@ -84,7 +84,7 @@ procs = [
 
   PythonProcess("otisserv", "selfdrive.navd.otisserv", always_run),
   PythonProcess("mapd", "selfdrive.mapd", always_run),
-  PythonProcess("opwebd", "system.webserver.remotedoorsd", always_run),
+  PythonProcess("opwebd", "system.fleetmanager.fleet_manager", only_offroad, sigkill=True),
 
   # debug procs
   NativeProcess("bridge", "cereal/messaging", ["./bridge"], notcar),

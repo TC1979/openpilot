@@ -1196,7 +1196,7 @@ Internet access from mobile phone (tethering) is required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>A webserver for accessing openpilot data and files. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:5000*.</source>
+        <source>A webserver for accessing openpilot data and files. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:5050*.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
