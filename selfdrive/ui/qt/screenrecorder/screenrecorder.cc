@@ -58,6 +58,18 @@ void ScreenRecorder::paintEvent(QPaintEvent *event) {
   p.setBrush(bgColor);
   p.setPen(Qt::NoPen);
   p.drawEllipse(rect);
+  // 新增的程式碼
+  QString text = "REC"; // 要顯示的文字
+  QFont font = p.font(); // 取得當前的字體
+  font.setPixelSize(30); // 設定字體大小
+  p.setFont(font); // 更新字體
+  p.setPen(Qt::white); // 設定文字顏色為白色
+  QFontMetrics fm(font); // 取得字體的度量
+  int textWidth = fm.horizontalAdvance(text); // 取得文字的寬度
+  int textHeight = fm.height(); // 取得文字的高度
+  int x = rect.center().x() - textWidth / 2; // 計算文字的x座標，使其置中
+  int y = rect.center().y() + textHeight / 4; // 計算文字的y座標，使其置中
+  p.drawText(x, y, text); // 在圓形上繪製文字
 }
 
 void ScreenRecorder::openEncoder(const char *filename) {
