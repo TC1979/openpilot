@@ -49,7 +49,7 @@ class OtisServ(BaseHTTPRequestHandler):
 
     if self.path.startswith('/fleetmanager'):
       # Redirect the request to the Flask app running on port 5050
-      flask_app_response = requests.get(f'http://127.0.0.1:5050{self.path.replace("/", "")}', stream=True)
+      flask_app_response = requests.get(f'http://127.0.0.1:5050{self.path.replace("/fleetmanager", "")}', stream=True)
       self.send_response(flask_app_response.status_code)
       self.send_header("Content-type", flask_app_response.headers.get('Content-type'))
       self.end_headers()
