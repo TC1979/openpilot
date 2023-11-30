@@ -91,6 +91,7 @@ private:
 
   QLabel *onroadLbl;
   LabelControl *versionLbl;
+  ButtonControl *errorLogBtn;
   ButtonControl *installBtn;
   ButtonControl *downloadBtn;
   ButtonControl *mapsBtn;
