@@ -44,8 +44,6 @@ qt_src = ["main.cc", "qt/sidebar.cc", "qt/onroad.cc", "qt/body.cc",
           "qt/offroad/driverview.cc", "qt/offroad/experimental_mode.cc",
           "qt/screenrecorder/omx_encoder.cc", "qt/screenrecorder/screenrecorder.cc"]
 
-qt_env.Append(CXXFLAGS=['-DBASEDIR=\\"' + BASEDIR + '\\"'])
-
 def is_running_on_wsl2():
   try:
     with open('/proc/version', 'r') as f:
