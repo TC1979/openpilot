@@ -39,7 +39,7 @@ extern "C" {
  *  for this header file to compile successfully 
  */
 
-#include <OMX_Core.h>
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_Core.h"
 
 /** @defgroup midi MIDI
  * @ingroup audio

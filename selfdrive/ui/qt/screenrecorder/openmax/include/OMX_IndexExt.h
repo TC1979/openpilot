@@ -37,7 +37,7 @@ extern "C" {
  * header to compile without errors.  The includes below are required
  * for this header file to compile successfully
  */
-#include <OMX_Index.h>
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_Index.h"
 
 
 /** Khronos standard extension indices.

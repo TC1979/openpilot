@@ -46,7 +46,7 @@ extern "C" {
  * for this header file to compile successfully 
  */
 
-#include <OMX_IVCommon.h>
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_IVCommon.h"
 
 
 /**

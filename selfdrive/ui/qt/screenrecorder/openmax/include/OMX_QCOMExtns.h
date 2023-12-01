@@ -43,8 +43,8 @@ extern "C" {
 ///////////////////////////////////////////////////////////////////////////////
 //                             Include Files
 ///////////////////////////////////////////////////////////////////////////////
-#include "OMX_Core.h"
-#include "OMX_Video.h"
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_Core.h"
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_Video.h"
 
 #define OMX_VIDEO_MAX_HP_LAYERS 6
 /**

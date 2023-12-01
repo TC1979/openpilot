@@ -34,7 +34,7 @@ extern "C"
 {
 #endif
 
-#include <OMX_Core.h>
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_Core.h"
 
 #pragma pack(push, 1)
 

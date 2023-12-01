@@ -41,10 +41,10 @@ extern "C" {
  *  for this header file to compile successfully 
  */
 
-#include <OMX_Audio.h>
-#include <OMX_Video.h>
-#include <OMX_Image.h>
-#include <OMX_Other.h>
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_Audio.h"
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_Video.h"
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_Image.h"
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_Other.h"
 
 /** @ingroup comp */
 typedef enum OMX_PORTDOMAINTYPE { 

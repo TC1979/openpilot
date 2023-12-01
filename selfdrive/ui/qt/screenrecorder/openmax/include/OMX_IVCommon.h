@@ -39,7 +39,7 @@ extern "C" {
  * file to compile successfully 
  */
 
-#include <OMX_Core.h>
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_Core.h"
 
 /** @defgroup iv OpenMAX IL Imaging and Video Domain
  * Common structures for OpenMAX IL Imaging and Video domains

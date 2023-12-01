@@ -10,10 +10,10 @@
 #include <cstdlib>
 #include <cstdio>
 
-#include <OMX_Component.h>
-#include <OMX_IndexExt.h>
-#include <OMX_QCOMExtns.h>
-#include <OMX_VideoExt.h>
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_Component.h"
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_IndexExt.h"
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_QCOMExtns.h"
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_VideoExt.h"
 #include "libyuv.h"
 #include "msm_media_info.h"
 #include "common/swaglog.h"
