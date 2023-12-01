@@ -122,7 +122,7 @@ typedef enum CP_CHECKBYTESRESULTTYPE
  */
 typedef enum CP_EVENTTYPE{
     CP_BytesAvailable,              /** bytes requested in a CheckAvailableBytes call are now available*/
-    CP_Overflow,  	                /** enumeration of content pipe events sent to the client callback*/
+    CP_Overflow,                    /** enumeration of content pipe events sent to the client callback*/
     CP_PipeDisconnected,            /** enumeration of content pipe events sent to the client callback*/
     CP_EventKhronosExtensions = 0x6F000000, /**< Reserved region for introducing Khronos Standard Extensions */ 
     CP_EventVendorStartUnused = 0x7F000000, /**< Reserved region for introducing Vendor Extensions */

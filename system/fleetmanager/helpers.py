@@ -1,13 +1,10 @@
 import os
 import subprocess
-from flask import render_template, request, session
-from functools import wraps
 from pathlib import Path
-from openpilot.common.params import Params
 from openpilot.system.hardware import PC
 from openpilot.system.hardware.hw import Paths
 from openpilot.system.loggerd.uploader import listdir_by_creation
-from tools.lib.route import SegmentName
+from openpilot.tools.lib.route import SegmentName
 
 
 # path to T.O.P screen recordings and error logs

@@ -113,8 +113,8 @@ typedef struct OMX_TIME_CONFIG_TIMESTAMPTYPE {
     OMX_U32 nSize;               /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion;    /**< OMX specification version
                                   *   information */
-    OMX_U32 nPortIndex;     /**< port that this structure applies to */
-    OMX_TICKS nTimestamp;  	     /**< timestamp .*/
+    OMX_U32 nPortIndex;          /**< port that this structure applies to */
+    OMX_TICKS nTimestamp;        /**< timestamp .*/
 } OMX_TIME_CONFIG_TIMESTAMPTYPE;  
 
 /** Enumeration of possible reference clocks to the media time. */

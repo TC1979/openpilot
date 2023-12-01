@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
-import os
-import random
 import secrets
-import threading
-import time
-from flask import Flask, render_template, Response, request, send_from_directory, session, redirect, url_for
+from flask import Flask, render_template, Response, request, send_from_directory,
 from openpilot.common.realtime import set_core_affinity
 import openpilot.system.fleetmanager.helpers as fleet
 from openpilot.system.hardware.hw import Paths

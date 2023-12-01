@@ -155,7 +155,7 @@ typedef struct OMX_RESOURCECONCEALMENTTYPE {
     OMX_U32 nSize;             /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion;  /**< OMX specification version information */
     OMX_BOOL bResourceConcealmentForbidden; /**< disallow the use of resource concealment 
-                                            methods (like degrading algorithm quality to
+                                            methods(like degrading algorithm quality to
                                             lower resource consumption or functional bypass) 
                                             on a component as a resolution to resource conflicts. */
 } OMX_RESOURCECONCEALMENTTYPE;
