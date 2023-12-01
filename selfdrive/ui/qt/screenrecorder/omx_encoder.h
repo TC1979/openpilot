@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-#include <OMX_Component.h>
+#include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_Component.h"
 extern "C" {
 #include <libavformat/avformat.h>
 }
