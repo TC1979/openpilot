@@ -55,10 +55,13 @@ void ScreenRecorder::paintEvent(QPaintEvent *event) {
 
   p.setRenderHint(QPainter::Antialiasing);
   p.setCompositionMode(QPainter::CompositionMode_SourceOver);
-  p.setBrush(bgColor);
-  p.setPen(Qt::NoPen);
+  p.setPen(QPen(QColor::fromRgbF(0.5, 0.8, 1, 0.8), 10));
+  // 繪製圓形
   p.drawEllipse(rect);
-  // 新增的程式碼
+  // 用無畫筆繪製一個稍小的圓形
+  p.setPen(Qt::NoPen);
+  p.setBrush(bgColor);
+  p.drawEllipse(rect.adjusted(5, 5, -5, -5));  // 新增的程式碼
   QString text = "REC"; // 要顯示的文字
   QFont font = p.font(); // 取得當前的字體
   font.setPixelSize(30); // 設定字體大小
