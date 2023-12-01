@@ -1,4 +1,5 @@
 #include "selfdrive/ui/qt/onroad.h"
+#include "selfdrive/ui/qt/screenrecorder/screenrecorder.h"
 
 #include <algorithm>
 #include <chrono>
