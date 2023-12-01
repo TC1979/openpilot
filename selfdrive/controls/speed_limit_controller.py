@@ -23,14 +23,9 @@ class SpeedLimitController:
   nav_speed_limit: float = 0 # m/s
   map_speed_limit: float = 0 # m/s
   map_advisory_limit: float = 0 # m/s
-  next_map_advisory_limit: float = 0 # m/s
-  next_map_advisory_limit_lat: float = 0 # deg
-  next_map_advisory_limit_lon: float = 0 # deg
   next_map_speed_limit: float = 0 # m/s
   next_map_speed_limit_lat: float = 0 # deg
   next_map_speed_limit_lon: float = 0 # deg
-  next_map_hazard: str = ""
-  map_hazard: str = ""
   lat: float = 0 # deg
   lon: float = 0 # deg
   car_speed_limit: float = 0 # m/s
@@ -62,18 +57,6 @@ class SpeedLimitController:
   @property
   def speed_limit(self) -> float:
     limit: float = 0
-    #if self.map_enabled and self.next_map_advisory_limit != 0:
-    #  d = distance_to_point(self.lat * TO_RADIANS, self.lon * TO_RADIANS, self.next_map_advisory_limit_lat * TO_RADIANS, self.next_map_advisory_limit_lon * TO_RADIANS)
-    #  max_d = NEXT_SPEED_DIST * self.current_velocity
-    #  if d < max_d:
-    #    return self.next_map_advisory_limit
-
-    if self.map_enabled and "curve" in self.next_map_hazard and self.next_map_speed_limit != 0:
-      d = distance_to_point(self.lat * TO_RADIANS, self.lon * TO_RADIANS, self.next_map_advisory_limit_lat * TO_RADIANS, self.next_map_advisory_limit_lon * TO_RADIANS)
-      max_d = NEXT_SPEED_DIST * self.current_velocity
-      if d < max_d:
-        return self.next_map_speed_limit - 2.2
-
     if self.map_enabled and self.next_map_speed_limit != 0:
       d = distance_to_point(self.lat * TO_RADIANS, self.lon * TO_RADIANS, self.next_map_speed_limit_lat * TO_RADIANS, self.next_map_speed_limit_lon * TO_RADIANS)
       max_d = NEXT_SPEED_DIST * self.current_velocity
@@ -86,8 +69,6 @@ class SpeedLimitController:
       limit = self.map_speed_limit
       #if self.map_advisory_limit != 0 and self.map_advisory_limit < limit:
       #  limit = self.map_advisory_limit
-      #elif "curve" in self.map_hazard:
-      #  limit = limit - 2.2
     elif self.car_enabled and self.car_speed_limit != 0:
       limit = self.car_speed_limit
 
@@ -131,10 +112,7 @@ class SpeedLimitController:
     self.map_enabled = mem_params.get_bool("MapSpeedLimitControl")
     self.offset = json.loads(mem_params.get("SpeedLimitOffset"))
     self.nav_speed_limit = json.loads(mem_params.get("NavSpeedLimit"))
-    try:
-      self.map_speed_limit = json.loads(mem_params.get("MapSpeedLimit"))
-    except Exception:
-      pass
+    self.map_speed_limit = json.loads(mem_params.get("MapSpeedLimit"))
     try:
       next_map_speed_limit = json.loads(mem_params.get("NextMapSpeedLimit"))
       self.next_map_speed_limit = next_map_speed_limit["speedlimit"]
@@ -148,18 +126,7 @@ class SpeedLimitController:
       self.lon = position["longitude"]
     except Exception:
       pass
-    try:
-      map_advisory_limit = json.loads(mem_params.get("MapAdvisoryLimit"))
-      self.map_advisory_limit = map_advisory_limit["speedlimit"]
-    except Exception:
-      pass
-    try:
-      next_map_advisory_limit = json.loads(mem_params.get("NextMapAdvisoryLimit"))
-      self.next_map_advisory_limit = next_map_advisory_limit["speedlimit"]
-      self.next_map_advisory_limit_lat = next_map_advisory_limit["start_latitude"]
-      self.next_map_advisory_limit_lon = next_map_advisory_limit["start_longitude"]
-    except Exception:
-      pass
+    self.map_advisory_limit = json.loads(mem_params.get("MapAdvisoryLimit"))
     self.car_speed_limit = json.loads(mem_params.get("CarSpeedLimit"))
 
     if load_persistent_enabled:

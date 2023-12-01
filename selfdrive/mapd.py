@@ -41,7 +41,7 @@ def mapd_thread(sm=None, pm=None):
           download()
           continue
 
-      process = subprocess.Popen(MAPD_PATH)
+      process = subprocess.Popen(MAPD_PATH, stdout=subprocess.PIPE)
       process.wait()
     except Exception as e:
       print(e)
