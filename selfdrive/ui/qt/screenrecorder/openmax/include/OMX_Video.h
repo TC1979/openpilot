@@ -501,7 +501,7 @@ typedef struct OMX_VIDEO_PARAM_H263TYPE {
     OMX_U32 nPFrames;
     OMX_U32 nBFrames;
     OMX_VIDEO_H263PROFILETYPE eProfile;
-	OMX_VIDEO_H263LEVELTYPE eLevel;
+    OMX_VIDEO_H263LEVELTYPE eLevel;
     OMX_BOOL bPLUSPTYPEAllowed;
     OMX_U32 nAllowedPictureTypes;
     OMX_BOOL bForceRoundingTypeToZero;
@@ -561,7 +561,7 @@ typedef struct OMX_VIDEO_PARAM_MPEG2TYPE {
     OMX_U32 nPFrames;        
     OMX_U32 nBFrames;        
     OMX_VIDEO_MPEG2PROFILETYPE eProfile;
-	OMX_VIDEO_MPEG2LEVELTYPE eLevel;   
+    OMX_VIDEO_MPEG2LEVELTYPE eLevel;   
 } OMX_VIDEO_PARAM_MPEG2TYPE;
 
 
@@ -888,25 +888,25 @@ typedef struct OMX_VIDEO_PARAM_AVCTYPE {
     OMX_U32 nBFrames;     
     OMX_BOOL bUseHadamard;
     OMX_U32 nRefFrames;  
-	OMX_U32 nRefIdx10ActiveMinus1;
-	OMX_U32 nRefIdx11ActiveMinus1;
+    OMX_U32 nRefIdx10ActiveMinus1;
+    OMX_U32 nRefIdx11ActiveMinus1;
     OMX_BOOL bEnableUEP;  
     OMX_BOOL bEnableFMO;  
     OMX_BOOL bEnableASO;  
     OMX_BOOL bEnableRS;   
     OMX_VIDEO_AVCPROFILETYPE eProfile;
-	OMX_VIDEO_AVCLEVELTYPE eLevel; 
+    OMX_VIDEO_AVCLEVELTYPE eLevel; 
     OMX_U32 nAllowedPictureTypes;  
-	OMX_BOOL bFrameMBsOnly;        									
+    OMX_BOOL bFrameMBsOnly;        									
     OMX_BOOL bMBAFF;               
     OMX_BOOL bEntropyCodingCABAC;  
     OMX_BOOL bWeightedPPrediction; 
     OMX_U32 nWeightedBipredicitonMode; 
-    OMX_BOOL bconstIpred ;
+    OMX_BOOL bconstIpred;
     OMX_BOOL bDirect8x8Inference;  
-	OMX_BOOL bDirectSpatialTemporal;
-	OMX_U32 nCabacInitIdc;
-	OMX_VIDEO_AVCLOOPFILTERTYPE eLoopFilterMode;
+    OMX_BOOL bDirectSpatialTemporal;
+    OMX_U32 nCabacInitIdc;
+    OMX_VIDEO_AVCLOOPFILTERTYPE eLoopFilterMode;
 } OMX_VIDEO_PARAM_AVCTYPE;
 
 typedef struct OMX_VIDEO_PARAM_PROFILELEVELTYPE {

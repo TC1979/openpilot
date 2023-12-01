@@ -1,9 +1,10 @@
 #pragma once
 
 #include <QPushButton>
+#include <memory>
 
-#include "omx_encoder.h"
-#include "blocking_queue.h"
+#include "selfdrive/ui/qt/screenrecorder/omx_encoder.h"
+#include "selfdrive/ui/qt/screenrecorder/blocking_queue.h"
 #include "selfdrive/ui/ui.h"
 
 class ScreenRecorder : public QPushButton {

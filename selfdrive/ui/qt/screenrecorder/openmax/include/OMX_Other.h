@@ -114,13 +114,13 @@ typedef struct OMX_TIME_CONFIG_TIMESTAMPTYPE {
     OMX_VERSIONTYPE nVersion;    /**< OMX specification version
                                   *   information */
     OMX_U32 nPortIndex;     /**< port that this structure applies to */
-    OMX_TICKS nTimestamp;  	     /**< timestamp .*/ 
+    OMX_TICKS nTimestamp;  	     /**< timestamp .*/
 } OMX_TIME_CONFIG_TIMESTAMPTYPE;  
 
 /** Enumeration of possible reference clocks to the media time. */
 typedef enum OMX_TIME_UPDATETYPE {
       OMX_TIME_UpdateRequestFulfillment,    /**< Update is the fulfillment of a media time request. */
-      OMX_TIME_UpdateScaleChanged,	        /**< Update was generated because the scale chagned. */
+      OMX_TIME_UpdateScaleChanged,          /**< Update was generated because the scale chagned. */
       OMX_TIME_UpdateClockStateChanged,     /**< Update was generated because the clock state changed. */
       OMX_TIME_UpdateKhronosExtensions = 0x6F000000, /**< Reserved region for introducing Khronos Standard Extensions */ 
       OMX_TIME_UpdateVendorStartUnused = 0x7F000000, /**< Reserved region for introducing Vendor Extensions */
@@ -130,7 +130,7 @@ typedef enum OMX_TIME_UPDATETYPE {
 /** Enumeration of possible reference clocks to the media time. */
 typedef enum OMX_TIME_REFCLOCKTYPE {
       OMX_TIME_RefClockNone,    /**< Use no references. */
-      OMX_TIME_RefClockAudio,	/**< Use references sent through OMX_IndexConfigTimeCurrentAudioReference */
+      OMX_TIME_RefClockAudio,   /**< Use references sent through OMX_IndexConfigTimeCurrentAudioReference */
       OMX_TIME_RefClockVideo,   /**< Use references sent through OMX_IndexConfigTimeCurrentVideoReference */
       OMX_TIME_RefClockKhronosExtensions = 0x6F000000, /**< Reserved region for introducing Khronos Standard Extensions */ 
       OMX_TIME_RefClockVendorStartUnused = 0x7F000000, /**< Reserved region for introducing Vendor Extensions */
@@ -177,7 +177,7 @@ typedef struct OMX_TIME_CONFIG_MEDIATIMEREQUESTTYPE {
     OMX_VERSIONTYPE nVersion;   /**< OMX specification version information */
     OMX_U32 nPortIndex;         /**< port that this structure applies to */
     OMX_PTR pClientPrivate;     /**< Client private data to disabiguate this media time 
-                                 *   from others (e.g. the number of the frame to deliver). 
+                                 *   from others(e.g. the number of the frame to deliver). 
                                  *   Duplicated in the media time structure that fulfills 
                                  *   this request. A value of zero is reserved for time scale 
                                  *   updates. */

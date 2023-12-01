@@ -110,7 +110,7 @@ typedef struct OMX_AUDIO_PORTDEFINITIONTYPE {
     OMX_BOOL bFlagErrorConcealment;  /**< Turns on error concealment if it is 
                                           supported by the OMX component */
     OMX_AUDIO_CODINGTYPE eEncoding;  /**< Type of data expected for this 
-                                          port (e.g. PCM, AMR, MP3, etc) */
+                                          port(e.g. PCM, AMR, MP3, etc) */
 } OMX_AUDIO_PORTDEFINITIONTYPE;
 
 
@@ -165,7 +165,7 @@ typedef struct OMX_AUDIO_PARAM_PCMMODETYPE {
     OMX_NUMERICALDATATYPE eNumData;   /**< indicates PCM data as signed or unsigned */ 
     OMX_ENDIANTYPE eEndian;           /**< indicates PCM data as little or big endian */ 
     OMX_BOOL bInterleaved;            /**< True for normal interleaved data; false for 
-                                           non-interleaved data (e.g. block data) */ 
+                                           non-interleaved data(e.g. block data) */ 
     OMX_U32 nBitPerSample;            /**< Bit per sample */ 
     OMX_U32 nSamplingRate;            /**< Sampling rate of the source data.  Use 0 for 
                                            variable or unknown sampling rate. */ 
@@ -211,7 +211,7 @@ typedef struct OMX_AUDIO_PARAM_MP3TYPE {
                                         rate or unknown bit rates */
     OMX_U32 nSampleRate;           /**< Sampling rate of the source data.  Use 0 for
                                         variable or unknown sampling rate. */
-    OMX_U32 nAudioBandWidth;       /**< Audio band width (in Hz) to which an encoder should
+    OMX_U32 nAudioBandWidth;       /**< Audio band width(in Hz) to which an encoder should
                                         limit the audio signal. Use 0 to let encoder decide */
     OMX_AUDIO_CHANNELMODETYPE eChannelMode;   /**< Channel mode enumeration */
     OMX_AUDIO_MP3STREAMFORMATTYPE eFormat;  /**< MP3 stream format */
@@ -281,10 +281,10 @@ typedef struct OMX_AUDIO_PARAM_AACPROFILETYPE {
                                         variable or unknown sampling rate. */
     OMX_U32 nBitRate;              /**< Bit rate of the input data.  Use 0 for variable
                                         rate or unknown bit rates */
-    OMX_U32 nAudioBandWidth;       /**< Audio band width (in Hz) to which an encoder should
+    OMX_U32 nAudioBandWidth;       /**< Audio band width(in Hz) to which an encoder should
                                         limit the audio signal. Use 0 to let encoder decide */
-    OMX_U32 nFrameLength;          /**< Frame length (in audio samples per channel) of the codec.
-                                        Can be 1024 or 960 (AAC-LC), 2048 (HE-AAC), 480 or 512 (AAC-LD).
+    OMX_U32 nFrameLength;          /**< Frame length(in audio samples per channel) of the codec.
+                                        Can be 1024 or 960(AAC-LC), 2048(HE-AAC), 480 or 512(AAC-LD).
                                         Use 0 to let encoder decide */
     OMX_U32 nAACtools;             /**< AAC tool usage */
     OMX_U32 nAACERtools;           /**< MPEG-4 AAC error resilience tool usage */
@@ -302,23 +302,23 @@ typedef struct OMX_AUDIO_PARAM_VORBISTYPE {
     OMX_U32 nChannels;        /**< Number of channels */
     OMX_U32 nBitRate;         /**< Bit rate of the encoded data data.  Use 0 for variable
                                    rate or unknown bit rates. Encoding is set to the
-                                   bitrate closest to specified  value (in bps) */
-    OMX_U32 nMinBitRate;      /**< Sets minimum bitrate (in bps). */
-    OMX_U32 nMaxBitRate;      /**< Sets maximum bitrate (in bps). */
+                                   bitrate closest to specified  value(in bps) */
+    OMX_U32 nMinBitRate;      /**< Sets minimum bitrate(in bps). */
+    OMX_U32 nMaxBitRate;      /**< Sets maximum bitrate(in bps). */
 
     OMX_U32 nSampleRate;      /**< Sampling rate of the source data.  Use 0 for
                                    variable or unknown sampling rate. */
-    OMX_U32 nAudioBandWidth;  /**< Audio band width (in Hz) to which an encoder should
+    OMX_U32 nAudioBandWidth;  /**< Audio band width(in Hz) to which an encoder should
                                    limit the audio signal. Use 0 to let encoder decide */
-    OMX_S32 nQuality;		  /**< Sets encoding quality to n, between -1 (low) and 10 (high).
+    OMX_S32 nQuality;         /**< Sets encoding quality to n, between -1(low) and 10(high).
                                    In the default mode of operation, teh quality level is 3.
                                    Normal quality range is 0 - 10. */
-    OMX_BOOL bManaged;		  /**< Set  bitrate  management  mode. This turns off the
+    OMX_BOOL bManaged;        /**< Set  bitrate  management  mode. This turns off the
                                    normal VBR encoding, but allows hard or soft bitrate
                                    constraints to be enforced by the encoder. This mode can
                                    be slower, and may also be lower quality. It is
                                    primarily useful for streaming. */
-    OMX_BOOL bDownmix;		  /**< Downmix input from stereo to mono (has no effect on 
+    OMX_BOOL bDownmix;        /**< Downmix input from stereo to mono(has no effect on 
                                    non-stereo streams). Useful for lower-bitrate encoding. */     
 } OMX_AUDIO_PARAM_VORBISTYPE;
 
@@ -356,7 +356,7 @@ typedef struct OMX_AUDIO_PARAM_WMATYPE {
     OMX_U32 nBitRate;         /**< Bit rate of the input data.  Use 0 for variable
                                    rate or unknown bit rates */
     OMX_AUDIO_WMAFORMATTYPE eFormat; /**< Version of WMA stream / data */
-	OMX_AUDIO_WMAPROFILETYPE eProfile;  /**< Profile of WMA stream / data */
+    OMX_AUDIO_WMAPROFILETYPE eProfile;  /**< Profile of WMA stream / data */
     OMX_U32 nSamplingRate;    /**< Sampling rate of the source data */
     OMX_U16 nBlockAlign;      /**< is the block alignment, or block size, in bytes of the audio codec */
     OMX_U16 nEncodeOptions;   /**< WMA Type-specific data */
@@ -380,7 +380,7 @@ typedef enum OMX_AUDIO_RAFORMATTYPE {
     OMX_VIDEO_RAFormatMax = 0x7FFFFFFF
 } OMX_AUDIO_RAFORMATTYPE;
 
-/** RA (Real Audio) params */ 
+/** RA(Real Audio) params */ 
 typedef struct OMX_AUDIO_PARAM_RATYPE { 
     OMX_U32 nSize;              /**< Size of this structure, in Bytes */ 
     OMX_VERSIONTYPE nVersion;   /**< OMX specification version information */ 
@@ -430,7 +430,7 @@ typedef struct OMX_AUDIO_PARAM_ADPCMTYPE {
     OMX_U32 nSize;              /**< size of the structure in bytes */ 
     OMX_VERSIONTYPE nVersion;   /**< OMX specification version information */ 
     OMX_U32 nPortIndex;         /**< port that this structure applies to */ 
-    OMX_U32 nChannels;          /**< Number of channels in the data stream (not 
+    OMX_U32 nChannels;          /**< Number of channels in the data stream(not 
                                      necessarily the same as the number of channels 
                                      to be rendered. */ 
     OMX_U32 nBitsPerSample;     /**< Number of bits in each sample */ 
@@ -455,7 +455,7 @@ typedef struct OMX_AUDIO_PARAM_G723TYPE {
     OMX_U32 nSize;                /**< size of the structure in bytes */ 
     OMX_VERSIONTYPE nVersion;     /**< OMX specification version information */ 
     OMX_U32 nPortIndex;           /**< port that this structure applies to */ 
-    OMX_U32 nChannels;            /**< Number of channels in the data stream (not 
+    OMX_U32 nChannels;            /**< Number of channels in the data stream(not 
                                        necessarily the same as the number of channels 
                                        to be rendered. */ 
     OMX_BOOL bDTX;                /**< Enable Discontinuous Transmisssion */ 
@@ -465,7 +465,7 @@ typedef struct OMX_AUDIO_PARAM_G723TYPE {
 } OMX_AUDIO_PARAM_G723TYPE; 
 
 
-/** ITU G726 (ADPCM) rate */
+/** ITU G726(ADPCM) rate */
 typedef enum OMX_AUDIO_G726MODE {
     OMX_AUDIO_G726ModeUnused = 0,  /**< G726 Mode unused / unknown */
     OMX_AUDIO_G726Mode16,          /**< 16 kbps */
@@ -483,7 +483,7 @@ typedef struct OMX_AUDIO_PARAM_G726TYPE {
     OMX_U32 nSize;              /**< size of the structure in bytes */ 
     OMX_VERSIONTYPE nVersion;   /**< OMX specification version information */ 
     OMX_U32 nPortIndex;         /**< port that this structure applies to */ 
-    OMX_U32 nChannels;          /**< Number of channels in the data stream (not 
+    OMX_U32 nChannels;          /**< Number of channels in the data stream(not 
                                      necessarily the same as the number of channels 
                                      to be rendered. */ 
      OMX_AUDIO_G726MODE eG726Mode;
@@ -507,7 +507,7 @@ typedef struct OMX_AUDIO_PARAM_G729TYPE {
     OMX_U32 nSize;            /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion; /**< OMX specification version information */
     OMX_U32 nPortIndex;       /**< port that this structure applies to */
-    OMX_U32 nChannels;        /**< Number of channels in the data stream (not
+    OMX_U32 nChannels;        /**< Number of channels in the data stream(not
                                    necessarily the same as the number of channels
                                    to be rendered. */
     OMX_BOOL bDTX;            /**< Enable Discontinuous Transmisssion */
@@ -518,7 +518,7 @@ typedef struct OMX_AUDIO_PARAM_G729TYPE {
 /** AMR Frame format */ 
 typedef enum OMX_AUDIO_AMRFRAMEFORMATTYPE { 
     OMX_AUDIO_AMRFrameFormatConformance = 0,  /**< Frame Format is AMR Conformance 
-                                                   (Standard) Format */ 
+                                                 (Standard) Format */ 
     OMX_AUDIO_AMRFrameFormatIF1,              /**< Frame Format is AMR Interface 
                                                    Format 1 */ 
     OMX_AUDIO_AMRFrameFormatIF2,              /**< Frame Format is AMR Interface 
@@ -527,7 +527,7 @@ typedef enum OMX_AUDIO_AMRFRAMEFORMATTYPE {
                                                    Format */ 
     OMX_AUDIO_AMRFrameFormatRTPPayload,       /**< Frame Format is AMR Real-Time 
                                                    Transport Protocol Payload Format */ 
-    OMX_AUDIO_AMRFrameFormatITU,              /**< Frame Format is ITU Format (added at Motorola request) */ 
+    OMX_AUDIO_AMRFrameFormatITU,              /**< Frame Format is ITU Format(added at Motorola request) */ 
     OMX_AUDIO_AMRFrameFormatKhronosExtensions = 0x6F000000, /**< Reserved region for introducing Khronos Standard Extensions */ 
     OMX_AUDIO_AMRFrameFormatVendorStartUnused = 0x7F000000, /**< Reserved region for introducing Vendor Extensions */
     OMX_AUDIO_AMRFrameFormatMax = 0x7FFFFFFF 
@@ -564,13 +564,13 @@ typedef enum OMX_AUDIO_AMRBANDMODETYPE {
 typedef enum OMX_AUDIO_AMRDTXMODETYPE { 
     OMX_AUDIO_AMRDTXModeOff = 0,        /**< AMR Discontinuous Transmission Mode is disabled */ 
     OMX_AUDIO_AMRDTXModeOnVAD1,         /**< AMR Discontinuous Transmission Mode using 
-                                             Voice Activity Detector 1 (VAD1) is enabled */ 
+                                             Voice Activity Detector 1(VAD1) is enabled */ 
     OMX_AUDIO_AMRDTXModeOnVAD2,         /**< AMR Discontinuous Transmission Mode using 
-                                             Voice Activity Detector 2 (VAD2) is enabled */       
+                                             Voice Activity Detector 2(VAD2) is enabled */       
     OMX_AUDIO_AMRDTXModeOnAuto,         /**< The codec will automatically select between 
                                              Off, VAD1 or VAD2 modes */ 
 
-    OMX_AUDIO_AMRDTXasEFR,             /**< DTX as EFR instead of AMR standard (3GPP 26.101, frame type =8,9,10) */
+    OMX_AUDIO_AMRDTXasEFR,             /**< DTX as EFR instead of AMR standard(3GPP 26.101, frame type =8,9,10) */
 
     OMX_AUDIO_AMRDTXModeKhronosExtensions = 0x6F000000, /**< Reserved region for introducing Khronos Standard Extensions */ 
     OMX_AUDIO_AMRDTXModeVendorStartUnused = 0x7F000000, /**< Reserved region for introducing Vendor Extensions */
@@ -591,7 +591,7 @@ typedef struct OMX_AUDIO_PARAM_AMRTYPE {
 } OMX_AUDIO_PARAM_AMRTYPE;
 
 
-/** GSM_FR (ETSI 06.10, 3GPP 46.010) stream format parameters */
+/** GSM_FR(ETSI 06.10, 3GPP 46.010) stream format parameters */
 typedef struct OMX_AUDIO_PARAM_GSMFRTYPE {
     OMX_U32 nSize;            /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion; /**< OMX specification version information */
@@ -601,7 +601,7 @@ typedef struct OMX_AUDIO_PARAM_GSMFRTYPE {
 } OMX_AUDIO_PARAM_GSMFRTYPE;
 
 
-/** GSM-HR (ETSI 06.20, 3GPP 46.020) stream format parameters */
+/** GSM-HR(ETSI 06.20, 3GPP 46.020) stream format parameters */
 typedef struct OMX_AUDIO_PARAM_GSMHRTYPE {
     OMX_U32 nSize;            /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion; /**< OMX specification version information */
@@ -611,7 +611,7 @@ typedef struct OMX_AUDIO_PARAM_GSMHRTYPE {
 } OMX_AUDIO_PARAM_GSMHRTYPE;
 
 
-/** GSM-EFR (ETSI 06.60, 3GPP 46.060) stream format parameters */
+/** GSM-EFR(ETSI 06.60, 3GPP 46.060) stream format parameters */
 typedef struct OMX_AUDIO_PARAM_GSMEFRTYPE {
     OMX_U32 nSize;            /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion; /**< OMX specification version information */
@@ -621,12 +621,12 @@ typedef struct OMX_AUDIO_PARAM_GSMEFRTYPE {
 } OMX_AUDIO_PARAM_GSMEFRTYPE;
 
 
-/** TDMA FR (TIA/EIA-136-420, VSELP 7.95kbps coder) stream format parameters */
+/** TDMA FR(TIA/EIA-136-420, VSELP 7.95kbps coder) stream format parameters */
 typedef struct OMX_AUDIO_PARAM_TDMAFRTYPE {
     OMX_U32 nSize;                /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion;     /**< OMX specification version information */
     OMX_U32 nPortIndex;           /**< port that this structure applies to */
-    OMX_U32 nChannels;            /**< Number of channels in the data stream (not
+    OMX_U32 nChannels;            /**< Number of channels in the data stream(not
                                        necessarily the same as the number of channels
                                        to be rendered. */
     OMX_BOOL bDTX;                /**< Enable Discontinuous Transmisssion */
@@ -634,12 +634,12 @@ typedef struct OMX_AUDIO_PARAM_TDMAFRTYPE {
 } OMX_AUDIO_PARAM_TDMAFRTYPE;
 
 
-/** TDMA EFR (TIA/EIA-136-410, ACELP 7.4kbps coder) stream format parameters */
+/** TDMA EFR(TIA/EIA-136-410, ACELP 7.4kbps coder) stream format parameters */
 typedef struct OMX_AUDIO_PARAM_TDMAEFRTYPE {
     OMX_U32 nSize;                /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion;     /**< OMX specification version information */
     OMX_U32 nPortIndex;           /**< port that this structure applies to */
-    OMX_U32 nChannels;            /**< Number of channels in the data stream (not
+    OMX_U32 nChannels;            /**< Number of channels in the data stream(not
                                        necessarily the same as the number of channels
                                        to be rendered. */
     OMX_BOOL bDTX;                /**< Enable Discontinuous Transmisssion */
@@ -647,12 +647,12 @@ typedef struct OMX_AUDIO_PARAM_TDMAEFRTYPE {
 } OMX_AUDIO_PARAM_TDMAEFRTYPE;
 
 
-/** PDC FR ( RCR-27, VSELP 6.7kbps coder) stream format parameters */
+/** PDC FR( RCR-27, VSELP 6.7kbps coder) stream format parameters */
 typedef struct OMX_AUDIO_PARAM_PDCFRTYPE {
     OMX_U32 nSize;                /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion;     /**< OMX specification version information */
     OMX_U32 nPortIndex;           /**< port that this structure applies to */
-    OMX_U32 nChannels;            /**< Number of channels in the data stream (not
+    OMX_U32 nChannels;            /**< Number of channels in the data stream(not
                                        necessarily the same as the number of channels
                                        to be rendered. */
     OMX_BOOL bDTX;                /**< Enable Discontinuous Transmisssion */
@@ -660,24 +660,24 @@ typedef struct OMX_AUDIO_PARAM_PDCFRTYPE {
 } OMX_AUDIO_PARAM_PDCFRTYPE;
 
 
-/** PDC EFR ( RCR-27, ACELP 6.7kbps coder) stream format parameters */
+/** PDC EFR( RCR-27, ACELP 6.7kbps coder) stream format parameters */
 typedef struct OMX_AUDIO_PARAM_PDCEFRTYPE {
     OMX_U32 nSize;                /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion;     /**< OMX specification version information */
     OMX_U32 nPortIndex;           /**< port that this structure applies to */
-    OMX_U32 nChannels;            /**< Number of channels in the data stream (not
+    OMX_U32 nChannels;            /**< Number of channels in the data stream(not
                                        necessarily the same as the number of channels
                                        to be rendered. */
     OMX_BOOL bDTX;                /**< Enable Discontinuous Transmisssion */
     OMX_BOOL bHiPassFilter;       /**< Enable High Pass Filter */
 } OMX_AUDIO_PARAM_PDCEFRTYPE;
 
-/** PDC HR ( RCR-27, PSI-CELP 3.45kbps coder) stream format parameters */
+/** PDC HR( RCR-27, PSI-CELP 3.45kbps coder) stream format parameters */
 typedef struct OMX_AUDIO_PARAM_PDCHRTYPE {
     OMX_U32 nSize;                /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion;     /**< OMX specification version information */
     OMX_U32 nPortIndex;           /**< port that this structure applies to */
-    OMX_U32 nChannels;            /**< Number of channels in the data stream (not
+    OMX_U32 nChannels;            /**< Number of channels in the data stream(not
                                        necessarily the same as the number of channels
                                        to be rendered. */
     OMX_BOOL bDTX;                /**< Enable Discontinuous Transmisssion */
@@ -691,7 +691,7 @@ typedef enum OMX_AUDIO_CDMARATETYPE {
     OMX_AUDIO_CDMARateFull,               /**< CDMA encoded frame in full rate */
     OMX_AUDIO_CDMARateHalf,               /**< CDMA encoded frame in half rate */
     OMX_AUDIO_CDMARateQuarter,            /**< CDMA encoded frame in quarter rate */
-    OMX_AUDIO_CDMARateEighth,             /**< CDMA encoded frame in eighth rate (DTX)*/
+    OMX_AUDIO_CDMARateEighth,             /**< CDMA encoded frame in eighth rate(DTX)*/
     OMX_AUDIO_CDMARateErasure,            /**< CDMA erasure frame */
     OMX_AUDIO_CDMARateKhronosExtensions = 0x6F000000, /**< Reserved region for introducing Khronos Standard Extensions */ 
     OMX_AUDIO_CDMARateVendorStartUnused = 0x7F000000, /**< Reserved region for introducing Vendor Extensions */
@@ -699,12 +699,12 @@ typedef enum OMX_AUDIO_CDMARATETYPE {
 } OMX_AUDIO_CDMARATETYPE;
 
 
-/** QCELP8 (TIA/EIA-96, up to 8kbps coder) stream format parameters */
+/** QCELP8(TIA/EIA-96, up to 8kbps coder) stream format parameters */
 typedef struct OMX_AUDIO_PARAM_QCELP8TYPE {
     OMX_U32 nSize;                /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion;     /**< OMX specification version information */
     OMX_U32 nPortIndex;           /**< port that this structure applies to */
-    OMX_U32 nChannels;            /**< Number of channels in the data stream (not
+    OMX_U32 nChannels;            /**< Number of channels in the data stream(not
                                        necessarily the same as the number of channels
                                        to be rendered. */
     OMX_U32 nBitRate;             /**< Bit rate of the input data.  Use 0 for variable
@@ -715,12 +715,12 @@ typedef struct OMX_AUDIO_PARAM_QCELP8TYPE {
 } OMX_AUDIO_PARAM_QCELP8TYPE;
 
 
-/** QCELP13 ( CDMA, EIA/TIA-733, 13.3kbps coder) stream format parameters */
+/** QCELP13( CDMA, EIA/TIA-733, 13.3kbps coder) stream format parameters */
 typedef struct OMX_AUDIO_PARAM_QCELP13TYPE {
     OMX_U32 nSize;                /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion;     /**< OMX specification version information */
     OMX_U32 nPortIndex;           /**< port that this structure applies to */
-    OMX_U32 nChannels;            /**< Number of channels in the data stream (not
+    OMX_U32 nChannels;            /**< Number of channels in the data stream(not
                                        necessarily the same as the number of channels
                                        to be rendered. */
     OMX_AUDIO_CDMARATETYPE eCDMARate; /**< Frame rate */
@@ -729,12 +729,12 @@ typedef struct OMX_AUDIO_PARAM_QCELP13TYPE {
 } OMX_AUDIO_PARAM_QCELP13TYPE;
 
 
-/** EVRC ( CDMA, EIA/TIA-127, RCELP up to 8.55kbps coder) stream format parameters */
+/** EVRC( CDMA, EIA/TIA-127, RCELP up to 8.55kbps coder) stream format parameters */
 typedef struct OMX_AUDIO_PARAM_EVRCTYPE {
     OMX_U32 nSize;                /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion;     /**< OMX specification version information */
     OMX_U32 nPortIndex;           /**< port that this structure applies to */
-    OMX_U32 nChannels;            /**< Number of channels in the data stream (not
+    OMX_U32 nChannels;            /**< Number of channels in the data stream(not
                                        necessarily the same as the number of channels
                                        to be rendered. */
     OMX_AUDIO_CDMARATETYPE eCDMARate; /**< actual Frame rate */
@@ -747,12 +747,12 @@ typedef struct OMX_AUDIO_PARAM_EVRCTYPE {
 } OMX_AUDIO_PARAM_EVRCTYPE;
 
 
-/** SMV ( up to 8.55kbps coder) stream format parameters */
+/** SMV( up to 8.55kbps coder) stream format parameters */
 typedef struct OMX_AUDIO_PARAM_SMVTYPE {
     OMX_U32 nSize;                /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion;     /**< OMX specification version information */
     OMX_U32 nPortIndex;           /**< port that this structure applies to */
-    OMX_U32 nChannels;            /**< Number of channels in the data stream (not
+    OMX_U32 nChannels;            /**< Number of channels in the data stream(not
                                        necessarily the same as the number of channels
                                        to be rendered. */
     OMX_AUDIO_CDMARATETYPE eCDMARate; /**< Frame rate */
@@ -777,7 +777,7 @@ typedef enum OMX_AUDIO_MIDIFORMATTYPE
     OMX_AUDIO_MIDIFormatSPMIDI,      /**< SP-MIDI */
     OMX_AUDIO_MIDIFormatXMF0,        /**< eXtensible Music Format type 0 */
     OMX_AUDIO_MIDIFormatXMF1,        /**< eXtensible Music Format type 1 */
-    OMX_AUDIO_MIDIFormatMobileXMF,   /**< Mobile XMF (eXtensible Music Format type 2) */
+    OMX_AUDIO_MIDIFormatMobileXMF,   /**< Mobile XMF(eXtensible Music Format type 2) */
     OMX_AUDIO_MIDIFormatKhronosExtensions = 0x6F000000, /**< Reserved region for introducing Khronos Standard Extensions */ 
     OMX_AUDIO_MIDIFormatVendorStartUnused = 0x7F000000, /**< Reserved region for introducing Vendor Extensions */
     OMX_AUDIO_MIDIFormatMax = 0x7FFFFFFF
@@ -793,7 +793,7 @@ typedef struct OMX_AUDIO_PARAM_MIDITYPE {
     OMX_U32 nPortIndex;            /**< port that this structure applies to */
     OMX_U32 nFileSize;             /**< size of the MIDI file in bytes, where the entire 
                                         MIDI file passed in, otherwise if 0x0, the MIDI data 
-                                        is merged and streamed (instead of passed as an 
+                                        is merged and streamed(instead of passed as an 
                                         entire MIDI file) */
     OMX_BU32 sMaxPolyphony;        /**< Specifies the maximum simultaneous polyphonic 
                                         voices. A value of zero indicates that the default 
@@ -824,8 +824,8 @@ typedef enum OMX_AUDIO_MIDISOUNDBANKTYPE {
  */
 typedef enum OMX_AUDIO_MIDISOUNDBANKLAYOUTTYPE {
    OMX_AUDIO_MIDISoundBankLayoutUnused = 0,   /**< unused/unknown soundbank type */
-   OMX_AUDIO_MIDISoundBankLayoutGM,           /**< GS layout (based on bank MSB 0x00) */
-   OMX_AUDIO_MIDISoundBankLayoutGM2,          /**< General MIDI 2 layout (using MSB 0x78/0x79, LSB 0x00) */
+   OMX_AUDIO_MIDISoundBankLayoutGM,           /**< GS layout(based on bank MSB 0x00) */
+   OMX_AUDIO_MIDISoundBankLayoutGM2,          /**< General MIDI 2 layout(using MSB 0x78/0x79, LSB 0x00) */
    OMX_AUDIO_MIDISoundBankLayoutUser,         /**< Does not conform to any bank numbering standards */
    OMX_AUDIO_MIDISoundBankLayoutKhronosExtensions = 0x6F000000, /**< Reserved region for introducing Khronos Standard Extensions */ 
    OMX_AUDIO_MIDISoundBankLayoutVendorStartUnused = 0x7F000000, /**< Reserved region for introducing Vendor Extensions */
@@ -849,7 +849,7 @@ typedef struct OMX_AUDIO_PARAM_MIDILOADUSERSOUNDTYPE {
 
 
 /** Structure for Live MIDI events and MIP messages. 
- * (MIP = Maximum Instantaneous Polyphony; part of the SP-MIDI standard.) 
+ *(MIP = Maximum Instantaneous Polyphony; part of the SP-MIDI standard.) 
  * @ingroup midi
  */
 typedef struct OMX_AUDIO_CONFIG_MIDIIMMEDIATEEVENTTYPE {
@@ -886,10 +886,10 @@ typedef struct OMX_AUDIO_CONFIG_MIDICONTROLTYPE {
     OMX_VERSIONTYPE nVersion;     /**< OMX specification version information */
     OMX_U32 nPortIndex;           /**< port that this structure applies to */
     OMX_BS32 sPitchTransposition; /**< Pitch transposition in semitones, stored as Q22.10 
-                                       format based on JAVA MMAPI (JSR-135) requirement */
+                                       format based on JAVA MMAPI(JSR-135) requirement */
     OMX_BU32 sPlayBackRate;       /**< Relative playback rate, stored as Q14.17 fixed-point
                                        number based on JSR-135 requirement */
-    OMX_BU32 sTempo ;             /**< Tempo in beats per minute (BPM), stored as Q22.10 
+    OMX_BU32 sTempo ;             /**< Tempo in beats per minute(BPM), stored as Q22.10 
                                        fixed-point number based on JSR-135 requirement */
     OMX_U32 nMaxPolyphony;        /**< Specifies the maximum simultaneous polyphonic 
                                        voices. A value of zero indicates that the default 
@@ -912,7 +912,7 @@ typedef struct OMX_AUDIO_CONFIG_MIDICONTROLTYPE {
  */
 typedef enum OMX_AUDIO_MIDIPLAYBACKSTATETYPE {
   OMX_AUDIO_MIDIPlayBackStateUnknown = 0,      /**< Unknown state or state does not map to 
-  													other defined states */
+                                                    other defined states */
   OMX_AUDIO_MIDIPlayBackStateClosedEngaged,    /**< No MIDI resource is currently open. 
                                                     The MIDI engine is currently processing 
                                                     MIDI events. */
@@ -975,7 +975,7 @@ typedef struct OMX_AUDIO_CONFIG_MIDISTATUSTYPE {
  *  with the MIDI content throughout the file and are not localized in the header. 
  *  As such, it is necessary to retrieve information about these Meta Events from 
  *  the engine, as it encounters these Meta Events within the MIDI content. 
- *  For example, SMF files can have up to 14 types of MIDI Meta Events (copyright, 
+ *  For example, SMF files can have up to 14 types of MIDI Meta Events(copyright, 
  *  author, default tempo, etc.) scattered throughout the file. 
  *  @ingroup midi
  */
@@ -984,7 +984,7 @@ typedef struct OMX_AUDIO_CONFIG_MIDIMETAEVENTTYPE{
     OMX_VERSIONTYPE nVersion; /**< OMX specification version information */ 
     OMX_U32 nPortIndex;       /**< port that this structure applies to */ 
     OMX_U32 nIndex;           /**< Index of Meta Event */ 
-    OMX_U8 nMetaEventType;    /**< Meta Event Type, 7bits (i.e. 0 - 127) */ 
+    OMX_U8 nMetaEventType;    /**< Meta Event Type, 7bits(i.e. 0 - 127) */ 
     OMX_U32 nMetaEventSize;   /**< size of the Meta Event in bytes */ 
     OMX_U32 nTrack;           /**< track number for the meta event */
     OMX_U32 nPosition;        /**< Position of the meta-event in milliseconds */
@@ -1014,14 +1014,14 @@ typedef struct OMX_AUDIO_CONFIG_VOLUMETYPE {
                                      just that port's volume.  Select the 
                                      output port to adjust the master 
                                      volume. */
-    OMX_BOOL bLinear;           /**< Is the volume to be set in linear (0.100) 
-                                     or logarithmic scale (mB) */
+    OMX_BOOL bLinear;           /**< Is the volume to be set in linear(0.100) 
+                                     or logarithmic scale(mB) */
     OMX_BS32 sVolume;           /**< Volume linear setting in the 0..100 range, OR
                                      Volume logarithmic setting for this port.  The values
-                                     for volume are in mB (millibels = 1/100 dB) relative
-                                     to a gain of 1 (e.g. the output is the same as the 
+                                     for volume are in mB(millibels = 1/100 dB) relative
+                                     to a gain of 1(e.g. the output is the same as the 
                                      input level).  Values are in mB from nMax 
-                                     (maximum volume) to nMin mB (typically negative).
+                                   (maximum volume) to nMin mB(typically negative).
                                      Since the volume is "voltage"
                                      and not a "power", it takes a setting of
                                      -600 mB to decrease the volume by 1/2.  If
@@ -1046,15 +1046,15 @@ typedef struct OMX_AUDIO_CONFIG_CHANNELVOLUMETYPE {
     OMX_U32 nChannel;           /**< channel to select from 0 to N-1, 
                                      using OMX_ALL to apply volume settings
                                      to all channels */
-    OMX_BOOL bLinear;           /**< Is the volume to be set in linear (0.100) or 
-                                     logarithmic scale (mB) */
+    OMX_BOOL bLinear;           /**< Is the volume to be set in linear(0.100) or 
+                                     logarithmic scale(mB) */
     OMX_BS32 sVolume;           /**< Volume linear setting in the 0..100 range, OR
                                      Volume logarithmic setting for this port.  
                                      The values for volume are in mB 
-                                     (millibels = 1/100 dB) relative to a gain
-                                     of 1 (e.g. the output is the same as the 
+                                   (millibels = 1/100 dB) relative to a gain
+                                     of 1(e.g. the output is the same as the 
                                      input level).  Values are in mB from nMax 
-                                     (maximum volume) to nMin mB (typically negative).  
+                                   (maximum volume) to nMin mB(typically negative).  
                                      Since the volume is "voltage"
                                      and not a "power", it takes a setting of
                                      -600 mB to decrease the volume by 1/2.  If
@@ -1079,7 +1079,7 @@ typedef struct OMX_AUDIO_CONFIG_BALANCETYPE {
                                      output port to adjust the master 
                                      balance. */
     OMX_S32 nBalance;           /**< balance setting for this port 
-                                     (-100 to 100, where -100 indicates
+                                   (-100 to 100, where -100 indicates
                                      all left, and no right */
 } OMX_AUDIO_CONFIG_BALANCETYPE;
 
@@ -1133,7 +1133,7 @@ typedef struct OMX_AUDIO_CONFIG_BASSTYPE {
     OMX_BOOL bEnable;          /**< Enable/disable for bass control */
     OMX_S32 nBass;             /**< bass setting for the port, as a 
                                     continuous value from -100 to 100  
-                                    (0 means no change in bass level)*/
+                                  (0 means no change in bass level)*/
 } OMX_AUDIO_CONFIG_BASSTYPE;
 
 
@@ -1146,7 +1146,7 @@ typedef struct OMX_AUDIO_CONFIG_TREBLETYPE {
     OMX_BOOL bEnable;          /**< Enable/disable for treble control */
     OMX_S32  nTreble;          /**< treble setting for the port, as a
                                     continuous value from -100 to 100  
-                                    (0 means no change in treble level) */
+                                  (0 means no change in treble level) */
 } OMX_AUDIO_CONFIG_TREBLETYPE;
 
 
@@ -1199,12 +1199,12 @@ typedef struct OMX_AUDIO_CONFIG_STEREOWIDENINGTYPE {
 } OMX_AUDIO_CONFIG_STEREOWIDENINGTYPE;
 
 
-/** The chorus effect (or ``choralizer'') is any signal processor which makes
- *  one sound source (such as a voice) sound like many such sources singing 
- *  (or playing) in unison. Since performance in unison is never exact, chorus 
+/** The chorus effect(or ``choralizer'') is any signal processor which makes
+ *  one sound source(such as a voice) sound like many such sources singing 
+ *(or playing) in unison. Since performance in unison is never exact, chorus 
  *  effects simulate this by making independently modified copies of the input 
- *  signal. Modifications may include (1) delay, (2) frequency shift, and 
- *  (3) amplitude modulation.
+ *  signal. Modifications may include(1) delay,(2) frequency shift, and 
+ *(3) amplitude modulation.
  * @ingroup effects
  */
 typedef struct OMX_AUDIO_CONFIG_CHORUSTYPE {
@@ -1215,7 +1215,7 @@ typedef struct OMX_AUDIO_CONFIG_CHORUSTYPE {
     OMX_BU32 sDelay;           /**< average delay in milliseconds */
     OMX_BU32 sModulationRate;  /**< rate of modulation in millihertz */
     OMX_U32 nModulationDepth;  /**< depth of modulation as a percentage of 
-                                    delay (i.e. 0 to 100) */
+                                    delay(i.e. 0 to 100) */
     OMX_BU32 nFeedback;        /**< Feedback from chorus output to input in percentage */
 } OMX_AUDIO_CONFIG_CHORUSTYPE;
 
@@ -1223,7 +1223,7 @@ typedef struct OMX_AUDIO_CONFIG_CHORUSTYPE {
 /** Reverberation is part of the reflected sound that follows the early 
  *  reflections. In a typical room, this consists of a dense succession of 
  *  echoes whose energy decays exponentially. The reverberation effect structure 
- *  as defined here includes both (early) reflections as well as (late) reverberations. 
+ *  as defined here includes both(early) reflections as well as(late) reverberations. 
  * @ingroup effects
  */
 typedef struct OMX_AUDIO_CONFIG_REVERBERATIONTYPE {
@@ -1232,13 +1232,13 @@ typedef struct OMX_AUDIO_CONFIG_REVERBERATIONTYPE {
     OMX_U32 nPortIndex;           /**< port that this structure applies to */
     OMX_BOOL bEnable;             /**< Enable/disable for reverberation control */
     OMX_BS32 sRoomLevel;          /**< Intensity level for the whole room effect 
-                                       (i.e. both early reflections and late 
+                                     (i.e. both early reflections and late 
                                        reverberation) in millibels */
     OMX_BS32 sRoomHighFreqLevel;  /**< Attenuation at high frequencies
                                        relative to the intensity at low
                                        frequencies in millibels */
     OMX_BS32 sReflectionsLevel;   /**< Intensity level of early reflections
-                                       (relative to room value), in millibels */
+                                     (relative to room value), in millibels */
     OMX_BU32 sReflectionsDelay;   /**< Delay time of the first reflection relative 
                                        to the direct path, in milliseconds */
     OMX_BS32 sReverbLevel;        /**< Intensity level of late reverberation
@@ -1251,9 +1251,9 @@ typedef struct OMX_AUDIO_CONFIG_REVERBERATIONTYPE {
     OMX_BU32 nDecayHighFreqRatio; /**< Ratio of high frequency decay time relative 
                                        to low frequency decay time in percent  */
     OMX_U32 nDensity;             /**< Modal density in the late reverberation decay,
-                                       in percent (i.e. 0 - 100) */
+                                       in percent(i.e. 0 - 100) */
     OMX_U32 nDiffusion;           /**< Echo density in the late reverberation decay,
-                                       in percent (i.e. 0 - 100) */
+                                       in percent(i.e. 0 - 100) */
     OMX_BU32 sReferenceHighFreq;  /**< Reference high frequency in Hertz. This is 
                                        the frequency used as the reference for all 
                                        the high-frequency settings above */
@@ -1271,7 +1271,7 @@ typedef enum OMX_AUDIO_ECHOCANTYPE {
    OMX_AUDIO_EchoCanHFree,      /**< Echo Cancellation optimized for 
                                      Hands Free operation */
    OMX_AUDIO_EchoCanCarKit,    /**< Echo Cancellation optimized for 
-                                     Car Kit (longer echo) */
+                                     Car Kit(longer echo) */
    OMX_AUDIO_EchoCanKhronosExtensions = 0x6F000000, /**< Reserved region for introducing Khronos Standard Extensions */ 
    OMX_AUDIO_EchoCanVendorStartUnused = 0x7F000000, /**< Reserved region for introducing Vendor Extensions */
    OMX_AUDIO_EchoCanMax = 0x7FFFFFFF

@@ -1,7 +1,9 @@
 #pragma once
+#include <deque>
 #include <iostream>
 #include <queue>
 #include <mutex>
+#include <utility>
 
 template <class T>
 class BlockingQueue
@@ -63,7 +65,7 @@ public:
   bool pop_wait_for(T &item, std::chrono::milliseconds duration) {
     {
       std::unique_lock<std::mutex> lk(mutex);
-      if(not_empty.wait_for(lk, duration, [this]() { return !content.empty(); })) {
+      if (not_empty.wait_for(lk, duration, this { return !content.empty(); })) {
         item = std::move(content.front());
         content.pop_front();
       }

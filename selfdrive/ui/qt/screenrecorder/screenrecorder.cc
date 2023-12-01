@@ -1,7 +1,9 @@
-#include "libyuv.h"
+#include "third_party/libyuv/include/libyuv.h"
 
 #include "selfdrive/ui/qt/screenrecorder/screenrecorder.h"
 #include "selfdrive/ui/qt/util.h"
+#include <string>
+#include <memory>
 
 static long long milliseconds() {
   struct timespec t;

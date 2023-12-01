@@ -1396,8 +1396,8 @@ OMX_API OMX_ERRORTYPE   OMX_GetContentPipe(
         Each name is NULL terminated. numComps indicates the number of names.
     @ingroup core
  */
-OMX_API OMX_ERRORTYPE OMX_GetComponentsOfRole ( 
-	OMX_IN      OMX_STRING role,
+OMX_API OMX_ERRORTYPE OMX_GetComponentsOfRole(
+    OMX_IN      OMX_STRING role,
     OMX_INOUT   OMX_U32 *pNumComps,
     OMX_INOUT   OMX_U8  **compNames);
 
@@ -1426,8 +1426,8 @@ OMX_API OMX_ERRORTYPE OMX_GetComponentsOfRole (
         specified component name. numComps indicates the number of names.
     @ingroup core
  */
-OMX_API OMX_ERRORTYPE OMX_GetRolesOfComponent ( 
-	OMX_IN      OMX_STRING compName, 
+OMX_API OMX_ERRORTYPE OMX_GetRolesOfComponent(
+    OMX_IN      OMX_STRING compName, 
     OMX_INOUT   OMX_U32 *pNumRoles,
     OMX_OUT     OMX_U8 **roles);
 

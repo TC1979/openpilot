@@ -14,8 +14,8 @@
 #include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_IndexExt.h"
 #include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_QCOMExtns.h"
 #include "selfdrive/ui/qt/screenrecorder/openmax/include/OMX_VideoExt.h"
-#include "libyuv.h"
-#include "msm_media_info.h"
+#include "third_party/libyuv/include/libyuv.h"
+#include "third_party/linux/include/msm_media_info.h"
 #include "common/swaglog.h"
 #include "common/util.h"
 
@@ -682,8 +682,12 @@ OmxEncoder::~OmxEncoder() {
   OMX_CHECK(OMX_FreeHandle(this->handle));
 
   OMX_BUFFERHEADERTYPE *out_buf;
-  while (this->free_in.try_pop(out_buf));
-  while (this->done_out.try_pop(out_buf));
+  while (this->free_in.try_pop(out_buf)) {
+    continue;
+  }
+  while (this->done_out.try_pop(out_buf)) {
+    continue;
+  }
 
   if (this->codec_config) {
     free(this->codec_config);

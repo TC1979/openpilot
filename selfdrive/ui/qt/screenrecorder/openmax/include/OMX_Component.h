@@ -123,7 +123,7 @@ typedef struct OMX_PARAM_SUSPENSIONTYPE {
     OMX_U32 nSize;                  
     OMX_VERSIONTYPE nVersion;       
     OMX_SUSPENSIONTYPE eType;             
-} OMX_PARAM_SUSPENSIONTYPE ;
+} OMX_PARAM_SUSPENSIONTYPE;
 
 typedef struct OMX_CONFIG_BOOLEANTYPE {
     OMX_U32 nSize;
@@ -155,7 +155,7 @@ typedef struct OMX_RESOURCECONCEALMENTTYPE {
     OMX_U32 nSize;             /**< size of the structure in bytes */
     OMX_VERSIONTYPE nVersion;  /**< OMX specification version information */
     OMX_BOOL bResourceConcealmentForbidden; /**< disallow the use of resource concealment 
-                                            methods (like degrading algorithm quality to 
+                                            methods (like degrading algorithm quality to
                                             lower resource consumption or functional bypass) 
                                             on a component as a resolution to resource conflicts. */
 } OMX_RESOURCECONCEALMENTTYPE;
@@ -281,14 +281,14 @@ typedef struct OMX_PARAM_METADATAFILTERTYPE
 { 
     OMX_U32 nSize; 
     OMX_VERSIONTYPE nVersion; 
-    OMX_BOOL bAllKeys;	/* if true then this structure refers to all keys and 
+    OMX_BOOL bAllKeys;  /* if true then this structure refers to all keys and 
                          * the three key fields below are ignored */
     OMX_METADATACHARSETTYPE eKeyCharset;
     OMX_U32 nKeySizeUsed; 
     OMX_U8   nKey [128]; 
     OMX_U32 nLanguageCountrySizeUsed;
     OMX_U8 nLanguageCountry[128];
-    OMX_BOOL bEnabled;	/* if true then key is part of filter (e.g. 
+    OMX_BOOL bEnabled;  /* if true then key is part of filter (e.g. 
                          * retained for query later). If false then
                          * key is not part of filter */
 } OMX_PARAM_METADATAFILTERTYPE; 
@@ -566,8 +566,8 @@ typedef struct OMX_COMPONENTTYPE
 
     OMX_ERRORTYPE (*ComponentRoleEnum)(
         OMX_IN OMX_HANDLETYPE hComponent,
-		OMX_OUT OMX_U8 *cRole,
-		OMX_IN OMX_U32 nIndex);
+        OMX_OUT OMX_U8 *cRole,
+        OMX_IN OMX_U32 nIndex);
 
 } OMX_COMPONENTTYPE;
 
