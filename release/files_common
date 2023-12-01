@@ -329,7 +329,6 @@ selfdrive/ui/qt/setup/*.cc
 selfdrive/ui/qt/setup/*.h
 selfdrive/ui/qt/screenrecorder/*.cc
 selfdrive/ui/qt/screenrecorder/*.h
-selfdrive/ui/qt/screenrecorder/openmax/include/*.h
 
 selfdrive/ui/installer/*.cc
 selfdrive/ui/installer/*.h
