@@ -31,7 +31,7 @@ function agnos_init {
   fi
 
   #top: change splash logo
-  if [ -f "/usr/comma/.top1_splash" ]; then
+  if [ -f "/usr/comma/.top_splash" ]; then
       echo "TOP splash exists."
   else
       echo "TOP splash not deployed yet"
