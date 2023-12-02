@@ -17,6 +17,7 @@
   </head>
   <body>
     <div style="place-items: center; padding: 5px; font-weight: bold;" align="center"><a href="?reset=1"><img style="width: 100px; height: 100px; background-color: black;" src="logo.png"></a></div>
+    <div style="padding: 5px; font-weight: bold;" align="center"><a href="/fleetmanager">Fleet Manager</a></div>
     <div class="uk-grid-match uk-grid-small uk-text-center" uk-grid>
       <div class="uk-width-1-3@m">
         <select id="save_type" class="uk-select" name="type">
