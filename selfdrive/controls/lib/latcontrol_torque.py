@@ -102,11 +102,11 @@ class LatControlTorque(LatControl):
       self.lat_jerk_deadzone = 0.0 # m/s^3 in [0, ∞] in 0.05 increments
       # Finally, lateral jerk error is downscaled so it doesn't dominate the friction error
       # term.
-      self.lat_jerk_friction_factor = 0.4 # in [0, 3] in 0.05 increments
+      self.lat_jerk_friction_factor = 0.4 # in [0, 1] in 0.01 increments
 
       # Scaling the lateral acceleration "friction response" could be helpful for some.
       # Increase for a stronger response, decrease for a weaker response.
-      self.lat_accel_friction_factor = 0.7 # in [0, 3], in 0.05 increments. 3 is arbitrary safety limit
+      self.lat_accel_friction_factor = 0.7 # in [0, 5], in 0.05 increments. 5 is arbitrary safety limit
 
   def update_live_torque_params(self, latAccelFactor, latAccelOffset, friction):
     self.torque_params.latAccelFactor = latAccelFactor
@@ -174,15 +174,15 @@ class LatControlTorque(LatControl):
           lateral_jerk_measurement = 0.0
 
         # compute NNFF error response
-        nnff_setpoint_input = [CS.vEgo, setpoint, lateral_jerk_setpoint, roll] \
+        nn_setpoint_input = [CS.vEgo, setpoint, lateral_jerk_setpoint, roll] \
                               + [setpoint] * self.past_future_len \
                               + past_rolls + future_rolls
         # past lateral accel error shouldn't count, so use past desired like the setpoint input
-        nnff_measurement_input = [CS.vEgo, measurement, lateral_jerk_measurement, roll] \
+        nn_measurement_input = [CS.vEgo, measurement, lateral_jerk_measurement, roll] \
                               + [measurement] * self.past_future_len \
                               + past_rolls + future_rolls
-        torque_from_setpoint = self.torque_from_nn(nnff_setpoint_input)
-        torque_from_measurement = self.torque_from_nn(nnff_measurement_input)
+        torque_from_setpoint = self.torque_from_nn(nn_setpoint_input)
+        torque_from_measurement = self.torque_from_nn(nn_measurement_input)
         pid_log.error = torque_from_setpoint - torque_from_measurement
 
         # compute feedforward (same as nn setpoint output)
@@ -198,7 +198,10 @@ class LatControlTorque(LatControl):
           pid_log.error += self.torque_from_lateral_accel(0.0, self.torque_params,
                                             friction_input,
                                             lateral_accel_deadzone, friction_compensation=True)
-        nn_log = nn_input + nnff_setpoint_input + nnff_measurement_input
+          ff += self.torque_from_lateral_accel(0.0, self.torque_params,
+                                            lookahead_lateral_jerk,
+                                            lateral_accel_deadzone, friction_compensation=True)
+        nn_log = nn_input + nn_setpoint_input + nn_measurement_input
       else:
         gravity_adjusted_lateral_accel = desired_lateral_accel - params.roll * ACCELERATION_DUE_TO_GRAVITY
         torque_from_setpoint = self.torque_from_lateral_accel(setpoint, self.torque_params, setpoint,
