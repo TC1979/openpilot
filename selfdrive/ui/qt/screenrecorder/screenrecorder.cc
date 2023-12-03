@@ -14,7 +14,7 @@ static long long milliseconds() {
 ScreenRecorder::ScreenRecorder(QWidget *parent)
   : QPushButton(parent), image_queue(30), recording(false), started(0), frame(0),
     screen_width(2160), screen_height(1080) {
-  setFixedSize(190, 190);
+  setFixedSize(210, 210);
   setFocusPolicy(Qt::NoFocus);
   connect(this, &QPushButton::pressed, this, &ScreenRecorder::buttonPressed);
   connect(this, &QPushButton::released, this, &ScreenRecorder::buttonReleased);
@@ -52,21 +52,24 @@ void ScreenRecorder::applyColor() {
 
 void ScreenRecorder::paintEvent(QPaintEvent *event) {
   QPainter p(this);
+  // 設定圓角矩形的大小和圓角半徑
   QRect rect(45, 45, width() - 90, height() - 90);
+  qreal radius = 20;
+
   QColor bgColor = recording ? recording_color : QColor::fromRgbF(1, 0, 0, 0.6);
 
   p.setRenderHint(QPainter::Antialiasing);
   p.setCompositionMode(QPainter::CompositionMode_SourceOver);
   p.setPen(QPen(QColor::fromRgbF(0.5, 0.8, 1, 0.8), 10));
-  // 繪製圓形
-  p.drawEllipse(rect);
-  // 用無畫筆繪製一個稍小的圓形
+  // 繪製圓角矩形
+  p.drawRoundedRect(rect, radius, radius);
+  // 用無畫筆繪製一個稍小的圓角矩形
   p.setPen(Qt::NoPen);
   p.setBrush(bgColor);
-  p.drawEllipse(rect.adjusted(5, 5, -5, -5));  // 新增的程式碼
+  p.drawRoundedRect(rect.adjusted(5, 5, -5, -5), radius - 5, radius - 5);  // 新增的程式碼
   QString text = "REC"; // 要顯示的文字
   QFont font = p.font(); // 取得當前的字體
-  font.setPixelSize(30); // 設定字體大小
+  font.setPixelSize(45); // 設定字體大小
   p.setFont(font); // 更新字體
   p.setPen(Qt::white); // 設定文字顏色為白色
   QFontMetrics fm(font); // 取得字體的度量
@@ -74,7 +77,7 @@ void ScreenRecorder::paintEvent(QPaintEvent *event) {
   int textHeight = fm.height(); // 取得文字的高度
   int x = rect.center().x() - textWidth / 2; // 計算文字的x座標，使其置中
   int y = rect.center().y() + textHeight / 4; // 計算文字的y座標，使其置中
-  p.drawText(x, y, text); // 在圓形上繪製文字
+  p.drawText(x, y, text); // 在圓角矩形上繪製文字
 }
 
 void ScreenRecorder::openEncoder(const char *filename) {
