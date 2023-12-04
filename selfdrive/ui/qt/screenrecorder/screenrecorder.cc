@@ -60,7 +60,7 @@ void ScreenRecorder::paintEvent(QPaintEvent *event) {
 
   p.setRenderHint(QPainter::Antialiasing);
   p.setCompositionMode(QPainter::CompositionMode_SourceOver);
-  p.setPen(QPen(QColor::fromRgbF(0.5, 0.8, 1, 0.7), 10));
+  p.setPen(QPen(QColor::fromRgbF(0.5, 0.8, 1, 0.5), 10));
   // 繪製圓角矩形
   p.drawRoundedRect(rect, radius, radius);
   // 用無畫筆繪製一個稍小的圓角矩形
