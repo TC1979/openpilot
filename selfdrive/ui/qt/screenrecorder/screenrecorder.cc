@@ -60,7 +60,7 @@ void ScreenRecorder::paintEvent(QPaintEvent *event) {
 
   p.setRenderHint(QPainter::Antialiasing);
   p.setCompositionMode(QPainter::CompositionMode_SourceOver);
-  p.setPen(QPen(QColor::fromRgbF(0.5, 0.8, 1, 0.5), 10));
+  p.setPen(QPen(QColor::fromRgbF(1, 0, 0, 0.5), 10));
   // 繪製圓角矩形
   p.drawRoundedRect(rect, radius, radius);
   // 用無畫筆繪製一個稍小的圓角矩形
@@ -70,6 +70,7 @@ void ScreenRecorder::paintEvent(QPaintEvent *event) {
   QString text = "REC"; // 要顯示的文字
   QFont font = p.font(); // 取得當前的字體
   font.setPixelSize(45); // 設定字體大小
+  font.setWeight(QFont::Bold);
   p.setFont(font); // 更新字體
   p.setPen(Qt::white); // 設定文字顏色為白色
   QFontMetrics fm(font); // 取得字體的度量
