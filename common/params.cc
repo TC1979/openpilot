@@ -261,6 +261,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"dp_nav_amap_key", PERSISTENT},
     {"dp_nav_amap_key_2", PERSISTENT},
     {"opwebd", PERSISTENT},
+    {"pf_mapd", PERSISTENT},
 };
 
 } // namespace

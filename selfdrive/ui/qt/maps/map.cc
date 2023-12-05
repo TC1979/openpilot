@@ -212,7 +212,7 @@ void MapWindow::updateState(const UIState &s) {
     }
   }
 
-  loaded_once = loaded_once || (m_map && m_map->isFullyLoaded());
+  loaded_once = loaded_once || (m_map && m_map->isFullyLoaded()) || Params("/dev/shm/params").getBool("pf_mapd");
   if (!loaded_once) {
     setError(tr("Map Loading"));
     return;
