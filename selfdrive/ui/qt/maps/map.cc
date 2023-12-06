@@ -212,7 +212,7 @@ void MapWindow::updateState(const UIState &s) {
     }
   }
 
-  loaded_once = loaded_once || (m_map && m_map->isFullyLoaded()) || params.getInt("pf_mapd") != 0;
+  loaded_once = loaded_once || (m_map && m_map->isFullyLoaded());
   if (!loaded_once) {
     setError(tr("Map Loading"));
     return;
@@ -255,7 +255,7 @@ void MapWindow::updateState(const UIState &s) {
     // - API exception/no internet
     // - route response is empty
     // - any time navd is waiting for recompute_countdown
-    routing_problem = !sm.valid("navInstruction") && coordinate_from_param("NavDestination").has_value() && params.getInt("pf_mapd") == 0;
+    routing_problem = !sm.valid("navInstruction") && coordinate_from_param("NavDestination").has_value();
 
     if (sm.valid("navInstruction")) {
       auto i = sm["navInstruction"].getNavInstruction();
