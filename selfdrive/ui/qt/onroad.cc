@@ -321,7 +321,7 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
   main_layout->setSpacing(0);
 
   // Neokii screen recorder
-  QHBoxLayout *top_right_layout = new QHBoxLayout();
+  QGridLayout *top_right_layout = new QGridLayout();
   top_right_layout->setSpacing(0);
   recorder_btn = new ScreenRecorder(this);
   experimental_btn = new ExperimentalButton(this);
