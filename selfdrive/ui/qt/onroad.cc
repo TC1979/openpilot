@@ -330,7 +330,7 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
   top_right_layout->addWidget(experimental_btn);
 
   main_layout->addLayout(top_right_layout, 0);
-  main_layout->setAlignment(top_right_layout, Qt::AlignTop | Qt::AlignRight);
+  main_layout->setAlignment(top_right_layout, Qt::AlignRight | Qt::AlignTop);
   main_layout->setContentsMargins(0, 60, 0, 0);
 
   map_settings_btn = new MapSettingsButton(this);
