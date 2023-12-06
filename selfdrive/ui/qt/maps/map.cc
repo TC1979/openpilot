@@ -8,7 +8,6 @@
 #include "selfdrive/ui/qt/maps/map_helpers.h"
 #include "selfdrive/ui/qt/util.h"
 #include "selfdrive/ui/ui.h"
-#include "common/params.h"
 
 const int INTERACTION_TIMEOUT = 100;
 
@@ -168,8 +167,8 @@ void MapWindow::updateState(const UIState &s) {
   if (sm.updated("modelV2")) {
     // set path color on change, and show map on rising edge of navigate on openpilot
     bool nav_enabled = sm["modelV2"].getModelV2().getNavEnabled() &&
-                       (sm["controlsState"].getControlsState().getEnabled() || Params().getBool("LateralAllowed")) &&
-                       (!Params().get("NavDestination").empty() || Params().getInt("PrimeType") != 0);
+                       (sm["controlsState"].getControlsState().getEnabled() || params.getInt("LateralAllowed") != 0) &&
+                       (!Params().get("NavDestination").empty() || params.getInt("PrimeType") != 0);
     if (nav_enabled != uiState()->scene.navigate_on_openpilot) {
       if (loaded_once) {
         m_map->setPaintProperty("navLayer", "line-color", getNavPathColor(nav_enabled));
@@ -213,7 +212,7 @@ void MapWindow::updateState(const UIState &s) {
     }
   }
 
-  loaded_once = loaded_once || (m_map && m_map->isFullyLoaded()) || Params().getBool("pf_mapd");
+  loaded_once = loaded_once || (m_map && m_map->isFullyLoaded()) || params.getInt("pf_mapd") != 0;
   if (!loaded_once) {
     setError(tr("Map Loading"));
     return;
@@ -256,7 +255,7 @@ void MapWindow::updateState(const UIState &s) {
     // - API exception/no internet
     // - route response is empty
     // - any time navd is waiting for recompute_countdown
-    routing_problem = !sm.valid("navInstruction") && coordinate_from_param("NavDestination").has_value() && !Params().getBool("pf_mapd");
+    routing_problem = !sm.valid("navInstruction") && coordinate_from_param("NavDestination").has_value() && params.getInt("pf_mapd") = 0;
 
     if (sm.valid("navInstruction")) {
       auto i = sm["navInstruction"].getNavInstruction();
