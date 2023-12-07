@@ -7,7 +7,7 @@ from openpilot.common.conversions import Conversions as CV
 from openpilot.common.params import put_nonblocking
 from openpilot.common.numpy_fast import clip
 from openpilot.selfdrive.car.toyota.values import ToyotaFlags, TSS2_CAR, RADAR_ACC_CAR
-from openpilot.system.swaglog import cloudlog
+from openpilot.common.swaglog import cloudlog
 # WARNING: imports outside of constants will not trigger a rebuild
 from openpilot.selfdrive.modeld.constants import index_function
 from openpilot.selfdrive.car.interfaces import ACCEL_MIN
