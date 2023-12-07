@@ -86,7 +86,7 @@ class Soundd:
     ret = np.zeros(frames, dtype=np.float32)
 
     if self.current_alert != AudibleAlert.none:
-      if not Params().getBool("QuietDrive") or self.current_alert in [AudibleAlert.warningSoft, AudibleAlert.warningImmediate]:
+      if not Params().getInt("QuietDrive") != 0 or self.current_alert in [AudibleAlert.warningSoft, AudibleAlert.warningImmediate]:
         num_loops = sound_list[self.current_alert][1]
         sound_data = self.loaded_sounds[self.current_alert]
         written_frames = 0
