@@ -123,7 +123,7 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   p.setOpacity(settings_pressed ? 0.65 : 1.0);
   p.drawPixmap(settings_btn.x(), settings_btn.y(), settings_img);
   p.setOpacity(onroad && flag_pressed ? 0.65 : 1.0);
-  p.drawPixmap(onroad ? home_btn.x() : home_btn.x() - 10, onroad ? home_btn.y() : home_btn.y() - 20, onroad ? flag_img : home_img);
+  p.drawPixmap(onroad ? home_btn.x() : home_btn.x() - 20, onroad ? home_btn.y() : home_btn.y() - 30, onroad ? flag_img : home_img);
   p.setOpacity(1.0);
 
   // network
