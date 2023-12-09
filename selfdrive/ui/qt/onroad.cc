@@ -266,7 +266,8 @@ void OnroadAlerts::paintEvent(QPaintEvent *event) {
 ExperimentalButton::ExperimentalButton(QWidget *parent) : experimental_mode(false), engageable(false), QPushButton(parent) {
   setFixedSize(btn_size, btn_size);
 
-  engage_img = loadPixmap("../assets/images/button_home.png", {img_size + 5, img_size + 5});
+  engage_img = loadPixmap("../assets/images/button_home.png", {img_size, img_size});
+  engage_img = engage_img.scaled(engage_img.width() * 1.2, engage_img.height() * 1.2, Qt::KeepAspectRatio); // 增加20%
   experimental_img = loadPixmap("../assets/img_experimental.svg", {img_size, img_size});
   QObject::connect(this, &QPushButton::clicked, this, &ExperimentalButton::changeMode);
 }
