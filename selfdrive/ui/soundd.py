@@ -31,7 +31,6 @@ AudibleAlert = car.CarControl.HUDControl.AudibleAlert
 sound_list: Dict[int, Tuple[str, Optional[int], float]] = {
   # AudibleAlert, file name, play count (none for infinite)
   AudibleAlert.engage: ("engage.wav", 1, MAX_VOLUME),
-  # AudibleAlert.engageBrakehold: ("engage_brakehold.wav", 1, MAX_VOLUME),
   AudibleAlert.disengage: ("disengage.wav", 1, MAX_VOLUME),
   AudibleAlert.refuse: ("refuse.wav", 1, MAX_VOLUME),
 
@@ -41,6 +40,7 @@ sound_list: Dict[int, Tuple[str, Optional[int], float]] = {
 
   AudibleAlert.warningSoft: ("warning_soft.wav", None, MAX_VOLUME),
   AudibleAlert.warningImmediate: ("warning_immediate.wav", None, MAX_VOLUME),
+  AudibleAlert.engageBrakehold: ("engage_brakehold.wav", 1, MAX_VOLUME),
 }
 
 def check_controls_timeout_alert(sm):
