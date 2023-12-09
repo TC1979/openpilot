@@ -8,7 +8,6 @@ from typing import Dict, Optional, Tuple
 from cereal import car, messaging
 from openpilot.common.basedir import BASEDIR
 from openpilot.common.filter_simple import FirstOrderFilter
-from openpilot.common.params import Params
 
 from openpilot.system import micd
 from openpilot.system.hardware import TICI
@@ -86,20 +85,19 @@ class Soundd:
     ret = np.zeros(frames, dtype=np.float32)
 
     if self.current_alert != AudibleAlert.none:
-      if not Params().get_bool("QuietDrive") or self.current_alert in [AudibleAlert.warningSoft, AudibleAlert.warningImmediate]:
-        num_loops = sound_list[self.current_alert][1]
-        sound_data = self.loaded_sounds[self.current_alert]
-        written_frames = 0
+      num_loops = sound_list[self.current_alert][1]
+      sound_data = self.loaded_sounds[self.current_alert]
+      written_frames = 0
 
-        current_sound_frame = self.current_sound_frame % len(sound_data)
-        loops = self.current_sound_frame // len(sound_data)
+      current_sound_frame = self.current_sound_frame % len(sound_data)
+      loops = self.current_sound_frame // len(sound_data)
 
-        while written_frames < frames and (num_loops is None or loops < num_loops):
-          available_frames = sound_data.shape[0] - current_sound_frame
-          frames_to_write = min(available_frames, frames - written_frames)
-          ret[written_frames:written_frames+frames_to_write] = sound_data[current_sound_frame:current_sound_frame+frames_to_write]
-          written_frames += frames_to_write
-          self.current_sound_frame += frames_to_write
+      while written_frames < frames and (num_loops is None or loops < num_loops):
+        available_frames = sound_data.shape[0] - current_sound_frame
+        frames_to_write = min(available_frames, frames - written_frames)
+        ret[written_frames:written_frames+frames_to_write] = sound_data[current_sound_frame:current_sound_frame+frames_to_write]
+        written_frames += frames_to_write
+        self.current_sound_frame += frames_to_write
 
     return ret * self.current_volume
 
