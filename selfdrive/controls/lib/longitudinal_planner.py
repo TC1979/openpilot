@@ -158,11 +158,7 @@ class LongitudinalPlanner:
       v_cruise = vtsc.v_target
     # }} PFEIFER - VTSC
 
-    lead_xv_0 = self.mpc.process_lead(sm['radarState'].leadOne)
-    lead_xv_1 = self.mpc.process_lead(sm['radarState'].leadTwo)
-    v_lead0 = lead_xv_0[0,1]
-    v_lead1 = lead_xv_1[0,1]
-    self.mpc.set_weights(prev_accel_constraint, personality=self.personality, v_lead0=v_lead0, v_lead1=v_lead1)
+    self.mpc.set_weights(prev_accel_constraint, personality=self.personality)
     self.mpc.set_accel_limits(accel_limits_turns[0], accel_limits_turns[1])
     self.mpc.set_cur_state(self.v_desired_filter.x, self.a_desired)
     x, v, a, j = self.parse_model(sm['modelV2'], self.v_model_error)
