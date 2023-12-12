@@ -1,5 +1,4 @@
 from cereal import car
-from openpilot.common.numpy_fast import interp
 from openpilot.common.conversions import Conversions as CV
 from openpilot.common.params import Params
 from panda import Panda

@@ -3,7 +3,6 @@ import os
 import time
 import numpy as np
 from cereal import log
-from openpilot.common.conversions import Conversions as CV
 from openpilot.common.params import put_nonblocking
 from openpilot.common.numpy_fast import clip
 from openpilot.selfdrive.car.toyota.values import ToyotaFlags, TSS2_CAR, RADAR_ACC_CAR
