@@ -22,7 +22,7 @@ def distance_to_point(ax, ay, bx, by):
 class SpeedLimitController:
   nav_speed_limit: float = 0 # m/s
   map_speed_limit: float = 0 # m/s
-  map_advisory_limit: float = 0 # m/s
+  #map_advisory_limit: float = 0 # m/s
   next_map_speed_limit: float = 0 # m/s
   next_map_speed_limit_lat: float = 0 # deg
   next_map_speed_limit_lon: float = 0 # deg
@@ -96,7 +96,7 @@ class SpeedLimitController:
 
   def write_map_state(self):
     mem_params.put("MapSpeedLimit", json.dumps(self.map_speed_limit))
-    mem_params.put("MapAdvisoryLimit", json.dumps(self.map_speed_limit))
+    #mem_params.put("MapAdvisoryLimit", json.dumps(self.map_speed_limit))
     mem_params.put_bool("MapSpeedLimitControl", self.map_enabled)
 
   def write_car_state(self):
@@ -126,7 +126,7 @@ class SpeedLimitController:
       self.lon = position["longitude"]
     except Exception:
       pass
-    self.map_advisory_limit = json.loads(mem_params.get("MapAdvisoryLimit"))
+    #self.map_advisory_limit = json.loads(mem_params.get("MapAdvisoryLimit"))
     self.car_speed_limit = json.loads(mem_params.get("CarSpeedLimit"))
 
     if load_persistent_enabled:
