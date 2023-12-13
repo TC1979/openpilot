@@ -93,7 +93,7 @@ class Soundd:
       loops = self.current_sound_frame // len(sound_data)
 
       # Check if QuietDrive is enabled
-      quiet_drive = Params("/dev/shm/params").get_bool("QuietDrive")
+      quiet_drive = Params().get_bool("QuietDrive")
       if quiet_drive and self.current_alert not in [AudibleAlert.warningSoft, AudibleAlert.warningImmediate]:
         return ret * self.current_volume
 
