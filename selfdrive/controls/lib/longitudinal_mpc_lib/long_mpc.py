@@ -4,7 +4,7 @@ import time
 import numpy as np
 from cereal import log
 from openpilot.common.conversions import Conversions as CV
-from openpilot.common.params import put_nonblocking
+from openpilot.common.params import Params
 from openpilot.common.numpy_fast import clip
 from openpilot.selfdrive.car.toyota.values import ToyotaFlags, TSS2_CAR, RADAR_ACC_CAR
 from openpilot.common.swaglog import cloudlog
@@ -389,6 +389,8 @@ class LongitudinalMpc:
     self.max_a = max_a
 
   def update_TF(self, carstate, personality=log.LongitudinalPersonality.standard):
+    self.params = Params()
+
     if personality==log.LongitudinalPersonality.relaxed:
       op_profile_key = 3
     elif personality==log.LongitudinalPersonality.standard:
@@ -406,13 +408,13 @@ class LongitudinalMpc:
         profile_key = op_profile_key
 
       if profile_key == 1: # No Cut In
-        put_nonblocking('LongitudinalPersonality', str(0))
+        self.params.put_nonblocking("LongitudinalPersonality", str(0))
 
       elif profile_key == 2: # Relaxed
-        put_nonblocking('LongitudinalPersonality', str(1))
+        self.params.put_nonblocking("LongitudinalPersonality", str(1))
 
       elif profile_key == 3: # Let You Cut In
-        put_nonblocking('LongitudinalPersonality', str(2))
+        self.params.put_nonblocking("LongitudinalPersonality", str(2))
 
   def update(self, carstate, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, dynamic_follow=False):
     # t_follow = get_T_FOLLOW(personality)
