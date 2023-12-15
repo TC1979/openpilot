@@ -130,6 +130,3 @@ cdef class Params:
 
   def all_keys(self):
     return self.p.allKeys()
-
-def put_int_nonblocking(key, int val, d=""):
-  threading.Thread(target=lambda: Params(d).put_int(key, val)).start()
