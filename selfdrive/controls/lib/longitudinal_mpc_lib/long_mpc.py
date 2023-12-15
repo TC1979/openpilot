@@ -389,8 +389,6 @@ class LongitudinalMpc:
     self.max_a = max_a
 
   def update_TF(self, carstate, personality=log.LongitudinalPersonality.standard):
-    self.params = Params()
-
     if personality==log.LongitudinalPersonality.relaxed:
       op_profile_key = 3
     elif personality==log.LongitudinalPersonality.standard:
@@ -408,13 +406,13 @@ class LongitudinalMpc:
         profile_key = op_profile_key
 
       if profile_key == 1: # No Cut In
-        self.params.put_nonblocking("LongitudinalPersonality", str(0))
+        Params().put_nonblocking("LongitudinalPersonality", str(0))
 
       elif profile_key == 2: # Relaxed
-        self.params.put_nonblocking("LongitudinalPersonality", str(1))
+        Params().put_nonblocking("LongitudinalPersonality", str(1))
 
       elif profile_key == 3: # Let You Cut In
-        self.params.put_nonblocking("LongitudinalPersonality", str(2))
+        Params().put_nonblocking("LongitudinalPersonality", str(2))
 
   def update(self, carstate, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, dynamic_follow=False):
     # t_follow = get_T_FOLLOW(personality)
