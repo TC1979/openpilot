@@ -1,5 +1,8 @@
 """Install exception handler for process crash."""
+import os
 import sentry_sdk
+import traceback
+from datetime import datetime
 from enum import Enum
 from sentry_sdk.integrations.threading import ThreadingIntegration
 
@@ -17,6 +20,8 @@ class SentryProject(Enum):
   # native project
   SELFDRIVE_NATIVE = "https://3e4b586ed21a4479ad5d85083b639bc6@o33823.ingest.sentry.io/157615"
 
+CRASHES_DIR = '/data/community/crashes/'
+
 
 def report_tombstone(fn: str, message: str, contents: str) -> None:
   cloudlog.error({'tombstone': message})
@@ -29,6 +34,7 @@ def report_tombstone(fn: str, message: str, contents: str) -> None:
 
 
 def capture_exception(*args, **kwargs) -> None:
+  save_exception(traceback.format_exc())
   cloudlog.error("crash", exc_info=kwargs.get('exc_info', 1))
 
   try:
@@ -36,6 +42,33 @@ def capture_exception(*args, **kwargs) -> None:
     sentry_sdk.flush()  # https://github.com/getsentry/sentry-python/issues/291
   except Exception:
     cloudlog.exception("sentry exception")
+
+
+def save_exception(exc_text):
+  if not os.path.exists(CRASHES_DIR):
+    os.makedirs(CRASHES_DIR)
+
+  files = [
+    os.path.join(CRASHES_DIR, datetime.now().strftime('%Y-%m-%d--%H-%M-%S.log')),
+    os.path.join(CRASHES_DIR, 'error.txt')
+  ]
+
+  for file in files:
+    with open(file, 'w') as f:
+      f.write(exc_text)
+
+
+def bind_user(**kwargs) -> None:
+  sentry_sdk.set_user(kwargs)
+  sentry_sdk.flush()
+
+
+def capture_warning(warning_string, serial_id):
+  with sentry_sdk.configure_scope() as scope:
+    scope.fingerprint = [warning_string, serial_id]
+  bind_user(id=serial_id)
+  sentry_sdk.capture_message(warning_string, level='warning')
+  sentry_sdk.flush()
 
 
 def set_tag(key: str, value: str) -> None:
