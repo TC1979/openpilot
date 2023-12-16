@@ -13,7 +13,7 @@ from openpilot.common.retry import retry
 from openpilot.common.swaglog import cloudlog
 
 from openpilot.system import micd
-from common.params import Params
+from openpilot.common.params import Params
 
 SAMPLE_RATE = 48000
 SAMPLE_BUFFER = 4096 # (approx 100ms)
