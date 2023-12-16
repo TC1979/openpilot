@@ -75,6 +75,7 @@ class ManagerProcess(ABC):
   watchdog_max_dt: Optional[int] = None
   watchdog_seen = False
   shutting_down = False
+  always_watchdog = Optional[bool] = False
 
   @abstractmethod
   def prepare(self) -> None:
