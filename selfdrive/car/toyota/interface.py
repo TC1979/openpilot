@@ -275,12 +275,13 @@ class CarInterface(CarInterfaceBase):
     ret.minEnableSpeed = -1. if (stop_and_go or ret.enableGasInterceptor) else MIN_ACC_SPEED
 
     # on stock Toyota this is -2.5
-    ret.stopAccel = -2.5
-
+    ret.stopAccel = -2.0
+    ret.stoppingDecelRate = 0.007
+    
     tune = ret.longitudinalTuning
     tune.kpBP = [0.,]
-    tune.kiBP = [0., 3.]
     tune.kpV = [1.]
+    tune.kiBP = [0., 3.]
     tune.kiV = [.3, 1.]
 
     return ret
