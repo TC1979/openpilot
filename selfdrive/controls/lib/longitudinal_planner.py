@@ -127,13 +127,10 @@ class LongitudinalPlanner:
 
     if self.mpc.mode == 'acc':
       if self.dynamic_follow:
-        print("Dynamic follow accel")
         accel_limits = [get_min_accel(v_ego), get_max_accel_df(v_ego)]
       elif not self.dynamic_follow and self.CP.carName == "toyota":
-        print("Toyota accel")
         accel_limits = [get_min_accel(v_ego), get_max_accel_toyota(v_ego)]
       else:
-        print("Common accel")
         accel_limits = [A_CRUISE_MIN, get_max_accel(v_ego)]
       accel_limits_turns = limit_accel_in_turns(v_ego, sm['carState'].steeringAngleDeg, accel_limits, self.CP)
     else:
