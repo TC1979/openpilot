@@ -1,4 +1,5 @@
 #include "selfdrive/ui/qt/onroad.h"
+#include "selfdrive/ui/qt/screenrecorder/screenrecorder.h"
 
 #include <algorithm>
 #include <chrono>
@@ -321,14 +322,32 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
   main_layout->setMargin(UI_BORDER_SIZE);
   main_layout->setSpacing(0);
 
+  // Neokii screen recorder
+  QGridLayout *top_right_layout = new QGridLayout();
+  top_right_layout->setSpacing(0);
+  recorder_btn = new ScreenRecorder(this);
   experimental_btn = new ExperimentalButton(this);
-  main_layout->addWidget(experimental_btn, 0, Qt::AlignTop | Qt::AlignRight);
+  top_right_layout->addWidget(experimental_btn);
+  top_right_layout->addWidget(recorder_btn);
+
+
+  main_layout->addLayout(top_right_layout, 0);
+  main_layout->setAlignment(top_right_layout, Qt::AlignTop | Qt::AlignRight);
   main_layout->setContentsMargins(0, 60, 0, 0);
 
   map_settings_btn = new MapSettingsButton(this);
   main_layout->addWidget(map_settings_btn, 0, Qt::AlignBottom | Qt::AlignRight);
 
   dm_img = loadPixmap("../assets/img_driver_face.png", {img_size + 5, img_size + 5});
+
+  // Screen recorder
+  QTimer *record_timer = new QTimer(this);
+  connect(record_timer, &QTimer::timeout, this, [this]() {
+    if (this->recorder_btn) {
+      this->recorder_btn->update_screen();
+    }
+  });
+  record_timer->start(1000 / UI_FREQ);
 
   // Driving personalities profiles
   profile_data = {
@@ -1069,8 +1088,12 @@ void AnnotatedCameraWidget::drawLockon(QPainter &painter, const cereal::ModelDat
 }
 
 void AnnotatedCameraWidget::paintGL() {
+}
+
+void AnnotatedCameraWidget::paintEvent(QPaintEvent *event) {
   UIState *s = uiState();
   SubMaster &sm = *(s->sm);
+  QPainter painter(this);
   const double start_draw_t = millis_since_boot();
   const cereal::ModelDataV2::Reader &model = sm["modelV2"].getModelV2();
 
@@ -1113,11 +1136,12 @@ void AnnotatedCameraWidget::paintGL() {
     } else {
       CameraWidget::updateCalibration(DEFAULT_CALIBRATION);
     }
+    painter.beginNativePainting();
     CameraWidget::setFrameId(model.getFrameId());
     CameraWidget::paintGL();
+    painter.endNativePainting();
   }
 
-  QPainter painter(this);
   painter.setRenderHint(QPainter::Antialiasing);
   painter.setPen(Qt::NoPen);
 
