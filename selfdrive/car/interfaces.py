@@ -5,6 +5,7 @@ import tomllib
 from abc import abstractmethod, ABC
 from difflib import SequenceMatcher
 from json import load
+from enum import StrEnum
 from typing import Any, Dict, Optional, Tuple, List, Callable, Union
 
 from cereal import car
@@ -574,7 +575,7 @@ INTERFACE_ATTR_FILE = {
 
 # interface-specific helpers
 
-def get_interface_attr(attr: str, combine_brands: bool = False, ignore_none: bool = False) -> Dict[str, Any]:
+def get_interface_attr(attr: str, combine_brands: bool = False, ignore_none: bool = False) -> Dict[str | StrEnum, Any]:
   # read all the folders in selfdrive/car and return a dict where:
   # - keys are all the car models or brand names
   # - values are attr values from all car folders
