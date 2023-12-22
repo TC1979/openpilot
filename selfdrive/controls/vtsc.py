@@ -11,8 +11,9 @@ from time import time
 from openpilot.common.params import Params
 params = Params()
 
-TARGET_LAT_A = 1.9 # m/s^2
+TARGET_LAT_A = 2.3 # m/s^2
 MIN_TARGET_V = 5 # m/s
+HOLD_TIME = 1.0 # s
 
 class VisionTurnController():
   def __init__(self):
@@ -21,6 +22,7 @@ class VisionTurnController():
     self.last_params_update = 0
     self.enabled = params.get_bool("TurnVisionControl")
     self.v_target = MIN_TARGET_V
+    self.v_target_time = time()
 
 
   @property
@@ -53,10 +55,13 @@ class VisionTurnController():
     max_curve = self.max_pred_lat_acc / (v_ego**2)
 
     # Get the target velocity for the maximum curve
-    if max_curve <= 0:
-      self.v_target = MIN_TARGET_V
-    else:
-      self.v_target = (TARGET_LAT_A / max_curve) ** 0.5
-    self.v_target = max(self.v_target, MIN_TARGET_V)
+    v_target = (TARGET_LAT_A / max_curve) ** 0.5
+    v_target = max(v_target, MIN_TARGET_V)
+
+    # only set if lower than current target or if we are past the hold time
+    if v_target < self.v_target or self.v_target_time + HOLD_TIME < time():
+      self.v_target = v_target
+      self.v_target_time = time()
+
 
 vtsc = VisionTurnController()
