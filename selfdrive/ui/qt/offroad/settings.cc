@@ -621,6 +621,12 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/offroad/icon_acc_change.png",
                                   this));
 
+  toggles.append(new ParamControl("SpeedLimitControl",
+                                  tr("Speed Limit Control"),
+                                  tr("Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav & mapd information."),
+                                  "../assets/img_experimental_white.svg",
+                                  this));
+
   toggles.append(new ParamControl("dp_jetson",
                                   tr("Enable Jetson Support"),
                                   tr("Enable this option if you intend to run dp on Nvidia Jetson. Reboot required."),

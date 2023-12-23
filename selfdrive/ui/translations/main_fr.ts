@@ -1196,6 +1196,14 @@ Enabled: Short and Long = 5.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Speed Limit Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav & mapd information.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Enable Jetson Support</source>
         <translation type="unfinished"></translation>
     </message>

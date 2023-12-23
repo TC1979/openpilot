@@ -228,6 +228,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"NNFF", PERSISTENT},
     {"NudgelessLaneChange", PERSISTENT},
     // PFEIFER - SLC {{
+    {"SpeedLimitControl", PERSISTENT},
     {"NavSpeedLimitControl", PERSISTENT},
     {"MapSpeedLimitControl", PERSISTENT},
     {"CarSpeedLimitControl", PERSISTENT},
