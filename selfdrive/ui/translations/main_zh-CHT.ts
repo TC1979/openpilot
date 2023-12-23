@@ -1163,7 +1163,7 @@ Enabled: Short and Long = 5.</source>
         <translation>導航地圖速限控制</translation>
     </message>
     <message>
-        <source>Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav & mapd information.</source>
+        <source>Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav and mapd information.</source>
         <translation>啟用導航地圖速限控制。啟用後，openpilot 的速度上限將調整至導航地圖資訊所提供的速度限制。</translation>
     </message>
     <message>

@@ -623,7 +623,7 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
 
   toggles.append(new ParamControl("SpeedLimitControl",
                                   tr("Speed Limit Control"),
-                                  tr("Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav & mapd information."),
+                                  tr("Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav and mapd information."),
                                   "../assets/img_experimental_white.svg",
                                   this));
 

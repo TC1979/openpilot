@@ -1156,7 +1156,7 @@ Enabled: Short and Long = 5.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav & mapd information.</source>
+        <source>Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav and mapd information.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
