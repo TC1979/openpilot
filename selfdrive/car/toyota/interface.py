@@ -279,8 +279,8 @@ class CarInterface(CarInterfaceBase):
     ret.stoppingDecelRate = 0.3
 
     tune = ret.longitudinalTuning
-    tune.kpBP = [0.,]
-    tune.kpV = [1.]
+    tune.kpBP = [0., 20.]
+    tune.kpV = [1., .7]
     tune.kiBP = [0., 6., 23., 30., 40.]
     tune.kiV = [.3, .2, .1, .005, .001]
 
