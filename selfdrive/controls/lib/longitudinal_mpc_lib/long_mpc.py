@@ -77,7 +77,7 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   elif personality==log.LongitudinalPersonality.standard:
     return 1.3
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 0.8
+    return 0.85
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
@@ -91,8 +91,8 @@ def get_dynamic_follow(v_ego, personality=log.LongitudinalPersonality.standard):
     x_vel =  [0.0,  3.0,  3.01,  8.33,  8.34,  13.89, 13.90,  19.99, 20,    25,   40]
     y_dist = [1.0,  1.2,  1.4,   1.4,   1.4,   1.4,   1.40,   1.40,  1.45,  1.45, 1.5]
   elif personality==log.LongitudinalPersonality.aggressive:
-    x_vel =  [0.0,  3.0,  3.01,  8.33,  8.34,  13.89, 13.90,  19.99, 20,    25,   40]
-    y_dist = [1.0,  1.0,  1.00,  1.00,  1.05,  1.05,   1.05,    1.05,  1.05,  1.11, 1.12]
+    x_vel =  [0.0,  3.00,  8.33,  13.89,  20,    25,   40]
+    y_dist = [1.1,  1.10,  1.00,  0.90,   1.05,  1.11, 1.12]
   else:
     raise NotImplementedError("Dynamic Follow personality not supported")
   return np.interp(v_ego, x_vel, y_dist)
@@ -420,7 +420,7 @@ class LongitudinalMpc:
     t_follow = get_T_FOLLOW(personality) if not dynamic_follow else get_dynamic_follow(v_ego, personality)
     stop_distance = get_STOP_DISTANCE(personality)
     if not (self.CP.flags & ToyotaFlags.SMART_DSU) or dynamic_follow:
-      stop_distance += 0.5
+      stop_distance += 0.75
 
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
