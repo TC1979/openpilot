@@ -90,6 +90,9 @@ class SpeedLimitController:
   def offset_kph(self) -> float:
     return self.offset * CV.MS_TO_KPH
 
+  def desired_speed_limit(self):
+    return self.speed_limit + 1.4 if self.speed_limit else 0
+
   def write_nav_state(self):
     mem_params.put("NavSpeedLimit", json.dumps(self.nav_speed_limit))
     mem_params.put_bool("NavSpeedLimitControl", self.nav_enabled)
