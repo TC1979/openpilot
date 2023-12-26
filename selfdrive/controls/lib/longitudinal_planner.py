@@ -160,8 +160,8 @@ class LongitudinalPlanner:
     accel_limits_turns[1] = max(accel_limits_turns[1], self.a_desired - 0.05)
 
     # PFEIFER - SLC {{
-    carState, controlsStat = sm['carState'], sm['controlsState']
-    enabled = controlsState.enabled
+    carState = sm['carState']
+    enabled = sm['controlsState'].enabled
     if self.params.get_bool("SpeedLimitControl"):
       slc.update_current_max_velocity(v_cruise_kph * CV.KPH_TO_MS, v_ego)
       desired_speed_limit = slc.desired_speed_limit
