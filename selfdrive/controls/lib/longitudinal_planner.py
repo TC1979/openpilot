@@ -165,32 +165,6 @@ class LongitudinalPlanner:
     # PFEIFER - SLC {{
     carState = sm['carState']
     enabled = sm['controlsState'].enabled
-    if self.params.get_bool("SpeedLimitControl"):
-      slc.update_current_max_velocity(v_cruise_kph * CV.KPH_TO_MS, v_ego)
-      self.slc_target = slc.desired_speed_limit()
-
-      # Override SLC upon gas pedal press and reset upon brake/cancel button
-      self.override_slc |= carState.gasPressed
-      self.override_slc &= enabled
-      self.override_slc &= v_ego > self.slc_target
-
-      # Set the max speed to the manual set speed
-      if carState.gasPressed:
-        self.overridden_speed = np.clip(v_ego, self.slc_target, v_cruise)
-
-      self.overridden_speed *= enabled
-
-      # Use the override speed if SLC is being overridden
-      if self.override_slc:
-        self.slc_target = self.overridden_speed
-
-      if self.slc_target == 0:
-        self.slc_target = v_cruise
-    else:
-      self.overriden_speed = 0
-      self.slc_target = v_cruise
-
-    return min(v_cruise, self.slc_target)
     # }} PFEIFER - SLC
     # PFEIFER - VTSC {{
     vtsc.update(prev_accel_constraint, v_ego, sm)
@@ -245,3 +219,31 @@ class LongitudinalPlanner:
     longitudinalPlan.personality = self.personality
 
     pm.send('longitudinalPlan', plan_send)
+
+  def v_cruise_update(self, carState, enabled, v_cruise, v_ego):
+    if self.params.get_bool("SpeedLimitControl"):
+      slc.update_current_max_velocity(v_cruise_kph * CV.KPH_TO_MS, v_ego)
+      self.slc_target = slc.desired_speed_limit()
+
+      # Override SLC upon gas pedal press and reset upon brake/cancel button
+      self.override_slc |= carState.gasPressed
+      self.override_slc &= enabled
+      self.override_slc &= v_ego > self.slc_target
+
+      # Set the max speed to the manual set speed
+      if carState.gasPressed:
+        self.overridden_speed = np.clip(v_ego, self.slc_target, v_cruise)
+
+      self.overridden_speed *= enabled
+
+      # Use the override speed if SLC is being overridden
+      if self.override_slc:
+        self.slc_target = self.overridden_speed
+
+      if self.slc_target == 0:
+        self.slc_target = v_cruise
+    else:
+      self.overriden_speed = 0
+      self.slc_target = v_cruise
+
+    return min(v_cruise, self.slc_target)
