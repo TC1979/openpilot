@@ -229,7 +229,7 @@ class CarController:
       accel_offset = 0.
     if not CS.out.gasPressed:
       pcm_accel_cmd = clip(actuators.accel + accel_offset, self.params.ACCEL_MIN, self.params.ACCEL_MAX)
-    else
+    else:
       pcm_accel_cmd = 0.
 
     # TODO: probably can delete this. CS.pcm_acc_status uses a different signal
