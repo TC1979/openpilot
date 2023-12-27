@@ -86,6 +86,7 @@ class LongitudinalPlanner:
     self.personality = log.LongitudinalPersonality.standard
     self.override_slc = False
     self.overridden_speed = 0
+    self.slc_target = 0
     self.dynamic_follow = False
 
   def read_param(self):
@@ -188,6 +189,8 @@ class LongitudinalPlanner:
     else:
       self.overriden_speed = 0
       self.slc_target = v_cruise
+
+    return min(v_cruise, self.slc_target)
     # }} PFEIFER - SLC
     # PFEIFER - VTSC {{
     vtsc.update(prev_accel_constraint, v_ego, sm)
