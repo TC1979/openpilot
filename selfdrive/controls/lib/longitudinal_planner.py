@@ -162,6 +162,32 @@ class LongitudinalPlanner:
     accel_limits_turns[0] = min(accel_limits_turns[0], self.a_desired + 0.05)
     accel_limits_turns[1] = max(accel_limits_turns[1], self.a_desired - 0.05)
 
+    # PFEIFER - SLC {{
+    carState = sm['carState']
+    enabled = sm['controlsState'].enabled
+
+    if self.params.get_bool("SpeedLimitControl"):
+      slc.update_current_max_velocity(v_cruise_kph * CV.KPH_TO_MS, v_ego)
+      self.slc_target = slc.desired_speed_limit()
+
+      # Override SLC upon gas pedal press and reset upon brake/cancel button
+      self.override_slc |= carState.gasPressed
+      self.override_slc &= enabled
+      self.override_slc &= v_ego > self.slc_target
+
+      # Set the max speed to the manual set speed
+      if carState.gasPressed:
+        self.overridden_speed = np.clip(v_ego, self.slc_target, v_cruise)
+
+      self.overridden_speed *= enabled
+
+      if slc.speed_limit > 0 and self.slc_target < v_cruise:
+        v_cruise = self.slc_target
+
+      # Use the override speed if SLC is being overridden
+      if self.override_slc:
+        v_cruise = self.overridden_speed
+    # }} PFEIFER - SLC
     # PFEIFER - VTSC {{
     vtsc.update(prev_accel_constraint, v_ego, sm)
     if vtsc.active and v_cruise > vtsc.v_target:
@@ -216,36 +242,3 @@ class LongitudinalPlanner:
 
     pm.send('longitudinalPlan', plan_send)
 
-  def v_cruise_update(self, carState, enabled, v_cruise, v_ego, sm):
-    # PFEIFER - SLC {{
-    v_cruise_kph = min(sm['controlsState'].vCruise, V_CRUISE_MAX)
-    carState = sm['carState']
-    enabled = sm['controlsState'].enabled
-
-    if self.params.get_bool("SpeedLimitControl"):
-      slc.update_current_max_velocity(v_cruise_kph * CV.KPH_TO_MS, v_ego)
-      self.slc_target = slc.desired_speed_limit()
-
-      # Override SLC upon gas pedal press and reset upon brake/cancel button
-      self.override_slc |= carState.gasPressed
-      self.override_slc &= enabled
-      self.override_slc &= v_ego > self.slc_target
-
-      # Set the max speed to the manual set speed
-      if carState.gasPressed:
-        self.overridden_speed = np.clip(v_ego, self.slc_target, v_cruise)
-
-      self.overridden_speed *= enabled
-
-      # Use the override speed if SLC is being overridden
-      if self.override_slc:
-        self.slc_target = self.overridden_speed
-
-      if self.slc_target == 0:
-        self.slc_target = v_cruise
-    else:
-      self.overriden_speed = 0
-      self.slc_target = v_cruise
-
-    return min(v_cruise, self.slc_target)
-    # }} PFEIFER - SLC
