@@ -166,7 +166,7 @@ class LongitudinalPlanner:
     enabled = sm['controlsState'].enabled
     if self.params.get_bool("SpeedLimitControl"):
       slc.update_current_max_velocity(v_cruise_kph * CV.KPH_TO_MS, v_ego)
-      desired_speed_limit = slc.desired_speed_limit
+      desired_speed_limit = slc.desired_speed_limit()
 
       # Override SLC upon gas pedal press and reset upon brake/cancel button
       self.override_slc |= carState.gasPressed
