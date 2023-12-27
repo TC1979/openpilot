@@ -281,10 +281,10 @@ class CarInterface(CarInterfaceBase):
     tune = ret.longitudinalTuning
     tune.deadzoneBP = [0., 9.]
     tune.deadzoneV = [.0, .15]
-    tune.kpBP = [0., 20.]
-    tune.kpV = [1., .7]
-    tune.kiBP = [0., .5, 10., 23., 30., 40.]
-    tune.kiV = [.05, .4, .2, .1, .005, .001]
+    tune.kpBP = [0.]
+    tune.kpV = [1.]
+    tune.kiBP = [0., 3.]
+    tune.kiV = [.3, 1.]
 
     return ret
 
