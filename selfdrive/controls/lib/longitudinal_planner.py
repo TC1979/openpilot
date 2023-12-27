@@ -162,10 +162,6 @@ class LongitudinalPlanner:
     accel_limits_turns[0] = min(accel_limits_turns[0], self.a_desired + 0.05)
     accel_limits_turns[1] = max(accel_limits_turns[1], self.a_desired - 0.05)
 
-    # PFEIFER - SLC {{
-    carState = sm['carState']
-    enabled = sm['controlsState'].enabled
-    # }} PFEIFER - SLC
     # PFEIFER - VTSC {{
     vtsc.update(prev_accel_constraint, v_ego, sm)
     if vtsc.active and v_cruise > vtsc.v_target:
@@ -220,7 +216,12 @@ class LongitudinalPlanner:
 
     pm.send('longitudinalPlan', plan_send)
 
-  def v_cruise_update(self, carState, enabled, v_cruise, v_ego):
+  def v_cruise_update(self, carState, enabled, v_cruise, v_ego, sm):
+    # PFEIFER - SLC {{
+    v_cruise_kph = min(sm['controlsState'].vCruise, V_CRUISE_MAX)
+    carState = sm['carState']
+    enabled = sm['controlsState'].enabled
+
     if self.params.get_bool("SpeedLimitControl"):
       slc.update_current_max_velocity(v_cruise_kph * CV.KPH_TO_MS, v_ego)
       self.slc_target = slc.desired_speed_limit()
@@ -247,3 +248,4 @@ class LongitudinalPlanner:
       self.slc_target = v_cruise
 
     return min(v_cruise, self.slc_target)
+    # }} PFEIFER - SLC
