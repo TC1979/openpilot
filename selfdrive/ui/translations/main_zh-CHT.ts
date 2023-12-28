@@ -1163,8 +1163,8 @@ Enabled: Short and Long = 5.</source>
         <translation>導航地圖速限控制</translation>
     </message>
     <message>
-        <source>Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav and mapd information.</source>
-        <translation>啟用導航地圖速限控制。啟用後，openpilot 的速度上限將調整至導航地圖資訊所提供的速度限制。</translation>
+        <source>Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav and mapd information. If you press the pedal when the speed limit is activated, the max speed will increase to the manual set speed.</source>
+        <translation>啟用導航地圖速限控制。啟用後，openpilot 的速度上限將調整至導航地圖資訊所提供的速度限制+5公里行駛。如果在速度限制啟動時踩下油門踏板，最高車速將回復到手動設定的速度。</translation>
     </message>
     <message>
         <source>Enable Jetson Support</source>
