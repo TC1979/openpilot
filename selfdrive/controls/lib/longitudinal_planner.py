@@ -241,4 +241,3 @@ class LongitudinalPlanner:
     longitudinalPlan.personality = self.personality
 
     pm.send('longitudinalPlan', plan_send)
-
