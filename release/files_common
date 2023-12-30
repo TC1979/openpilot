@@ -3,7 +3,6 @@ LICENSE
 launch_env.sh
 launch_chffrplus.sh
 launch_openpilot.sh
-force_car_recognition.py
 
 Jenkinsfile
 SConstruct
@@ -136,6 +135,7 @@ selfdrive/controls/controlsd.py
 selfdrive/controls/distance_based_curvature.py
 selfdrive/controls/plannerd.py
 selfdrive/controls/radard.py
+selfdrive/controls/speed_limit_controller.py
 selfdrive/controls/vtsc.py
 selfdrive/controls/lib/__init__.py
 selfdrive/controls/lib/alertmanager.py
@@ -564,6 +564,3 @@ tinygrad_repo/tinygrad/runtime/ops_disk.py
 tinygrad_repo/tinygrad/runtime/ops_gpu.py
 tinygrad_repo/tinygrad/shape/*
 tinygrad_repo/tinygrad/*.py
-selfdrive/controls/speed_limit_controller.py
-selfdrive/controls/vtsc.py
-selfdrive/controls/distance_based_curvature.py
