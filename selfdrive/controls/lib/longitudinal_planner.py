@@ -192,7 +192,7 @@ class LongitudinalPlanner:
           self.slc_target = self.overridden_speed
           self.overridden = True
        else:
-		  self.slc_target = desired_speed_limit
+          self.slc_target = desired_speed_limit
           self.overridden = Fales
     # }} PFEIFER - SLC
     # PFEIFER - VTSC {{
