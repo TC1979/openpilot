@@ -84,7 +84,7 @@ class LongitudinalPlanner:
     self.param_read_counter = 0
     self.read_param()
     self.personality = log.LongitudinalPersonality.standard
-    # self.overridden = False
+    self.overridden = False
     self.override_slc = False
     self.overridden_speed = 0
     self.slc_target = 0
@@ -188,12 +188,12 @@ class LongitudinalPlanner:
           self.slc_target = desired_speed_limit
           v_cruise = self.slc_target
       else:
-       # if not self.overridden:
-        self.slc_target = self.overridden_speed
-          # self.overridden = True
-       # else:
-          # self.slc_target = desired_speed_limit
-          # self.overridden = False
+       if not self.overridden:
+          self.slc_target = self.overridden_speed
+          self.overridden = True
+       else:
+          self.slc_target = desired_speed_limit
+          self.overridden = False
     # }} PFEIFER - SLC
     # PFEIFER - VTSC {{
     vtsc.update(prev_accel_constraint, v_ego, sm)
