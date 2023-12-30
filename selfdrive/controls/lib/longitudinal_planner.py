@@ -84,7 +84,6 @@ class LongitudinalPlanner:
     self.param_read_counter = 0
     self.read_param()
     self.personality = log.LongitudinalPersonality.standard
-    self.overridden = False
     self.override_slc = False
     self.overridden_speed = 0
     self.slc_target = 0
@@ -131,7 +130,6 @@ class LongitudinalPlanner:
 
     # Reset current state when not engaged, or user is controlling the speed
     reset_state = long_control_off if self.CP.openpilotLongitudinalControl else not sm['controlsState'].enabled
-    # reset_state = reset_state or sm['carState'].gasPressed
 
     # No change cost when user is controlling the speed, or when standstill
     prev_accel_constraint = not (reset_state or sm['carState'].standstill)
@@ -188,12 +186,11 @@ class LongitudinalPlanner:
           self.slc_target = desired_speed_limit
           v_cruise = self.slc_target
       else:
-       if not self.overridden:
-          self.slc_target = self.overridden_speed
-          self.overridden = True
-       else:
+        if self.slc_target != desired_speed_limit:
           self.slc_target = desired_speed_limit
-          self.overridden = False
+          v_cruise = self.slc_target
+        else:
+          self.slc_target = self.overridden_speed
     # }} PFEIFER - SLC
     # PFEIFER - VTSC {{
     vtsc.update(prev_accel_constraint, v_ego, sm)
