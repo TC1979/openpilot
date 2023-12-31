@@ -188,7 +188,7 @@ class LongitudinalPlanner:
       else:
         if self.slc_target != desired_speed_limit:
           self.slc_target = desired_speed_limit
-          v_cruise = self.slc_target
+          # v_cruise = self.slc_target
         else:
           self.slc_target = self.overridden_speed
     # }} PFEIFER - SLC
