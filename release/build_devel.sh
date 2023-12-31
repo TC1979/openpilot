@@ -55,10 +55,14 @@ GIT_HASH=$(git --git-dir=$SOURCE_DIR/.git rev-parse HEAD)
 DATETIME=$(date '+%Y-%m-%dT%H:%M:%S')
 TOP_VERSION=$(cat $SOURCE_DIR/common/version.h | awk -F\" '{print $2}')
 
+VERSION=$(date '+%Y.%m.%d')
+echo "#define COMMA_VERSION \"$VERSION\"" > common/version.h
+
 echo "[-] committing version $VERSION T=$SECONDS"
+git commit -a -m "T.O.P v$VERSION release"
 git add -f .
 git status
-git commit -a -m "T.O.P v$VERSION
+git commit --amend -m "T.O.P v$VERSION
 
 version: T.O.P v$TOP_VERSION release
 date: $DATETIME
