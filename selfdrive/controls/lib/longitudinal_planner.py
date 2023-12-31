@@ -85,6 +85,8 @@ class LongitudinalPlanner:
     self.read_param()
     self.personality = log.LongitudinalPersonality.standard
     self.override_slc = False
+    self.overridden = 0
+    self.overridden_prev = 1
     self.overridden_speed = 0
     self.slc_target = 0
     self.dynamic_follow = False
@@ -177,7 +179,12 @@ class LongitudinalPlanner:
 
       # Set the max speed to the manual set speed
       if carState.gasPressed:
-        self.overridden_speed = np.clip(v_ego, desired_speed_limit, v_cruise)
+        if self.overridden != self.overridden_prev
+          self.overridden_speed = np.clip(v_ego, desired_speed_limit, v_cruise)
+          self.overridden_prev = self.overridden
+        else:
+          self.overridden_speed = desired_speed_limit
+          self.overridden_prev = 1
       self.overridden_speed *= enabled
 
       # Use the speed limit if its not being overridden
@@ -186,11 +193,7 @@ class LongitudinalPlanner:
           self.slc_target = desired_speed_limit
           v_cruise = self.slc_target
       else:
-        if self.slc_target != desired_speed_limit:
-          self.slc_target = desired_speed_limit
-          # v_cruise = self.slc_target
-        else:
-          self.slc_target = self.overridden_speed
+        self.slc_target = self.overridden_speed
     # }} PFEIFER - SLC
     # PFEIFER - VTSC {{
     vtsc.update(prev_accel_constraint, v_ego, sm)
