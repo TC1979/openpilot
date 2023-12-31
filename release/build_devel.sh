@@ -53,15 +53,16 @@ rm -f panda/board/obj/panda.bin.signed
 # include source commit hash and build date in commit
 GIT_HASH=$(git --git-dir=$SOURCE_DIR/.git rev-parse HEAD)
 DATETIME=$(date '+%Y-%m-%dT%H:%M:%S')
-VERSION=$(cat $SOURCE_DIR/common/version.h | awk -F\" '{print $2}')
+TOP_VERSION=$(cat $SOURCE_DIR/common/version.h | awk -F\" '{print $2}')
 
 echo "[-] committing version $VERSION T=$SECONDS"
 git add -f .
 git status
-git commit -a -m "openpilot v$VERSION release
+git commit -a -m "T.O.P v$VERSION
 
+version: T.O.P v$TOP_VERSION release
 date: $DATETIME
-master commit: $GIT_HASH
+top-dev(priv) master commit: $GIT_HASH
 "
 
 # ensure files are within GitHub's limit
