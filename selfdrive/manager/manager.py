@@ -70,7 +70,6 @@ def manager_init() -> None:
     ("NudgelessLaneChange", "0"),
     ("NNFF", "0"),
     ("opwebd", "1"),
-    ("pf_mapd", "1"),
     ("PrimeAd", "1"),
     ("ReverseAccChange", "1"),
     ("TimSignals", "1"),
@@ -180,8 +179,6 @@ def manager_thread() -> None:
   ignore += [x for x in os.getenv("BLOCK", "").split(",") if len(x) > 0]
   if not params.get_bool("opwebd"):
     ignore += ["opwebd"]
-  if not params.get_bool("pf_mapd"):
-    ignore += ["mapd"]
 
   sm = messaging.SubMaster(['deviceState', 'carParams'], poll=['deviceState'])
   pm = messaging.PubMaster(['managerState'])
