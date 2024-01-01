@@ -246,7 +246,6 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"PrimeAd", PERSISTENT},
     {"ReverseAccChange", PERSISTENT},
     {"TimSignals", PERSISTENT},
-    {"OSM", PERSISTENT},
     {"TogglesUpdated", CLEAR_ON_MANAGER_START | CLEAR_ON_OFFROAD_TRANSITION},
     {"topsng", PERSISTENT},
     {"toyotaautolock", PERSISTENT},
