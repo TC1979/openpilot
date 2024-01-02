@@ -5,8 +5,6 @@ from openpilot.common.params import Params
 from openpilot.system.hardware import PC, TICI
 from openpilot.selfdrive.manager.process import PythonProcess, NativeProcess, DaemonProcess
 
-params_memory = Params("/dev/shm/params")
-
 WEBCAM = os.getenv("USE_WEBCAM") is not None
 
 def driverview(started: bool, params: Params, CP: car.CarParams) -> bool:
@@ -42,9 +40,6 @@ def only_onroad(started: bool, params, CP: car.CarParams) -> bool:
 
 def only_offroad(started, params, CP: car.CarParams) -> bool:
   return not started
-
-def osm(started, params, CP: car.CarParams) -> bool:
-  return params_memory.get_bool("OSM")
 
 procs = [
   DaemonProcess("manage_athenad", "selfdrive.athena.manage_athenad", "AthenadPid"),
@@ -88,7 +83,7 @@ procs = [
   PythonProcess("statsd", "selfdrive.statsd", always_run),
 
   PythonProcess("otisserv", "selfdrive.navd.otisserv", always_run),
-  PythonProcess("mapd", "selfdrive.mapd", osm),
+  PythonProcess("mapd", "selfdrive.mapd", always_run),
   PythonProcess("opwebd", "system.fleetmanager.fleet_manager", only_offroad, sigkill=True),
 
   # debug procs
