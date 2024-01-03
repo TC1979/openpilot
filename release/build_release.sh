@@ -23,8 +23,8 @@ mkdir -p $BUILD_DIR
 cd $BUILD_DIR
 git init
 source /data/identity.sh
-git remote add origin git@github.com:tt921/openpilot.git
-git checkout --orphan $RELEASE_BRANCH
+git remote add origin https://github.com/tt921/openpilot.git
+git fetch origin $RELEASE_BRANCH
 
 # do the files copy
 echo "[-] copying files T=$SECONDS"
