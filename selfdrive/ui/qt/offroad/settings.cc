@@ -605,7 +605,7 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
 
   toggles.append(new ParamControl("AleSato_AutomaticBrakeHold",
                                   tr("Automatic Brake Hold"),
-                                  tr("Activates the car's brakes after 3 seconds stopped. (Only support on Toyota TSS2)"),
+                                  tr("Activates the car's brakes after 0.4 seconds stopped. (Only support on Toyota TSS2)"),
                                   "../assets/offroad/icon_road.png",
                                   this));
 

@@ -402,8 +402,8 @@
         <translation>觀看或下載comma設備的行車記錄影像</translation>
     </message>
     <message>
-        <source>Connect your smartphone and comma device to the same Wi-Fi network</source>
-        <translation>請先將您的手機和comma裝置連接到同一個 Wi-Fi 網路上</translation>
+        <source>Connect your smartphone and comma device to the same Wi-Fi network and disconnect from the car's CAN signal</source>
+        <translation>請先將您的手機和comma裝置連接到同一個 Wi-Fi 網路上，並且與車子的CAN訊號斷開</translation>
     </message>
     <message>
         <source>Scan the QR code on the right</source>
@@ -1135,8 +1135,8 @@ Speed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above
         <translation>自動煞停維持</translation>
     </message>
     <message>
-        <source>Activates the car&apos;s brakes after 3 seconds stopped. (Only support on Toyota TSS2)</source>
-        <translation>踩煞車踏板3秒後，啟動自動煞停維持功能。(僅適用於 Toyota TSS2 車款)</translation>
+        <source>Activates the car&apos;s brakes after 0.4 seconds stopped. (Only support on Toyota TSS2)</source>
+        <translation>踩煞車踏板0.4秒後，啟動自動煞停維持功能。(僅適用於 Toyota TSS2 車款)</translation>
     </message>
     <message>
         <source>Fix Toyota BSM Signal</source>

@@ -198,7 +198,7 @@ MyFootagePopup::MyFootagePopup(QWidget *parent) : DialogBase(parent) {
         <li style='margin-bottom: 50px;'>%1</li>
         <li style='margin-bottom: 50px;'>%2</li>
       </ol>
-    )").arg(tr("Connect your smartphone and comma device to the same Wi-Fi network"))
+    )").arg(tr("Connect your smartphone and comma device to the same Wi-Fi network and disconnect from the car's CAN signal"))
     .arg(tr("Scan the QR code on the right")), this);
 
     instructions->setStyleSheet("font-size: 47px; font-weight: bold; color: black;");
