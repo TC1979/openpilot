@@ -30,7 +30,7 @@ A_CRUISE_MIN_BP =   [0.,     0.2,   5.0,    28.,   42.]
 A_CRUISE_MAX_VALS_DF =     [1.5, 2.4, 2.4, 2.4, 1.45, 1.05, .78, .58, .34, .092]  # Sets the limits of the planner accel, PID may exceed
 A_CRUISE_MAX_BP_DF =       [0.,  0.5, 6.,  8.,  11., 15.,   20., 25., 30., 55.]
 # A_CRUISE_MAX_VALS_TOYOTA = [2.0, 1.68, 1.55, 1.25, 1.05, 0.75, 0.58, 0.4,  0.31, 0.11]  # Sets the limits of the planner accel, PID may exceed
-A_CRUISE_MAX_VALS_TOYOTA =   [2.0, 1.68, 1.55, 1.3,  1.15, 0.92, 0.72, 0.52, 0.34, 0.11]  # Sets the limits of the planner accel, PID may exceed
+A_CRUISE_MAX_VALS_TOYOTA =   [2.0, 1.68, 1.58, 1.3,  1.15, 0.92, 0.72, 0.52, 0.34, 0.11]  # Sets the limits of the planner accel, PID may exceed
 # CRUISE_MAX_BP in kmh =     [0.,  10,   20,   30,   40,   53,   72,   90,   107,  150]
 A_CRUISE_MAX_BP_TOYOTA =     [0.,  3,    6.,   8.,   11.,  15.,  20.,  25.,  30.,  55.]
 
@@ -85,10 +85,9 @@ class LongitudinalPlanner:
     self.read_param()
     self.personality = log.LongitudinalPersonality.standard
     self.override_slc = False
-    self.overridden = 0
-    self.overridden_prev = 1
     self.overridden_speed = 0
     self.slc_target = 0
+    self.toggle_state = False
     self.dynamic_follow = False
 
   def read_param(self):
@@ -173,18 +172,15 @@ class LongitudinalPlanner:
       desired_speed_limit = slc.speed_limit + 1.5 + v_ego_diff
 
       # Override SLC upon gas pedal press and reset upon brake/cancel button
+      if carState.gasPressed and not self.override_slc:
+        self.toggle_state = not self.toggle_state
       self.override_slc |= carState.gasPressed
       self.override_slc &= enabled
       self.override_slc &= v_ego > desired_speed_limit
 
       # Set the max speed to the manual set speed
       if carState.gasPressed:
-        if self.overridden != self.overridden_prev:
-          self.overridden_speed = np.clip(v_ego, desired_speed_limit, v_cruise)
-          self.overridden_prev = self.overridden
-        else:
-          self.overridden_speed = desired_speed_limit
-          self.overridden_prev = 1
+        self.overridden_speed = np.clip(v_ego, desired_speed_limit, v_cruise)
       self.overridden_speed *= enabled
 
       # Use the speed limit if its not being overridden
@@ -193,7 +189,10 @@ class LongitudinalPlanner:
           self.slc_target = desired_speed_limit
           v_cruise = self.slc_target
       else:
-        self.slc_target = self.overridden_speed
+        if self.toggle_state:
+          self.slc_target = self.overridden_speed
+        else:
+          self.slc_target = desired_speed_limit
     # }} PFEIFER - SLC
     # PFEIFER - VTSC {{
     vtsc.update(prev_accel_constraint, v_ego, sm)
