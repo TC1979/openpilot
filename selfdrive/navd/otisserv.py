@@ -22,15 +22,14 @@
 # THE SOFTWARE.
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from cgi import parse_header
+from cgi import parse_header, parse_multipart
 from urllib.parse import parse_qs, unquote
 import json
 import requests
 import math
 from openpilot.common.basedir import BASEDIR
 from openpilot.common.params import Params
-from openpilot.common.realtime import set_core_affinity
-from openpilot.common.swaglog import cloudlog
+from openpilot.common.i18n import supported_languages
 params = Params()
 
 hostName = ""
@@ -201,8 +200,20 @@ class OtisServ(BaseHTTPRequestHandler):
         name = postvars.get("name")[0] if postvars.get("name") is not None else ""
         if use_amap:
           lng, lat = self.gcj02towgs84(lng, lat)
+        params.put("NavDestination", "{\"latitude\": %f, \"longitude\": %f, \"place_name\": \"%s\"}" % (lat, lng, name))
+        self.to_json(lat, lng, save_type, name)
+
+    if postvars is not None:
+      latitude_value = postvars.get("latitude")
+      longitude_value = postvars.get("longitude")
+      if latitude_value is not None and latitude_value != "" and longitude_value is not None and longitude_value != "":
+        lat = float(latitude_value)
+        lng = float(longitude_value)
+        save_type = "recent"
+        name = postvars.get("place_name", [""])
         params.put('NavDestination', "{\"latitude\": %f, \"longitude\": %f, \"place_name\": \"%s\"}" % (lat, lng, name))
         self.to_json(lat, lng, save_type, name)
+
       # favorites
       if not use_gmap and "fav_val" in postvars:
         addr = postvars.get("fav_val")[0]
@@ -331,7 +342,22 @@ class OtisServ(BaseHTTPRequestHandler):
     if last_pos is not None and last_pos != "":
       l = json.loads(last_pos)
       return l["longitude"], l["latitude"]
-    return "", ""
+    else:
+      locale = params.get("LanguageSetting", encoding='utf8')
+      if locale == "zh-TW":
+        return "121.3149803", "24.996256935"
+    return "-117.1662042", "32.7207742"
+
+  def get_lang(self):
+    lang = params.get("LanguageSetting", encoding='utf8')
+    try:
+      if lang is not None:
+        lang = supported_languages[lang.strip()]
+      else:
+        lang = "en-US"
+    except KeyError:
+      lang = "en-US"
+    return lang
 
   def display_page_gmap_key(self):
     self.wfile.write(bytes(self.get_parsed_template("body", {"{{content}}": self.get_parsed_template("gmap/key_input")}), "utf-8"))
@@ -361,14 +387,12 @@ class OtisServ(BaseHTTPRequestHandler):
     self.wfile.write(bytes(self.get_parsed_template("body", {"{{content}}": content }), "utf-8"))
 
   def display_page_gmap(self):
-    self.wfile.write(bytes(self.get_parsed_template("gmap/index.html", {"{{gmap_key}}": self.get_gmap_key()}), "utf-8"))
+    self.wfile.write(bytes(self.get_parsed_template("gmap/index.html", {"{{gmap_key}}": self.get_gmap_key(), "{{language}}": self.get_lang()}), "utf-8"))
 
   def display_page_amap(self):
     self.wfile.write(bytes(self.get_parsed_template("amap/index.html", {"{{amap_key}}": self.get_amap_key(), "{{amap_key_2}}": self.get_amap_key_2()}), "utf-8"))
 
-  def get_parsed_template(self, name, replace=None):
-    if replace is None:
-        replace = {}
+  def get_parsed_template(self, name, replace = {}):
     f = open('%s/selfdrive/navd/tpl/%s.tpl' % (BASEDIR, name), mode='r', encoding='utf-8')
     content = f.read()
     for key in replace:
@@ -443,16 +467,16 @@ class OtisServ(BaseHTTPRequestHandler):
     ret += (150.0 * math.sin(lng / 12.0 * pi) + 300.0 * math.sin(lng / 30.0 * pi)) * 2.0 / 3.0
     return ret
 
-  def to_json(self, lat, lng, dest_type = "recent", name = ""):
+  def to_json(self, lat, lng, type = "recent", name = ""):
     if name == "":
       name =  str(lat) + "," + str(lng)
     new_dest = {"latitude": float(lat), "longitude": float(lng), "place_name": name}
 
-    if dest_type == "recent":
+    if type == "recent":
       new_dest["save_type"] = "recent"
     else:
       new_dest["save_type"] = "favorite"
-      new_dest["label"] = dest_type
+      new_dest["label"] = type
 
     val = params.get("ApiCache_NavDestinations", encoding='utf8')
     if val is not None:
@@ -469,25 +493,21 @@ class OtisServ(BaseHTTPRequestHandler):
         type_label_ids["recent"].append(idx)
       idx += 1
 
-    if dest_type == "recent":
-      id_ = None
+    if type == "recent":
+      id = None
       if len(type_label_ids["recent"]) > 10:
         dests.pop(type_label_ids["recent"][-1])
     else:
-      id_ = type_label_ids[dest_type]
+      id = type_label_ids[type]
 
-    if id_ is None:
+    if id is None:
       dests.insert(0, new_dest)
     else:
-      dests[id_] = new_dest
+      dests[id] = new_dest
 
     params.put("ApiCache_NavDestinations", json.dumps(dests).rstrip("\n\r"))
 
 def main():
-  try:
-    set_core_affinity([0, 1, 2, 3])
-  except Exception:
-    cloudlog.exception("otisserv: failed to set core affinity")
   webServer = HTTPServer((hostName, serverPort), OtisServ)
 
   try:
