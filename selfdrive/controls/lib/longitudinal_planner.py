@@ -193,6 +193,7 @@ class LongitudinalPlanner:
           self.slc_target = self.overridden_speed
         else:
           self.slc_target = desired_speed_limit
+          v_cruise = self.slc_target
     # }} PFEIFER - SLC
     # PFEIFER - VTSC {{
     vtsc.update(prev_accel_constraint, v_ego, sm)
