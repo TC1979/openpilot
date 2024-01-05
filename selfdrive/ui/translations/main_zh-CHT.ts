@@ -1195,9 +1195,9 @@ Toyota/Lexus：按下 ECO 按鈕。
         <translation>使用 Google 地圖搜尋目的地</translation>
     </message>
     <message>
-        <source>This will allow you to search destination in google map api.
+        <source>This will allow you to search destination in google map api. Before turning on this function, please confirm that you have entered the mapbox token and completed the reboot.
 You will need to apply your own google map api key. Enter your key detail in web interface once to enable.</source>
-        <translation>這將允許您以 google 地圖 api 搜尋目的地。
+        <translation>這將允許您以 google 地圖 api 搜尋目的地。在開啟這個功能前，請先確認您已輸入 Mapbox 身分驗證並完成重新開機。
 您將需要應用自己的 google 地圖 api 密鑰。在網路界面中輸入您的密鑰詳細訊息。</translation>
     </message>
     <message>

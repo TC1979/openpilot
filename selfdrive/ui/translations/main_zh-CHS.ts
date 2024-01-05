@@ -1188,7 +1188,7 @@ Other makes: Double tapping the screen.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This will allow you to search destination in google map api.
+        <source>This will allow you to search destination in google map api. Before turning on this function, please confirm that you have entered the mapbox token and completed the reboot.
 You will need to apply your own google map api key. Enter your key detail in web interface once to enable.</source>
         <translation type="unfinished"></translation>
     </message>
