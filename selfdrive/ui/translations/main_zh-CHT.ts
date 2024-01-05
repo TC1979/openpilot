@@ -402,7 +402,7 @@
         <translation>觀看或下載comma設備的行車記錄影像</translation>
     </message>
     <message>
-        <source>Connect your smartphone and comma device to the same Wi-Fi network and disconnect from the car's CAN signal</source>
+        <source>Connect your smartphone and comma device to the same Wi-Fi network and disconnect from the car&apos;s CAN signal</source>
         <translation>請先將您的手機和comma裝置連接到同一個 Wi-Fi 網路上，並且與車子的CAN訊號斷開</translation>
     </message>
     <message>

@@ -402,7 +402,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Connect your smartphone and comma device to the same Wi-Fi network and disconnect from the car's CAN signal</source>
+        <source>Connect your smartphone and comma device to the same Wi-Fi network and disconnect from the car&apos;s CAN signal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
