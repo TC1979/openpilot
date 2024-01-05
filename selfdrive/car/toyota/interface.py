@@ -281,6 +281,9 @@ class CarInterface(CarInterfaceBase):
     tune = ret.longitudinalTuning
     tune.deadzoneBP = [0., 9.]
     tune.deadzoneV = [.0, .15]
+    if candidate in TSS2_CAR:
+      ret.vEgoStopping = 0.25
+      ret.vEgoStarting = 0.25
     tune.kpBP = [0., 8,  16]
     tune.kpV = [1.5, 2.0, 1.]
     tune.kiBP = [0., 1., 3.]
