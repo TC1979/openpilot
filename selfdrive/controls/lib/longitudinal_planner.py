@@ -177,7 +177,7 @@ class LongitudinalPlanner:
         self.use_overridden_speed = not self.use_overridden_speed
       else:
         self.override_slc = False
-
+      # self.override_slc |= carState.gasPressed
       self.override_slc &= enabled
       self.override_slc &= v_ego > desired_speed_limit
 
@@ -191,10 +191,8 @@ class LongitudinalPlanner:
         if slc.speed_limit > 0 and desired_speed_limit < v_cruise:
           self.slc_target = desired_speed_limit
           v_cruise = self.slc_target
-      elif self.use_overridden_speed:
-        self.slc_target = self.overridden_speed
       else:
-        self.slc_target = desired_speed_limit
+        self.slc_target = self.overridden_speed
     # }} PFEIFER - SLC
     # PFEIFER - VTSC {{
     vtsc.update(prev_accel_constraint, v_ego, sm)
