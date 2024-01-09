@@ -88,7 +88,6 @@ class LongitudinalPlanner:
     self.override_slc = False
     self.overridden_speed = 0
     self.slc_target = 0
-    self.use_overridden_speed = False
     self.dynamic_follow = False
 
   def read_param(self):
@@ -175,16 +174,14 @@ class LongitudinalPlanner:
       # Override SLC upon gas pedal press and reset upon brake/cancel button
       if carState.gasPressed and not self.override_slc:
         self.override_slc = True
-        self.use_overridden_speed = not self.use_overridden_speed
+      # Set the max speed to the manual set speed
+        self.overridden_speed = np.clip(v_ego, desired_speed_limit, v_cruise)
       else:
         self.override_slc = False
       # self.override_slc |= carState.gasPressed
       self.override_slc &= enabled
       self.override_slc &= v_ego > desired_speed_limit
 
-      # Set the max speed to the manual set speed
-      if self.override_slc and self.use_overridden_speed:
-        self.overridden_speed = np.clip(v_ego, desired_speed_limit, v_cruise)
       self.overridden_speed *= enabled
 
       # Use the speed limit if its not being overridden
