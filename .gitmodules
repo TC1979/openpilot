@@ -1,12 +1,12 @@
 [submodule "panda"]
   path = panda
-  url = ../../tt921/panda.git
+  url = ../../TC1979/panda.git
 [submodule "opendbc"]
   path = opendbc
-  url = ../../tt921/opendbc.git
+  url = ../../TC1979/opendbc.git
 [submodule "cereal"]
   path = cereal
-  url = ../../tt921/cereal.git
+  url = ../../TC1979/cereal.git
 [submodule "rednose_repo"]
   path = rednose_repo
   url = ../../commaai/rednose.git
