@@ -135,7 +135,7 @@ def get_nn_model_path(car, eps_firmware) -> Tuple[Union[str, None], float]:
     model_path = None
     max_similarity = -1.0
     for f in os.listdir(TORQUE_NN_MODEL_PATH):
-      if f.endswith(".json") and _car in f:
+      if f.endswith(".json") and car in f:
         model = f.replace(".json", "").replace(f"{TORQUE_NN_MODEL_PATH}/","")
         similarity_score = similarity(model, check_model)
         if similarity_score > max_similarity:
