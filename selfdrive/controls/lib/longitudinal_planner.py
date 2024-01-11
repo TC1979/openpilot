@@ -30,7 +30,7 @@ A_CRUISE_MIN_BP =   [0.,     0.2,     5.0,   16.,   28.,   42.]
 A_CRUISE_MAX_VALS_DF =     [1.5, 2.4, 2.4, 2.0, 1.45, 1.05, .78, .58, .38, .11]  # Sets the limits of the planner accel, PID may exceed
 A_CRUISE_MAX_BP_DF =       [0.,  0.5, 6.,  8.,  11., 15.,   20., 25., 30., 55.]
 # A_CRUISE_MAX_VALS_TOYOTA = [2.0, 1.68, 1.58, 1.3,  1.15, 0.92, 0.72, 0.52, 0.34, 0.11]  # Sets the limits of the planner accel, PID may exceed
-A_CRUISE_MAX_VALS_TOYOTA =   [2.0, 1.65, 1.48, 1.25, 1.02, 0.78, 0.64, 0.45, 0.31, 0.11]  # Sets the limits of the planner accel, PID may exceed
+A_CRUISE_MAX_VALS_TOYOTA =   [2.0, 1.65, 1.52, 1.35, 1.15, 0.88, 0.72, 0.52, 0.34, 0.11]  # Sets the limits of the planner accel, PID may exceed
 # CRUISE_MAX_BP in kmh =     [0.,  10,   20,   30,   40,   53,   72,   90,   107,  150]
 A_CRUISE_MAX_BP_TOYOTA =     [0.,  3,    6.,   8.,   11.,  15.,  20.,  25.,  30.,  55.]
 
@@ -86,7 +86,6 @@ class LongitudinalPlanner:
     self.read_param()
     self.personality = log.LongitudinalPersonality.standard
     self.override_slc = False
-    self.overridden = False
     self.overridden_speed = 0
     self.slc_target = 0
     self.dynamic_follow = False
@@ -178,13 +177,8 @@ class LongitudinalPlanner:
       self.override_slc &= v_ego > desired_speed_limit
 
       # Set the max speed to the manual set speed
-      if carState.gasPressed and not self.overridden:
+      if carState.gasPressed:
         self.overridden_speed = np.clip(v_ego, desired_speed_limit, v_cruise)
-        print("User set speed")
-        self.overridden = True
-      else:
-        self.overridden_speed = desired_speed_limit
-        print("Map control speed limit")
       self.overridden_speed *= enabled
 
       # Use the speed limit if its not being overridden
