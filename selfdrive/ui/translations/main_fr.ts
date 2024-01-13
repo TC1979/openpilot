@@ -1109,6 +1109,14 @@ Cela peut prendre jusqu&apos;à une minute.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Dynamic Lane Planner</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enables Dynamic Lane Planner. When enabled openpilot will use a lane planner when there are clear lane lines instead of using the pure end to end lateral plan.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Dynamic Distance Adjustment</source>
         <translation type="unfinished"></translation>
     </message>

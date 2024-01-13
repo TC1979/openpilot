@@ -220,6 +220,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"DistanceBasedCurvature", PERSISTENT},
     {"Distances", PERSISTENT},
     {"DrivingPersonalitiesUIWheel", PERSISTENT},
+    {"DynamicLanePlanner", PERSISTENT},
     {"MapSelected", PERSISTENT},
     {"OSM", PERSISTENT},
     {"OSMDownloadLocations", PERSISTENT},

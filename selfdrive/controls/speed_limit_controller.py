@@ -22,7 +22,6 @@ def distance_to_point(ax, ay, bx, by):
 class SpeedLimitController:
   nav_speed_limit: float = 0 # m/s
   map_speed_limit: float = 0 # m/s
-  #map_advisory_limit: float = 0 # m/s
   next_map_speed_limit: float = 0 # m/s
   next_map_speed_limit_lat: float = 0 # deg
   next_map_speed_limit_lon: float = 0 # deg
@@ -67,8 +66,6 @@ class SpeedLimitController:
       limit = self.nav_speed_limit
     elif self.map_enabled and self.map_speed_limit != 0:
       limit = self.map_speed_limit
-      #if self.map_advisory_limit != 0 and self.map_advisory_limit < limit:
-      #  limit = self.map_advisory_limit
     elif self.car_enabled and self.car_speed_limit != 0:
       limit = self.car_speed_limit
 
@@ -96,7 +93,6 @@ class SpeedLimitController:
 
   def write_map_state(self):
     mem_params.put("MapSpeedLimit", json.dumps(self.map_speed_limit))
-    #mem_params.put("MapAdvisoryLimit", json.dumps(self.map_speed_limit))
     mem_params.put_bool("MapSpeedLimitControl", self.map_enabled)
 
   def write_car_state(self):
@@ -118,15 +114,12 @@ class SpeedLimitController:
       self.next_map_speed_limit = next_map_speed_limit["speedlimit"]
       self.next_map_speed_limit_lat = next_map_speed_limit["latitude"]
       self.next_map_speed_limit_lon = next_map_speed_limit["longitude"]
-    except Exception:
-      pass
+    except: pass
     try:
       position = json.loads(mem_params.get("LastGPSPosition"))
       self.lat = position["latitude"]
       self.lon = position["longitude"]
-    except Exception:
-      pass
-    #self.map_advisory_limit = json.loads(mem_params.get("MapAdvisoryLimit"))
+    except: pass
     self.car_speed_limit = json.loads(mem_params.get("CarSpeedLimit"))
 
     if load_persistent_enabled:

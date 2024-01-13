@@ -6,6 +6,7 @@ import json
 from openpilot.selfdrive.modeld.constants import ModelConstants
 from openpilot.common.params import Params
 mem_params = Params("/dev/shm/params")
+params = Params()
 
 CONTROL_N = 17
 N = 12
@@ -15,6 +16,9 @@ T_IDXS_LST = [index_function(idx, max_val=MAX_T, max_idx=N) for idx in range(N+1
 T_IDXS_MPC = np.array(T_IDXS_LST)
 
 class DistanceBasedCurvature:
+  def __init__(self):
+    self.enabled = params.get_bool("DistanceBasedCurvature")
+
   @property
   def distances(self):
     distances = mem_params.get("Distances")
@@ -40,7 +44,7 @@ class DistanceBasedCurvature:
     distances = self.distances
     distance = np.interp(delay, ModelConstants.T_IDXS[:CONTROL_N], distances)
     distance = max(0.0001, distance)
-    average_curvature_desired = psi / distance if mem_params.get_bool("DistanceBasedCurvature") else psi / (v_ego * delay)
+    average_curvature_desired = (psi / distance).item() if self.enabled else psi / (v_ego * delay)
     return average_curvature_desired
 
 dbc = DistanceBasedCurvature()
