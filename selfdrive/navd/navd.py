@@ -92,8 +92,11 @@ class RouteEngine:
         self.ui_pid = ui_pid[0]
 
     self.update_location()
-    self.recompute_route()
-    self.send_instruction()
+    try:
+      self.recompute_route()
+      self.send_instruction()
+    except Exception:
+      cloudlog.exception("navd.failed_to_compute")
 
   def update_location(self):
     location = self.sm['liveLocationKalman']
@@ -308,7 +311,10 @@ class RouteEngine:
     for i in range(self.step_idx + 1, len(self.route)):
       total_distance_remaining += self.route[i]['distance']
       total_time_remaining += self.route[i]['duration']
-      total_typical_time_remaining += self.route[i]['duration_typical']
+      if self.route[i]['duration_typical'] is None:
+        total_typical_time_remaining += self.route[i]['duration']
+      else:
+        total_typical_time_remaining += self.route[i]['duration_typical']
 
     msg.navInstruction.distanceRemaining = total_distance_remaining
     msg.navInstruction.timeRemaining = total_time_remaining
