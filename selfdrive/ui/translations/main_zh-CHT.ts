@@ -68,23 +68,23 @@
     </message>
     <message>
         <source>Hidden Network</source>
-        <translation type="unfinished"></translation>
+        <translation>隱藏網路</translation>
     </message>
     <message>
         <source>CONNECT</source>
-        <translation type="unfinished">雲端服務</translation>
+        <translation>雲端服務</translation>
     </message>
     <message>
         <source>Enter SSID</source>
-        <translation type="unfinished">輸入 SSID</translation>
+        <translation>輸入 SSID</translation>
     </message>
     <message>
         <source>Enter password</source>
-        <translation type="unfinished">輸入密碼</translation>
+        <translation>輸入密碼</translation>
     </message>
     <message>
         <source>for &quot;%1&quot;</source>
-        <translation type="unfinished">給 &quot;%1&quot;</translation>
+        <translation>給 &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
