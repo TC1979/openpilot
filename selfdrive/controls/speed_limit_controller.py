@@ -114,12 +114,14 @@ class SpeedLimitController:
       self.next_map_speed_limit = next_map_speed_limit["speedlimit"]
       self.next_map_speed_limit_lat = next_map_speed_limit["latitude"]
       self.next_map_speed_limit_lon = next_map_speed_limit["longitude"]
-    except: pass
+    except Exception:
+      pass
     try:
       position = json.loads(mem_params.get("LastGPSPosition"))
       self.lat = position["latitude"]
       self.lon = position["longitude"]
-    except: pass
+    except Exception:
+      pass
     self.car_speed_limit = json.loads(mem_params.get("CarSpeedLimit"))
 
     if load_persistent_enabled:

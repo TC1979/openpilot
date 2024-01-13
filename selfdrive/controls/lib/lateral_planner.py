@@ -3,9 +3,6 @@ from openpilot.selfdrive.controls.lib.drive_helpers import CONTROL_N, MIN_SPEED,
 from openpilot.selfdrive.controls.lib.desire_helper import DesireHelper
 import cereal.messaging as messaging
 from cereal import log
-# PFEIFER - LD {{
-from openpilot.selfdrive.controls.lane_detection import ld
-# }} PFEIFER - LD
 # PFEIFER - DLP {{
 from openpilot.selfdrive.controls.lib.lane_planner import LanePlanner
 # }} PFEIFER - DLP

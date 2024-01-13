@@ -48,7 +48,7 @@ class LanePlanner:
 
     try:
       self.enabled = params.get_bool("DynamicLanePlanner")
-    except:
+    except KeyError:
       self.enabled = False
 
   def use_lane_planner(self, v_ego):
