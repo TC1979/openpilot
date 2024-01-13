@@ -52,10 +52,7 @@ class LateralPlanner:
       self.l_lane_change_prob = desire_state[log.LateralPlan.Desire.laneChangeLeft]
       self.r_lane_change_prob = desire_state[log.LateralPlan.Desire.laneChangeRight]
     lane_change_prob = self.l_lane_change_prob + self.r_lane_change_prob
-    # PFEIFER - LD {{
-    ld.update(md)
-    # }} PFEIFER - LD
-    self.DH.update(sm['carState'], sm['carControl'].latActive, lane_change_prob)
+    self.DH.update(sm['carState'], sm['carControl'].latActive, lane_change_prob, md)
     # PFEIFER - DLP {{
     self.LP.parse_model(md)
     if self.LP.use_lane_planner(v_ego_car):
