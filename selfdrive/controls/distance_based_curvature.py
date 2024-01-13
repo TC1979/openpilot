@@ -6,7 +6,6 @@ import json
 from openpilot.selfdrive.modeld.constants import ModelConstants
 from openpilot.common.params import Params
 mem_params = Params("/dev/shm/params")
-params = Params()
 
 CONTROL_N = 17
 N = 12
@@ -17,7 +16,7 @@ T_IDXS_MPC = np.array(T_IDXS_LST)
 
 class DistanceBasedCurvature:
   def __init__(self):
-    self.enabled = params.get_bool("DistanceBasedCurvature")
+    self.enabled = Params().get_bool("DistanceBasedCurvature")
 
   @property
   def distances(self):
