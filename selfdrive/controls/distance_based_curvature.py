@@ -16,7 +16,7 @@ T_IDXS_MPC = np.array(T_IDXS_LST)
 
 class DistanceBasedCurvature:
   def __init__(self):
-    self.enabled = Params().get_bool("DistanceBasedCurvature")
+    self.enabled = mem_params.get_bool("DistanceBasedCurvature")
 
   @property
   def distances(self):
