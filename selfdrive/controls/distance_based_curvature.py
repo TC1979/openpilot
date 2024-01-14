@@ -43,7 +43,9 @@ class DistanceBasedCurvature:
     distances = self.distances
     distance = np.interp(delay, ModelConstants.T_IDXS[:CONTROL_N], distances)
     distance = max(0.0001, distance)
-    average_curvature_desired = (psi / distance).item() if self.enabled else psi / (v_ego * delay)
+    average_curvature_desired = psi / distance if self.enabled else psi / (v_ego * delay)
+    if isinstance(average_curvature_desired, np.float64):
+      return average_curvature_desired.item()
     return average_curvature_desired
 
 dbc = DistanceBasedCurvature()

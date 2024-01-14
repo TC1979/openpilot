@@ -11,7 +11,7 @@ from time import time
 from openpilot.common.params import Params
 params = Params()
 
-TARGET_LAT_A = 1.9 # m/s^2
+TARGET_LAT_A = 2.3 # m/s^2
 MIN_TARGET_V = 5 # m/s
 
 class VisionTurnController():
