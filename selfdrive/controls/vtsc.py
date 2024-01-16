@@ -41,6 +41,9 @@ class VisionTurnController():
     rate_plan = np.array(np.abs(sm['modelV2'].orientationRate.z))
     vel_plan = np.array(sm['modelV2'].velocity.x)
 
+    if rate_plan.size == 0 or vel_plan.size == 0:
+      return
+
     # get the maximum lat accel from the model
     predicted_lat_accels = rate_plan * vel_plan
     self.max_pred_lat_acc = np.amax(predicted_lat_accels)
@@ -50,7 +53,10 @@ class VisionTurnController():
     max_curve = self.max_pred_lat_acc / (v_ego**2)
 
     # Get the target velocity for the maximum curve
-    self.v_target = (TARGET_LAT_A / max_curve) ** 0.5
+    if max_curve <= 0:
+      self.v_target = MIN_TARGET_V
+    else:
+      self.v_target = (TARGET_LAT_A / max_curve) ** 0.5
     self.v_target = max(self.v_target, MIN_TARGET_V)
 
 vtsc = VisionTurnController()
