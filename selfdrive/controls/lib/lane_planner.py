@@ -11,15 +11,25 @@ from openpilot.common.filter_simple import FirstOrderFilter
 from openpilot.common.numpy_fast import interp
 from openpilot.common.realtime import DT_MDL
 from openpilot.common.params import Params
+from openpilot.selfdrive.controls.lib.lateral_mpc_lib.lat_mpc import LateralMpc, N as LAT_MPC_N
 params = Params()
 
 LaneChangeState = log.LateralPlan.LaneChangeState
 
 TRAJECTORY_SIZE = 33
 
+PATH_COST = 1.0
+LATERAL_MOTION_COST = 0.11
+LATERAL_ACCEL_COST = 0.0
+LATERAL_JERK_COST = 0.04
+# Extreme steering rate is unpleasant, even
+# when it does not cause bad jerk.
+# TODO this cost should be lowered when low
+# speed lateral control is stable on all cars
+STEERING_RATE_COST = 700.0
 
 class LanePlanner:
-  def __init__(self, DH):
+  def __init__(self, DH, CP):
     self.ll_t = np.zeros((TRAJECTORY_SIZE,))
     self.ll_x = np.zeros((TRAJECTORY_SIZE,))
     self.lll_y = np.zeros((TRAJECTORY_SIZE,))
@@ -45,6 +55,18 @@ class LanePlanner:
     self.DH = DH
 
     self.t_idxs = np.arange(TRAJECTORY_SIZE)
+
+    self.path_xyz = np.zeros((TRAJECTORY_SIZE, 3))
+    self.plan_yaw = np.zeros((TRAJECTORY_SIZE,))
+    self.plan_yaw_rate = np.zeros((TRAJECTORY_SIZE,))
+    self.t_idxs = np.arange(TRAJECTORY_SIZE)
+    self.y_pts = np.zeros((TRAJECTORY_SIZE,))
+    self.lat_mpc = LateralMpc()
+    self.reset_mpc(np.zeros(4))
+    self.factor1 = CP.wheelbase - CP.centerToFront
+    self.factor2 = (CP.centerToFront * CP.mass) / (CP.wheelbase * CP.tireStiffnessRear)
+
+    self.using_lane_planner = False
 
     try:
       self.enabled = params.get_bool("DynamicLanePlanner")
@@ -78,9 +100,12 @@ class LanePlanner:
         return False
     return True
 
-  def parse_model(self, md):
+  def update(self, sm, md, v_plan, v_ego_car, v_ego, path_xyz):
+    self.path_xyz = path_xyz
     if len(md.orientation.x) == TRAJECTORY_SIZE:
       self.t_idxs = np.array(md.position.t)
+      self.plan_yaw = np.array(md.orientation.z)
+      self.plan_yaw_rate = np.array(md.orientationRate.z)
 
     lane_lines = md.laneLines
     if len(lane_lines) == 4 and len(lane_lines[0].t) == TRAJECTORY_SIZE:
@@ -99,10 +124,60 @@ class LanePlanner:
       self.l_lane_change_prob = desire_state[log.LateralPlan.Desire.laneChangeLeft]
       self.r_lane_change_prob = desire_state[log.LateralPlan.Desire.laneChangeRight]
 
+    self.using_lane_planner = self.use_lane_planner(v_ego_car)
+    if self.using_lane_planner:
+      self.mpc(sm, v_plan, v_ego)
+
+  def mpc(self, sm, v_plan, v_ego):
+    self.path_xyz = self.get_d_path(v_ego, self.path_xyz)
+    self.lat_mpc.set_weights(PATH_COST, LATERAL_MOTION_COST,
+                             LATERAL_ACCEL_COST, LATERAL_JERK_COST,
+                             STEERING_RATE_COST)
+
+    y_pts = self.path_xyz[:LAT_MPC_N+1, 1]
+    heading_pts = self.plan_yaw[:LAT_MPC_N+1]
+    yaw_rate_pts = self.plan_yaw_rate[:LAT_MPC_N+1]
+    self.y_pts = y_pts
+
+    assert len(y_pts) == LAT_MPC_N + 1
+    assert len(heading_pts) == LAT_MPC_N + 1
+    assert len(yaw_rate_pts) == LAT_MPC_N + 1
+    lateral_factor = np.clip(self.factor1 - (self.factor2 * v_plan**2), 0.0, np.inf)
+    p = np.column_stack([v_plan, lateral_factor])
+    self.lat_mpc.run(self.x0,
+                     p,
+                     y_pts,
+                     heading_pts,
+                     yaw_rate_pts)
+    # init state for next iteration
+    # mpc.u_sol is the desired second derivative of psi given x0 curv state.
+    # with x0[3] = measured_yaw_rate, this would be the actual desired yaw rate.
+    # instead, interpolate x_sol so that x0[3] is the desired yaw rate for lat_control.
+    self.x0[3] = interp(DT_MDL, self.t_idxs[:LAT_MPC_N + 1], self.lat_mpc.x_sol[:, 3])
+
+    #  Check for infeasible MPC solution
+    mpc_nans = np.isnan(self.lat_mpc.x_sol[:, 3]).any()
+    if mpc_nans or self.lat_mpc.solution_status != 0:
+      self.reset_mpc()
+      self.x0[3] = sm['controlsState'].curvature * v_ego
+
+    if self.lat_mpc.cost > 1e6 or mpc_nans:
+      self.solution_invalid_cnt += 1
+    else:
+      self.solution_invalid_cnt = 0
+
   def get_d_path(self, v_ego, path_xyz):
     # Reduce reliance on lanelines that are too far apart or
     # will be in a few seconds
     l_prob, r_prob = self.lll_prob, self.rll_prob
+    width_pts = self.rll_y - self.lll_y
+    prob_mods = []
+    for t_check in (0.0, 1.5, 3.0):
+      width_at_t = interp(t_check * (v_ego + 7), self.ll_x, width_pts)
+      prob_mods.append(interp(width_at_t, [4.0, 5.0], [1.0, 0.0]))
+    mod = min(prob_mods)
+    l_prob *= mod
+    r_prob *= mod
 
     # Reduce reliance on uncertain lanelines
     l_std_mod = interp(self.lll_std, [.15, .3], [1.0, 0.0])
@@ -129,3 +204,12 @@ class LanePlanner:
       lane_path_y_interp = np.interp(self.t_idxs, self.ll_t[safe_idxs], lane_path_y[safe_idxs])
       path_xyz[:,1] = self.d_prob * lane_path_y_interp + (1.0 - self.d_prob) * path_xyz[:,1]
     return path_xyz
+
+  def valid(self):
+    return self.solution_invalid_cnt < 2
+
+  def reset_mpc(self, x0=None):
+    if x0 is None:
+      x0 = np.zeros(4)
+    self.x0 = x0
+    self.lat_mpc.reset(x0=self.x0)
