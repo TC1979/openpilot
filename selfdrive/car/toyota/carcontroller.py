@@ -72,6 +72,8 @@ class CarController:
     self.topsng = Params().get_bool("topsng")
     self.toyota_bsm = Params().get_bool("toyota_bsm")
 
+    self.reset_pcm_compensation = True
+
 
     self.blindspot_debug_enabled_left = False
     self.blindspot_debug_enabled_right = False
@@ -219,15 +221,21 @@ class CarController:
     else:
       interceptor_gas_cmd = 0.
 
+    # Transition Logic
+    if CS.out.gasPressed or not CS.out.cruiseState.enabled:
+      self.reset_pcm_compensation = True
+    if CS.pcm_neutral_force >= 0:
+      self.reset_pcm_compensation = False
+
     # NO_STOP_TIMER_CAR will creep if compensation is applied when stopping or stopped, don't compensate when stopped or stopping
     should_compensate = True
     if self.CP.carFingerprint in NO_STOP_TIMER_CAR and ((CS.out.vEgo <  1e-3 and actuators.accel < 1e-3) or stopping):
       should_compensate = False
-    if CC.longActive and should_compensate:
+    if CC.longActive and should_compensate and not self.reset_pcm_compensation:
       accel_offset = CS.pcm_neutral_force / self.CP.mass
     else:
       accel_offset = 0.
-    if CC.longActive:
+    if not CS.out.gasPressed:
       pcm_accel_cmd = clip(actuators.accel + accel_offset, self.params.ACCEL_MIN, self.params.ACCEL_MAX)
     else:
       pcm_accel_cmd = 0.
@@ -269,7 +277,7 @@ class CarController:
         can_sends.append(toyotacan.create_acc_cancel_command(self.packer))
       elif self.CP.openpilotLongitudinalControl:
         can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, actuators.accel, pcm_cancel_cmd,
-                                                        self.standstill_req, lead, CS.acc_type, fcw_alert, CS.distance_btn, reverse_acc, hud_control.leadVisible))
+                                                        self.standstill_req, lead, CS.acc_type, fcw_alert, CS.distance_btn, reverse_acc, should_compensate))
         self.accel = pcm_accel_cmd
       else:
         can_sends.append(toyotacan.create_accel_command(self.packer, 0, 0, pcm_cancel_cmd, False, lead, CS.acc_type, False, CS.distance_btn, reverse_acc, False))
