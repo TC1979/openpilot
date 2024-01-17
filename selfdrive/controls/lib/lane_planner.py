@@ -65,6 +65,7 @@ class LanePlanner:
     self.reset_mpc(np.zeros(4))
     self.factor1 = CP.wheelbase - CP.centerToFront
     self.factor2 = (CP.centerToFront * CP.mass) / (CP.wheelbase * CP.tireStiffnessRear)
+    self.max_pred_lat_acc = 0.
 
     self.using_lane_planner = False
 
@@ -89,7 +90,6 @@ class LanePlanner:
     # laneless while lane change in progress
     if self.DH.lane_change_state in (LaneChangeState.laneChangeStarting, LaneChangeState.laneChangeFinishing):
       return False
-    # only while lane change is off
     elif self.DH.lane_change_state == LaneChangeState.off:
       # laneline probability too low, we switch to laneless mode
       if (lll_prob + rll_prob) / 2 < 0.3:
@@ -98,10 +98,19 @@ class LanePlanner:
         self.dynamic_lane_profile_status_buffer = False
       if self.dynamic_lane_profile_status_buffer:  # in buffer mode, always laneless
         return False
+
     return True
 
   def update(self, sm, md, v_plan, v_ego_car, v_ego, path_xyz):
     self.path_xyz = path_xyz
+
+    rate_plan = np.array(np.abs(md.orientationRate.z))
+    vel_plan = np.array(md.velocity.x)
+
+    # get the maximum lat accel from the model
+    predicted_lat_accels = rate_plan * vel_plan
+    self.max_pred_lat_acc = float(np.amax(predicted_lat_accels))
+
     if len(md.orientation.x) == TRAJECTORY_SIZE:
       self.t_idxs = np.array(md.position.t)
       self.plan_yaw = np.array(md.orientation.z)
@@ -184,6 +193,11 @@ class LanePlanner:
     r_std_mod = interp(self.rll_std, [.15, .3], [1.0, 0.0])
     l_prob *= l_std_mod
     r_prob *= r_std_mod
+
+    # fade in laneless for curves
+    curve_mod = interp(self.max_pred_lat_acc, [0.5, 2.0], [1.0, 0.15])
+    l_prob *= curve_mod
+    r_prob *= curve_mod
 
     # Find current lanewidth
     self.lane_width_certainty.update(l_prob * r_prob)
