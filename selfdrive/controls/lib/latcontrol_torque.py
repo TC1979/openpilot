@@ -32,7 +32,7 @@ def sign(x):
 LAT_PLAN_MIN_IDX = 5
 def get_lookahead_value(future_vals, current_val):
   if len(future_vals) == 0:
-    return 1
+    return current_val
 
   same_sign_vals = [v for v in future_vals if sign(v) == sign(current_val)]
 
@@ -84,7 +84,6 @@ class LatControlTorque(LatControl):
       self.history_frame_offsets = [history_check_frames[0] - i for i in history_check_frames]
       self.lateral_accel_desired_deque = deque(maxlen=history_check_frames[0])
       self.roll_deque = deque(maxlen=history_check_frames[0])
-      self.error_deque = deque(maxlen=history_check_frames[0])
       self.past_future_len = len(self.past_times) + len(self.nn_future_times)
 
       # Setup adjustable parameters
