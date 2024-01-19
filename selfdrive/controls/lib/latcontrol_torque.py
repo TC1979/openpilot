@@ -30,9 +30,9 @@ def sign(x):
   return 1.0 if x > 0.0 else (-1.0 if x < 0.0 else 0.0)
 
 LAT_PLAN_MIN_IDX = 5
-def get_lookahead_value(future_vals, current_val):
+def get_lookahead_value(future_vals):
   if len(future_vals) == 0:
-    return current_val
+    return 1
 
   same_sign_vals = [v for v in future_vals if sign(v) == sign(current_val)]
 
@@ -84,6 +84,7 @@ class LatControlTorque(LatControl):
       self.history_frame_offsets = [history_check_frames[0] - i for i in history_check_frames]
       self.lateral_accel_desired_deque = deque(maxlen=history_check_frames[0])
       self.roll_deque = deque(maxlen=history_check_frames[0])
+      self.error_deque = deque(maxlen=history_check_frames[0])
       self.past_future_len = len(self.past_times) + len(self.nn_future_times)
 
       # Setup adjustable parameters
@@ -150,7 +151,8 @@ class LatControlTorque(LatControl):
         # prepare "look-ahead" desired lateral jerk
         lookahead = interp(CS.vEgo, self.friction_look_ahead_bp, self.friction_look_ahead_v)
         friction_upper_idx = next((i for i, val in enumerate(ModelConstants.T_IDXS) if val > lookahead), 16)
-        lookahead_curvature_rate = get_lookahead_value(list(lat_plan.curvatureRates)[LAT_PLAN_MIN_IDX:friction_upper_idx], 1.0)
+        desired_curvature_rate = (interp(0.4, ModelConstants.T_IDXS[:CONTROL_N], lat_plan.curvatures) - interp(0.1, ModelConstants.T_IDXS[:CONTROL_N], lat_plan.curvatures)) / 0.3
+        lookahead_curvature_rate = get_lookahead_value(list(lat_plan.curvatureRates)[LAT_PLAN_MIN_IDX:friction_upper_idx], desired_curvature_rate)
         lookahead_lateral_jerk = lookahead_curvature_rate * CS.vEgo**2
 
         # prepare past and future values
