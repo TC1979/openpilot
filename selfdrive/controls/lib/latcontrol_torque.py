@@ -30,7 +30,7 @@ def sign(x):
   return 1.0 if x > 0.0 else (-1.0 if x < 0.0 else 0.0)
 
 LAT_PLAN_MIN_IDX = 5
-def get_lookahead_value(future_vals):
+def get_lookahead_value(future_vals, current_val):
   if len(future_vals) == 0:
     return 1
 
