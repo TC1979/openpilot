@@ -273,6 +273,10 @@ class CarController:
     # we can spam can to cancel the system even if we are using lat only control
     if (self.frame % 3 == 0 and self.CP.openpilotLongitudinalControl) or pcm_cancel_cmd:
       lead = hud_control.leadVisible or CS.out.vEgo < 12.  # at low speed we always assume the lead is present so ACC can be engaged
+      # when stopping, send -2.5 raw acceleration immediately to prevent vehicle from creeping, send compensated accel if there is
+      # a leading vehicle, else send actuators.accel and let pcm figure the rest out
+      accel_raw = -2.5 if stopping else pcm_accel_cmd if hud_control.leadVisible else actuators.accel
+
       reverse_acc = 2 if self._reverse_acc_change else 1
 
       # Lexus IS uses a different cancellation message
