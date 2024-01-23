@@ -133,7 +133,6 @@ common/*.cc
 
 selfdrive/controls/__init__.py
 selfdrive/controls/controlsd.py
-selfdrive/controls/distance_based_curvature.py
 selfdrive/controls/plannerd.py
 selfdrive/controls/radard.py
 selfdrive/controls/speed_limit_controller.py
@@ -144,7 +143,6 @@ selfdrive/controls/lib/alerts_offroad.json
 selfdrive/controls/lib/desire_helper.py
 selfdrive/controls/lib/drive_helpers.py
 selfdrive/controls/lib/events.py
-selfdrive/controls/lib/lane_planner.py
 selfdrive/controls/lib/latcontrol_angle.py
 selfdrive/controls/lib/latcontrol_torque.py
 selfdrive/controls/lib/latcontrol_pid.py

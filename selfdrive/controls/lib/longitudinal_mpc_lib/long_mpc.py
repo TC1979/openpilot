@@ -12,7 +12,6 @@ from openpilot.common.swaglog import cloudlog
 from openpilot.selfdrive.modeld.constants import index_function
 from openpilot.selfdrive.car.interfaces import ACCEL_MIN
 from openpilot.selfdrive.controls.radard import _LEAD_ACCEL_TAU
-from openpilot.selfdrive.controls.distance_based_curvature import dbc
 
 if __name__ == '__main__':  # generating code
   from openpilot.third_party.acados.acados_template import AcadosModel, AcadosOcp, AcadosOcpSolver
@@ -527,7 +526,6 @@ class LongitudinalMpc:
     for i in range(N):
       self.u_sol[i] = self.solver.get(i, 'u')
 
-    dbc.distances = self.x_sol[:,0]
     self.v_solution = self.x_sol[:,1]
     self.a_solution = self.x_sol[:,2]
     self.j_solution = self.u_sol[:,0]

@@ -546,12 +546,6 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/offroad/icon_road.png",
                                   this));
 
-  toggles.append(new ParamControl("DynamicLanePlanner",
-                                  tr("Dynamic Lane Planner"),
-                                  tr("Enables Dynamic Lane Planner. When enabled openpilot will use a lane planner when there are clear lane lines instead of using the pure end to end lateral plan."),
-                                  "../assets/offroad/icon_road.png",
-                                  this));
-
   toggles.append(new ParamControl("Marc_Dynamic_Follow",
                                   tr("Dynamic Distance Adjustment"),
                                   tr("The distance to the lead car will no longer be a fixed reaction time, but will be dynamically adjusted based on the speed of the vehicle. (Fine-tuned by Marc - cgw1968-5779)"),

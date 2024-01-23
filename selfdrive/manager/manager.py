@@ -54,7 +54,6 @@ def manager_init() -> None:
 
     ("AleSato_AutomaticBrakeHold", "0"),
     ("CarModel", ""),
-    ("DistanceBasedCurvature", "1"),
     ("dp_atl", "0"),
     ("dp_jetson", "0"),
     ("dp_nav_gmap_enable", "0"),

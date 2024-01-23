@@ -1101,14 +1101,6 @@ This may take up to a minute.</source>
         <translation>啟用Stop And Go 功能，讓車輛跟車到停並進入auto hold。</translation>
     </message>
     <message>
-        <source>Dynamic Lane Planner</source>
-        <translation>動態線道模式規劃</translation>
-    </message>
-    <message>
-        <source>Enables Dynamic Lane Planner. When enabled openpilot will use a lane planner when there are clear lane lines instead of using the pure end to end lateral plan.</source>
-        <translation>啟用動態線道模式規劃。啟用後，當有清晰的車道線時，openpilot 將使用線道模式規劃，而不是使用純粹的端對端橫向規劃。</translation>
-    </message>
-    <message>
         <source>Dynamic Distance Adjustment</source>
         <translation>動態距離調整</translation>
     </message>
