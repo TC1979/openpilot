@@ -31,7 +31,7 @@ def manager_init() -> None:
   set_time(cloudlog)
 
   # save boot log
-  if not Params().get_bool("dp_jetson"):
+  if not (Params().get_bool("dp_jetson") or Params().get_bool("AleSato_AutomaticBrakeHold")):
     subprocess.call("./bootlog", cwd=os.path.join(BASEDIR, "system/loggerd"))
 
   params = Params()
@@ -167,10 +167,13 @@ def manager_thread() -> None:
   ignore: List[str] = []
   dp_otisserv = params.get_bool("dp_otisserv")
   dp_jetson = params.get_bool("dp_jetson")
+  brake_hold = params.get_bool("AleSato_AutomaticBrakeHold")
   ignore += ['dmonitoringmodeld', 'dmonitoringd'] if dp_jetson else []
   ignore += ['otisserv'] if not dp_otisserv else []
   if dp_jetson:
     ignore += ['logcatd', 'proclogd', 'loggerd', 'logmessaged', 'encoderd', 'uploader']
+  if brake_hold:
+    ignore += ['uploader']
 
   if params.get("DongleId", encoding='utf8') in (None, UNREGISTERED_DONGLE_ID):
     ignore += ["manage_athenad", "uploader"]
