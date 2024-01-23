@@ -1,5 +1,4 @@
 from cereal import car
-from openpilot.common.numpy_fast import interp
 from openpilot.common.conversions import Conversions as CV
 from openpilot.common.params import Params
 from panda import Panda
@@ -28,9 +27,7 @@ class CarInterface(CarInterfaceBase):
   def get_pid_accel_limits(CP, current_speed, cruise_speed):
     if CP.carFingerprint in TSS2_CAR:
       # Allow for higher accel from PID controller at low speeds
-      return CarControllerParams.ACCEL_MIN, interp(current_speed,
-                                                   CarControllerParams.ACCEL_MAX_TSS2_BP,
-                                                   CarControllerParams.ACCEL_MAX_TSS2_VALS)
+      return CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX_PLUS
     else:
       return CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX
 
@@ -275,15 +272,14 @@ class CarInterface(CarInterfaceBase):
     ret.minEnableSpeed = -1. if (stop_and_go or ret.enableGasInterceptor) else MIN_ACC_SPEED
 
     # on stock Toyota this is -2.5
-    ret.stopAccel = -2.0
-    ret.stoppingDecelRate = 0.1
+    ret.stopAccel = -2.5
+    ret.stoppingDecelRate = 0.2
 
     tune = ret.longitudinalTuning
     tune.deadzoneBP = [0., 9.]
     tune.deadzoneV = [.0, .15]
     if candidate in TSS2_CAR:
-      ret.vEgoStopping = 0.1
-      ret.vEgoStarting = 0.1
+      ret.stopAccel = -2.0
       ret.stoppingDecelRate = 0.05  # reach stopping target smoothly
     tune.kpBP = [0.,]
     tune.kiBP = [0., 3.]
