@@ -624,10 +624,6 @@
         <translation>إغلاق</translation>
     </message>
     <message>
-        <source>dashcam</source>
-        <translation>dashcam</translation>
-    </message>
-    <message>
         <source>T.O.P</source>
         <translation type="unfinished"></translation>
     </message>

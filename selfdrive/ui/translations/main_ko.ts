@@ -619,10 +619,6 @@
         <translation>종료</translation>
     </message>
     <message>
-        <source>dashcam</source>
-        <translation>블랙박스</translation>
-    </message>
-    <message>
         <source>T.O.P</source>
         <translation type="unfinished"></translation>
     </message>

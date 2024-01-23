@@ -619,10 +619,6 @@
         <translation>退出</translation>
     </message>
     <message>
-        <source>dashcam</source>
-        <translation>行车记录仪</translation>
-    </message>
-    <message>
         <source>T.O.P</source>
         <translation type="unfinished"></translation>
     </message>

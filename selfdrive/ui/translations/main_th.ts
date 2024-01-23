@@ -619,10 +619,6 @@
         <translation>ปิด</translation>
     </message>
     <message>
-        <source>dashcam</source>
-        <translation>กล้องติดรถยนต์</translation>
-    </message>
-    <message>
         <source>T.O.P</source>
         <translation type="unfinished"></translation>
     </message>

@@ -25,7 +25,7 @@ QString getVersion() {
 }
 
 QString getBrand() {
-  return Params().getBool("Passive") ? QObject::tr("dashcam") : QObject::tr("T.O.P");
+  return QObject::tr("T.O.P");
 }
 
 QString getUserAgent() {
