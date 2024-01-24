@@ -1186,7 +1186,7 @@ You will need to apply your own google map api key. Enter your key detail in web
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Activates the car&apos;s brakes after 0.4 seconds stopped. (Only support on Toyota TSS2)</source>
+        <source>Activates the car&apos;s brakes after 0.3 seconds stopped. (Only support on Toyota TSS2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

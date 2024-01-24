@@ -1151,8 +1151,8 @@ Speed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above
         <translation>自動煞停維持</translation>
     </message>
     <message>
-        <source>Activates the car&apos;s brakes after 0.4 seconds stopped. (Only support on Toyota TSS2)</source>
-        <translation>踩煞車踏板0.4秒後，啟動自動煞停維持功能。(僅適用於 Toyota TSS2 車款)</translation>
+        <source>Activates the car&apos;s brakes after 0.3 seconds stopped. (Only support on Toyota TSS2)</source>
+        <translation>踩煞車踏板0.3秒後，啟動自動煞停維持功能。(僅適用於 Toyota TSS2 車款)</translation>
     </message>
     <message>
         <source>Fix Toyota BSM Signal</source>
