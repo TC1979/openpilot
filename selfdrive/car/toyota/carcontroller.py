@@ -61,7 +61,7 @@ class CarController:
     self.alert_active = False
     self.last_standstill = False
     self.standstill_req = False
-    self.e2e_long = params.get_bool("ExperimentalMode")
+    self.e2e_long = Params().get_bool("ExperimentalMode")
     self.steer_rate_counter = 0
     self.prohibit_neg_calculation = True
     self.prohibit_acceleration = False
