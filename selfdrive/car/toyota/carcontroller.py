@@ -62,11 +62,12 @@ class CarController:
     self.last_standstill = False
     self.standstill_req = False
     self.steer_rate_counter = 0
-    self.prohibit_neg_calculation = True
 
     self.packer = CANPacker(dbc_name)
     self.gas = 0
     self.accel = 0
+
+    self.reset_pcm_compensation = True
 
     self.toyotaautolock = Params().get_bool("toyotaautolock")
     self.toyotaautounlock = Params().get_bool("toyotaautounlock")
@@ -91,7 +92,7 @@ class CarController:
     hud_control = CC.hudControl
     pcm_cancel_cmd = CC.cruiseControl.cancel
     lat_active = CC.latActive and abs(CS.out.steeringTorque) < MAX_USER_TORQUE
-    stopping = actuators.longControlState == LongCtrlState.stopping
+    stopping = actuators.longControlState == LongCtrlState.stopping and not CS.out.gasPressed
 
     # *** control msgs ***
     can_sends = []
@@ -222,23 +223,24 @@ class CarController:
     else:
       interceptor_gas_cmd = 0.
 
-    # prohibit negative compensatory calculations when first activating long after accelerator depression or engagement
-    if not CC.longActive:
-      self.prohibit_neg_calculation = True
+    # PCM compensation Transition Logic (enter only at first positive calculation)
+    if CS.out.gasPressed or not CS.out.cruiseState.enabled:
+      self.reset_pcm_compensation = True
     # don't reset until a reasonable compensatory value is reached
     if CS.pcm_neutral_force > COMPENSATORY_CALCULATION_THRESHOLD * self.CP.mass:
-      self.prohibit_neg_calculation = False
+      self.reset_pcm_compensation = False
+
     # NO_STOP_TIMER_CAR will creep if compensation is applied when stopping or stopped, don't compensate when stopped or stopping
     should_compensate = True
     if (self.CP.carFingerprint in NO_STOP_TIMER_CAR and actuators.accel < 1e-3 or stopping) or CS.out.vEgo < 1e-3:
       should_compensate = False
     # limit minimum to only positive until first positive is reached after engagement, don't calculate when long isn't active
-    if CC.longActive and should_compensate and not self.prohibit_neg_calculation:
+    if CC.longActive and should_compensate and not self.reset_pcm_compensation:
       accel_offset = CS.pcm_neutral_force / self.CP.mass
     else:
       accel_offset = 0.
     # only calculate pcm_accel_cmd when long is active to prevent disengagement from accelerator depression
-    if CC.longActive:
+    if not CS.out.gasPressed:
       if self.CP.carFingerprint in TSS2_CAR:
         pcm_accel_cmd = clip(actuators.accel + accel_offset, self.params.ACCEL_MIN, self.params.ACCEL_MAX_PLUS)
       else:
@@ -280,7 +282,7 @@ class CarController:
       # when stopping, send -2.5 raw acceleration immediately to prevent vehicle from creeping, send compensated accel if there is
       # a leading vehicle, else send actuators.accel and let pcm figure the rest out
       # accel_raw = -2.5 if stopping or (CS.out.vEgo < 0.5 and lead_vehicle_stopped) else actuators.accel
-      accel_raw = -2.5 if stopping else pcm_accel_cmd if hud_control.leadVisible else actuators.accel
+      accel_raw = -2.5 if stopping else actuators.accel if should_compensate else pcm_accel_cmd
 
       reverse_acc = 2 if self._reverse_acc_change else 1
 
