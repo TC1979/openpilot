@@ -61,8 +61,10 @@ class CarController:
     self.alert_active = False
     self.last_standstill = False
     self.standstill_req = False
+    self.e2e_long = params.get_bool("ExperimentalMode")
     self.steer_rate_counter = 0
     self.prohibit_neg_calculation = True
+    self.prohibit_acceleration = False
 
     self.packer = CANPacker(dbc_name)
     self.gas = 0
@@ -222,6 +224,15 @@ class CarController:
     else:
       interceptor_gas_cmd = 0.
 
+    # cydia2020 - LVSTP Logic, 0.5 m/s to give radar some room for error
+    # Lead is never stopped and openpilot is ready to be resumed when using e2e long
+    lead_vehicle_stopped = (hud_control.leadVelocity < 0.3 and hud_control.leadVisible) and not self.e2e_long
+
+    if lead_vehicle_stopped and CS.out.vEgo < 1e-3:
+      self.prohibit_acceleration = True
+    if not lead_vehicle_stopped:
+      self.prohibit_acceleration = False
+
     # prohibit negative compensatory calculations when first activating long after accelerator depression or engagement
     if not CC.longActive:
       self.prohibit_neg_calculation = True
@@ -238,7 +249,9 @@ class CarController:
     else:
       accel_offset = 0.
     # only calculate pcm_accel_cmd when long is active to prevent disengagement from accelerator depression
-    if CC.longActive:
+    if self.prohibit_acceleration:
+      pcm_accel_cmd = -2.5
+    elif CC.longActive:
       if self.CP.carFingerprint in TSS2_CAR:
         pcm_accel_cmd = clip(actuators.accel + accel_offset, self.params.ACCEL_MIN, self.params.ACCEL_MAX_PLUS)
       else:
@@ -272,7 +285,7 @@ class CarController:
     # handle UI messages
     fcw_alert = hud_control.visualAlert == VisualAlert.fcw
     steer_alert = hud_control.visualAlert in (VisualAlert.steerRequired, VisualAlert.ldw)
-    lead_vehicle_stopped = hud_control.leadVelocity < 0.5 and hud_control.leadVisible
+    # lead_vehicle_stopped = hud_control.leadVelocity < 0.5 and hud_control.leadVisible
 
     # we can spam can to cancel the system even if we are using lat only control
     if (self.frame % 3 == 0 and self.CP.openpilotLongitudinalControl) or pcm_cancel_cmd:
