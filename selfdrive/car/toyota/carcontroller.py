@@ -28,7 +28,7 @@ MAX_LTA_ANGLE = 94.9461  # deg
 MAX_LTA_DRIVER_TORQUE_ALLOWANCE = 150  # slightly above steering pressed allows some resistance when changing lanes
 
 # PCM compensatory force calculation threshold
-COMPENSTAORY_CALCULATION_THRESHOLD = -0.25  # m/s^2
+COMPENSATORY_CALCULATION_THRESHOLD = -0.25  # m/s^2
 
 GearShifter = car.CarState.GearShifter
 UNLOCK_CMD = b'\x40\x05\x30\x11\x00\x40\x00\x00'
@@ -237,11 +237,11 @@ class CarController:
     if not CC.longActive:
       self.prohibit_neg_calculation = True
     # don't reset until a reasonable compensatory value is reached
-    if CS.pcm_neutral_force > COMPENSTAORY_CALCULATION_THRESHOLD * self.CP.mass:
+    if CS.pcm_neutral_force > COMPENSATORY_CALCULATION_THRESHOLD * self.CP.mass:
       self.prohibit_neg_calculation = False
     # NO_STOP_TIMER_CAR will creep if compensation is applied when stopping or stopped, don't compensate when stopped or stopping
     should_compensate = True
-    if self.CP.carFingerprint in NO_STOP_TIMER_CAR and ((CS.out.vEgo <  1e-3 and actuators.accel < 1e-3) or stopping):
+    if (self.CP.carFingerprint in NO_STOP_TIMER_CAR and actuators.accel < 1e-3 or stopping) or CS.out.vEgo < 1e-3:
       should_compensate = False
     # limit minimum to only positive until first positive is reached after engagement, don't calculate when long isn't active
     if CC.longActive and should_compensate and not self.prohibit_neg_calculation:
