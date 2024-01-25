@@ -61,10 +61,8 @@ class CarController:
     self.alert_active = False
     self.last_standstill = False
     self.standstill_req = False
-    self.e2e_long = Params().get_bool("ExperimentalMode")
     self.steer_rate_counter = 0
     self.prohibit_neg_calculation = True
-    self.prohibit_acceleration = False
 
     self.packer = CANPacker(dbc_name)
     self.gas = 0
@@ -224,15 +222,6 @@ class CarController:
     else:
       interceptor_gas_cmd = 0.
 
-    # cydia2020 - LVSTP Logic, 0.5 m/s to give radar some room for error
-    # Lead is never stopped and openpilot is ready to be resumed when using e2e long
-    lead_vehicle_stopped = (hud_control.leadVelocity < 0.3 and hud_control.leadVisible) and not self.e2e_long
-
-    if lead_vehicle_stopped and CS.out.vEgo < 1e-3:
-      self.prohibit_acceleration = True
-    if not lead_vehicle_stopped:
-      self.prohibit_acceleration = False
-
     # prohibit negative compensatory calculations when first activating long after accelerator depression or engagement
     if not CC.longActive:
       self.prohibit_neg_calculation = True
@@ -249,9 +238,7 @@ class CarController:
     else:
       accel_offset = 0.
     # only calculate pcm_accel_cmd when long is active to prevent disengagement from accelerator depression
-    if self.prohibit_acceleration:
-      pcm_accel_cmd = -2.5
-    elif CC.longActive:
+    if CC.longActive:
       if self.CP.carFingerprint in TSS2_CAR:
         pcm_accel_cmd = clip(actuators.accel + accel_offset, self.params.ACCEL_MIN, self.params.ACCEL_MAX_PLUS)
       else:
@@ -285,13 +272,15 @@ class CarController:
     # handle UI messages
     fcw_alert = hud_control.visualAlert == VisualAlert.fcw
     steer_alert = hud_control.visualAlert in (VisualAlert.steerRequired, VisualAlert.ldw)
-    # lead_vehicle_stopped = hud_control.leadVelocity < 0.5 and hud_control.leadVisible
+    #lead_vehicle_stopped = hud_control.leadVelocity < 0.5 and hud_control.leadVisible
 
     # we can spam can to cancel the system even if we are using lat only control
     if (self.frame % 3 == 0 and self.CP.openpilotLongitudinalControl) or pcm_cancel_cmd:
       lead = hud_control.leadVisible or CS.out.vEgo < 12.  # at low speed we always assume the lead is present so ACC can be engaged
-      # when stopping, send -2.5 raw acceleration immediately to prevent vehicle from creeping, else send actuators.accel
-      accel_raw = -2.5 if stopping or (CS.out.vEgo < 0.5 and lead_vehicle_stopped) else actuators.accel
+      # when stopping, send -2.5 raw acceleration immediately to prevent vehicle from creeping, send compensated accel if there is
+      # a leading vehicle, else send actuators.accel and let pcm figure the rest out
+      # accel_raw = -2.5 if stopping or (CS.out.vEgo < 0.5 and lead_vehicle_stopped) else actuators.accel
+      accel_raw = -2.5 if stopping else pcm_accel_cmd if hud_control.leadVisible else actuators.accel
 
       reverse_acc = 2 if self._reverse_acc_change else 1
 
@@ -300,10 +289,10 @@ class CarController:
         can_sends.append(toyotacan.create_acc_cancel_command(self.packer))
       elif self.CP.openpilotLongitudinalControl:
         can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, accel_raw, pcm_cancel_cmd,
-                                                        self.standstill_req, lead, CS.acc_type, fcw_alert, CS.distance_btn, reverse_acc, lead_vehicle_stopped))
+                                                        self.standstill_req, lead, CS.acc_type, fcw_alert, CS.distance_btn, reverse_acc))
         self.accel = pcm_accel_cmd
       else:
-        can_sends.append(toyotacan.create_accel_command(self.packer, 0, 0, pcm_cancel_cmd, False, lead, CS.acc_type, False, CS.distance_btn, reverse_acc, False))
+        can_sends.append(toyotacan.create_accel_command(self.packer, 0, 0, pcm_cancel_cmd, False, lead, CS.acc_type, False, CS.distance_btn, reverse_acc))
 
     if self.frame % 2 == 0 and self.CP.enableGasInterceptor and self.CP.openpilotLongitudinalControl:
       # send exactly zero if gas cmd is zero. Interceptor will send the max between read value and gas cmd.
