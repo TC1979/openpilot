@@ -1,8 +1,8 @@
 from openpilot.common.params import Params
-from openpilot.common.conversions import Conversions as CV
+#from openpilot.common.conversions import Conversions as CV
 import json
 import math
-from openpilot.common.numpy_fast import interp
+#from openpilot.common.numpy_fast import interp
 from time import time
 
 mem_params = Params("/dev/shm/params")
@@ -45,11 +45,13 @@ class MapTurnSpeedController:
       position = json.loads(mem_params.get("LastGPSPosition"))
       lat = position["latitude"]
       lon = position["longitude"]
-    except: return 0.0
+    except Exception:
+      return 0.0
 
     try:
       target_velocities = json.loads(mem_params.get("MapTargetVelocities"))
-    except: return 0.0
+    except Exception:
+      return 0.0
 
     min_dist = 1000
     min_idx = 0
