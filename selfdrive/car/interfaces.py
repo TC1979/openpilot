@@ -218,8 +218,9 @@ class CarInterfaceBase(ABC):
   def get_params(cls, candidate: str, fingerprint: Dict[int, Dict[int, int]], car_fw: List[car.CarParams.CarFw], experimental_long: bool, docs: bool):
     ret = CarInterfaceBase.get_std_params(candidate)
     ret = cls._get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs)
-    if Params().get_bool("NNFF") and ret.steerControlType != car.CarParams.SteerControlType.angle:
-      ret = CarInterfaceBase.top_configure_torque_tune(candidate, ret)
+    if ret.steerControlType != car.CarParams.SteerControlType.angle:
+      if Params().get_bool("NNFF"):
+        ret = CarInterfaceBase.top_configure_torque_tune(candidate, ret)
 
     if ret.lateralTuning.which() == 'torque':
       eps_firmware = str(next((fw.fwVersion for fw in car_fw if fw.ecu == "eps"), ""))
