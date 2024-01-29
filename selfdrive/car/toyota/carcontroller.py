@@ -281,7 +281,7 @@ class CarController:
       # when stopping, send -2.5 raw acceleration immediately to prevent vehicle from creeping, send compensated accel if there is
       # a leading vehicle, else send actuators.accel and let pcm figure the rest out
       # accel_raw = -2.5 if stopping or (CS.out.vEgo < 0.5 and lead_vehicle_stopped) else actuators.accel
-      accel_raw = -2.5 if stopping else actuators.accel if should_compensate else pcm_accel_cmd
+      accel_raw = -2.5 if stopping else pcm_accel_cmd if hud_control.leadVisible else actuators.accel
 
       reverse_acc = 2 if self._reverse_acc_change else 1
 
