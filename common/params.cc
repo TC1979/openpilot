@@ -244,7 +244,10 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"toyota_bsm", PERSISTENT},
     {"TurnVisionControl", PERSISTENT},
     {"QuietDrive", PERSISTENT},
-
+    // PFEIFER - MTSC {{
+    {"MapTargetVelocities", PERSISTENT},
+    {"MTSCEnabled", PERSISTENT},
+    // }} PFEIFER - MTSC
     {"dp_otisserv", PERSISTENT},
     {"dp_nav_mapbox_token_pk", PERSISTENT},
     {"dp_nav_mapbox_token_sk", PERSISTENT},
