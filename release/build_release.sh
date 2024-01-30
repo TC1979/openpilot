@@ -10,8 +10,11 @@ BUILD_DIR=/data/openpilot
 SOURCE_DIR="$(git rev-parse --show-toplevel)"
 
 FILES_SRC="release/files_tici"
-RELEASE_BRANCH="release3"
-DEVEL_BRANCH="devel"
+if [ -z "$RELEASE_BRANCH" ]; then
+  echo "RELEASE_BRANCH is not set"
+  exit 1
+fi
+
 
 # set git identity
 source $DIR/identity.sh
@@ -23,8 +26,8 @@ mkdir -p $BUILD_DIR
 cd $BUILD_DIR
 git init
 source /data/identity.sh
-git remote add origin https://github.com/tt921/openpilot.git
-git fetch origin $RELEASE_BRANCH
+git remote add origin git@github.com:tc1979/openpilot.git
+git checkout --orphan $RELEASE_BRANCH
 
 # do the files copy
 echo "[-] copying files T=$SECONDS"
@@ -45,18 +48,12 @@ echo "[-] committing version $VERSION T=$SECONDS"
 git add -f .
 git commit -a -m "T.O.P v$VERSION release"
 
-# ACADOS
-wget https://github.com/acados/tera_renderer/releases/download/v0.0.34/t_renderer-v0.0.34-linux -P /data/openpilot/third_party/acados/x86_64
-strip -s /data/openpilot/third_party/acados/x86_64/t_renderer-v0.0.34-linux -o /data/openpilot/third_party/acados/x86_64/t_renderer
-
-chmod +x /data/openpilot/third_party/acados/x86_64/t_renderer
-
 # Build
 export PYTHONPATH="$BUILD_DIR"
 scons -j$(nproc)
 
 # release panda fw
-# CERT=/data/pandaextra/certs/release RELEASE=1 scons -j$(nproc) panda/
+CERT=panda/certs/release DEBUG=1 scons -j$(nproc) panda/
 
 # Ensure no submodules in release
 if test "$(git submodule--helper list | wc -l)" -gt "0"; then
@@ -104,7 +101,7 @@ top-dev(priv) master commit: $GIT_HASH
 #cp -pR -n --parents $TEST_FILES $BUILD_DIR/
 #cd $BUILD_DIR
 #RELEASE=1 selfdrive/test/test_onroad.py
-##selfdrive/manager/test/test_manager.py
+#selfdrive/manager/test/test_manager.py
 #selfdrive/car/tests/test_car_interfaces.py
 #rm -rf $TEST_FILES
 
