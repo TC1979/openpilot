@@ -1140,11 +1140,19 @@ Speed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enable vision based turn control</source>
+        <source>Vision Based Turn Control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Use vision path predictions to estimate the appropriate speed to drive through turns ahead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Map Turn Speed Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enables M-TSC. When enabled, the car will slow down when it predicts a lateral acceleration greater than 2.0 m/s^2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

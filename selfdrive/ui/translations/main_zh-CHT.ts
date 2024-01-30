@@ -1123,12 +1123,20 @@ Speed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above
 換道速度限制: 一般模式：時速32公里以上, 開啟全時置中功能：時速65公里以上。</translation>
     </message>
     <message>
-        <source>Enable vision based turn control</source>
-        <translation>彎道減速</translation>
+        <source>Vision Based Turn Control</source>
+        <translation>視覺彎道減速</translation>
     </message>
     <message>
         <source>Use vision path predictions to estimate the appropriate speed to drive through turns ahead.</source>
         <translation>使用視覺路徑預測來估算適當的速度，可自動降速以順利通過前方的轉彎。</translation>
+    </message>
+    <message>
+        <source>Map Turn Speed Control</source>
+        <translation>地圖彎道減速</translation>
+    </message>
+    <message>
+        <source>Enables M-TSC. When enabled, the car will slow down when it predicts a lateral acceleration greater than 2.0 m/s^2.</source>
+        <translation>使用地圖資訊預測橫向加速度，當預測大於 2.0 m/s^2 時，汽車將會減速以順利通過前方的轉彎。</translation>
     </message>
     <message>
         <source>Enable Door Auto Lock</source>

@@ -559,8 +559,14 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
                                   this));
 
   toggles.append(new ParamControl("TurnVisionControl",
-                                  tr("Enable vision based turn control"),
+                                  tr("Vision Based Turn Control"),
                                   tr("Use vision path predictions to estimate the appropriate speed to drive through turns ahead."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("MTSCEnabled",
+                                  tr("Map Turn Speed Control"),
+                                  tr("Enables M-TSC. When enabled, the car will slow down when it predicts a lateral acceleration greater than 2.0 m/s^2."),
                                   "../assets/offroad/icon_road.png",
                                   this));
 
