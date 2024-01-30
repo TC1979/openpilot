@@ -10,10 +10,7 @@ BUILD_DIR=/data/openpilot
 SOURCE_DIR="$(git rev-parse --show-toplevel)"
 
 FILES_SRC="release/files_tici"
-if [ -z "$RELEASE_BRANCH" ]; then
-  echo "RELEASE_BRANCH is not set"
-  exit 1
-fi
+RELEASE_BRANCH="release3"
 
 
 # set git identity
