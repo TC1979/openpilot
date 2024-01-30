@@ -5,11 +5,11 @@ import numpy as np
 from cereal import log
 from openpilot.common.filter_simple import FirstOrderFilter
 from openpilot.common.numpy_fast import interp
-# from openpilot.selfdrive.controls.lib.drive_helpers import CONTROL_N
+from openpilot.selfdrive.controls.lib.drive_helpers import CONTROL_N
 from openpilot.selfdrive.controls.lib.latcontrol import LatControl
 from openpilot.selfdrive.controls.lib.pid import PIDController
 from openpilot.selfdrive.controls.lib.vehicle_model import ACCELERATION_DUE_TO_GRAVITY
-# from openpilot.selfdrive.modeld.constants import ModelConstants
+from openpilot.selfdrive.modeld.constants import ModelConstants
 
 # At higher speeds (25+mph) we can assume:
 # Lateral acceleration achieved by a specific car correlates to
@@ -24,12 +24,21 @@ from openpilot.selfdrive.controls.lib.vehicle_model import ACCELERATION_DUE_TO_G
 
 LOW_SPEED_X = [0, 10, 20, 30]
 LOW_SPEED_Y = [15, 13, 10, 5]
-LOW_SPEED_Y_NN = [12, 4, 1, 0]
+LOW_SPEED_Y_NN = [12, 3, 1, 0]
+
+LAT_PLAN_MIN_IDX = 5
+
+def get_predicted_lateral_jerk(lat_accels, t_diffs):
+  # compute finite difference between subsequent model_data.acceleration.y values
+  # this is just two calls of np.diff followed by an element-wise division
+  lat_accel_diffs = np.diff(lat_accels)
+  lat_jerk = lat_accel_diffs / t_diffs
+  # return as python list
+  return lat_jerk.tolist()
 
 def sign(x):
   return 1.0 if x > 0.0 else (-1.0 if x < 0.0 else 0.0)
 
-LAT_PLAN_MIN_IDX = 5
 def get_lookahead_value(future_vals, current_val):
   if len(future_vals) == 0:
     return current_val
@@ -86,6 +95,10 @@ class LatControlTorque(LatControl):
       self.roll_deque = deque(maxlen=history_check_frames[0])
       self.past_future_len = len(self.past_times) + len(self.nn_future_times)
 
+      # precompute time differences between ModelConstants.T_IDXS
+      self.t_diffs = np.diff(ModelConstants.T_IDXS)
+      self.desired_lat_jerk_time = CP.steerActuatorDelay + 0.3
+
       # Setup adjustable parameters
 
       # Instantaneous lateral jerk changes very rapidly, making it not useful on its own,
@@ -119,15 +132,15 @@ class LatControlTorque(LatControl):
       if self.use_steering_angle:
         actual_curvature = -VM.calc_curvature(math.radians(CS.steeringAngleDeg - params.angleOffsetDeg), CS.vEgo, params.roll)
         curvature_deadzone = abs(VM.calc_curvature(math.radians(self.steering_angle_deadzone_deg), CS.vEgo, 0.0))
-        # if self.use_nn:
-          # actual_curvature_rate = -VM.calc_curvature(math.radians(CS.steeringRateDeg), CS.vEgo, 0.0)
-          # actual_lateral_jerk = actual_curvature_rate * CS.vEgo ** 2
+        if self.use_nn:
+          actual_curvature_rate = -VM.calc_curvature(math.radians(CS.steeringRateDeg), CS.vEgo, 0.0)
+          actual_lateral_jerk = actual_curvature_rate * CS.vEgo ** 2
       else:
         actual_curvature_vm = -VM.calc_curvature(math.radians(CS.steeringAngleDeg - params.angleOffsetDeg), CS.vEgo, params.roll)
         actual_curvature_llk = llk.angularVelocityCalibrated.value[2] / CS.vEgo
         actual_curvature = interp(CS.vEgo, [2.0, 5.0], [actual_curvature_vm, actual_curvature_llk])
         curvature_deadzone = 0.0
-        # actual_lateral_jerk = 0.0
+        actual_lateral_jerk = 0.0
       desired_lateral_accel = desired_curvature * CS.vEgo ** 2
 
       # desired rate is the desired rate of change in the setpoint, not the absolute desired curvature
@@ -138,30 +151,66 @@ class LatControlTorque(LatControl):
       setpoint = desired_lateral_accel + low_speed_factor * desired_curvature
       measurement = actual_lateral_accel + low_speed_factor * actual_curvature
 
-      if self.use_nn:
+      model_good = model_data is not None and len(model_data.orientation.x) >= CONTROL_N
+      if self.use_nn and model_good:
         # update past data
         roll = params.roll
         pitch = self.pitch.update(llk.calibratedOrientationNED.value[1])
         roll = roll_pitch_adjust(roll, pitch)
+        self.roll_deque.append(roll)
+        self.lateral_accel_desired_deque.append(desired_lateral_accel)
+
+        # prepare "look-ahead" desired lateral jerk
+        lookahead = interp(CS.vEgo, self.friction_look_ahead_bp, self.friction_look_ahead_v)
+        friction_upper_idx = next((i for i, val in enumerate(ModelConstants.T_IDXS) if val > lookahead), 16)
+        predicted_lateral_jerk = get_predicted_lateral_jerk(model_data.acceleration.y, self.t_diffs)
+        desired_lateral_jerk = (interp(self.desired_lat_jerk_time, ModelConstants.T_IDXS, model_data.acceleration.y) - actual_lateral_accel) / 0.3
+        lookahead_lateral_jerk = get_lookahead_value(predicted_lateral_jerk[LAT_PLAN_MIN_IDX:friction_upper_idx], desired_lateral_jerk)
+
+        # prepare past and future values
+        # adjust future times to account for longitudinal acceleration
+        adjusted_future_times = [t + 0.5*CS.aEgo*(t/max(CS.vEgo, 1.0)) for t in self.nn_future_times]
+        past_rolls = [self.roll_deque[min(len(self.roll_deque)-1, i)] for i in self.history_frame_offsets]
+        future_rolls = [roll_pitch_adjust(interp(t, ModelConstants.T_IDXS, model_data.orientation.x) + roll, interp(t, ModelConstants.T_IDXS, model_data.orientation.y) + pitch) for t in adjusted_future_times]
+        past_lateral_accels_desired = [self.lateral_accel_desired_deque[min(len(self.lateral_accel_desired_deque)-1, i)] for i in self.history_frame_offsets]
+        future_planned_lateral_accels = [interp(t, ModelConstants.T_IDXS[:CONTROL_N], model_data.acceleration.y) for t in adjusted_future_times]
+
+        lat_accel_friction_factor = self.lat_accel_friction_factor
+        if self.use_steering_angle or lookahead_lateral_jerk == 0.0:
+          lookahead_lateral_jerk = 0.0
+          actual_lateral_jerk = 0.0
+          lat_accel_friction_factor = 1.0
+
+        lateral_jerk_setpoint = self.lat_jerk_friction_factor * lookahead_lateral_jerk
+        lateral_jerk_measurement = self.lat_jerk_friction_factor * actual_lateral_jerk
 
         # compute NNFF error response
-        nn_setpoint_input = [CS.vEgo, setpoint, 0.0, roll]
+        nn_setpoint_input = [CS.vEgo, setpoint, lateral_jerk_setpoint, roll] \
+                              + [setpoint] * self.past_future_len \
+                              + past_rolls + future_rolls
         # past lateral accel error shouldn't count, so use past desired like the setpoint input
-        nn_measurement_input = [CS.vEgo, measurement, 0.0, roll]
+        nn_measurement_input = [CS.vEgo, measurement, lateral_jerk_measurement, roll] \
+                              + [measurement] * self.past_future_len \
+                              + past_rolls + future_rolls
         torque_from_setpoint = self.torque_from_nn(nn_setpoint_input)
         torque_from_measurement = self.torque_from_nn(nn_measurement_input)
         pid_log.error = torque_from_setpoint - torque_from_measurement
 
         # compute feedforward (same as nn setpoint output)
         error = setpoint - measurement
-        friction_input = error
-        nn_input = [CS.vEgo, desired_lateral_accel, friction_input, roll]
+        friction_input = lat_accel_friction_factor * error + self.lat_jerk_friction_factor * lookahead_lateral_jerk
+        nn_input = [CS.vEgo, desired_lateral_accel, friction_input, roll] \
+                              + past_lateral_accels_desired + future_planned_lateral_accels \
+                              + past_rolls + future_rolls
         ff = self.torque_from_nn(nn_input)
 
         # apply friction override for cars with low NN friction response
         if self.nn_friction_override:
           pid_log.error += self.torque_from_lateral_accel(0.0, self.torque_params,
                                             friction_input,
+                                            lateral_accel_deadzone, friction_compensation=True)
+          ff += self.torque_from_lateral_accel(0.0, self.torque_params,
+                                            lookahead_lateral_jerk,
                                             lateral_accel_deadzone, friction_compensation=True)
         nn_log = nn_input + nn_setpoint_input + nn_measurement_input
       else:
