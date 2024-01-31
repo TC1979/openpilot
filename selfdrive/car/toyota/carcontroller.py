@@ -231,7 +231,7 @@ class CarController:
 
     # NO_STOP_TIMER_CAR will creep if compensation is applied when stopping or stopped, don't compensate when stopped or stopping
     should_compensate = True
-    if self.CP.carFingerprint in NO_STOP_TIMER_CAR and ((CS.out.vEgo <  1e-3 and actuators.accel < 1e-3) or stopping):
+    if (self.CP.carFingerprint in NO_STOP_TIMER_CAR and actuators.accel < 1e-3 or stopping) or CS.out.vEgo < 1e-3:
       should_compensate = False
     # limit minimum to only positive until first positive is reached after engagement, don't calculate when long isn't active
     if CC.longActive and should_compensate and not self.prohibit_neg_calculation:
@@ -279,7 +279,7 @@ class CarController:
     if (self.frame % 3 == 0 and self.CP.openpilotLongitudinalControl) or pcm_cancel_cmd:
       lead = hud_control.leadVisible or CS.out.vEgo < 12.  # at low speed we always assume the lead is present so ACC can be engaged
       # when stopping, send -2.5 raw acceleration immediately to prevent vehicle from creeping, else send actuators.accel
-      accel_raw = -2.5 if stopping or (CS.out.vEgo < 0.5 and lead_vehicle_stopped) else actuators.accel
+      accel_raw = -2.5 if stopping else actuators.accel
 
       reverse_acc = 2 if self._reverse_acc_change else 1
 
@@ -288,10 +288,10 @@ class CarController:
         can_sends.append(toyotacan.create_acc_cancel_command(self.packer))
       elif self.CP.openpilotLongitudinalControl:
         can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, accel_raw, pcm_cancel_cmd,
-                                                        self.standstill_req, lead, CS.acc_type, fcw_alert, CS.distance_btn, reverse_acc, lead_vehicle_stopped))
+                                                        self.standstill_req, lead, CS.acc_type, fcw_alert, CS.distance_btn, reverse_acc))
         self.accel = pcm_accel_cmd
       else:
-        can_sends.append(toyotacan.create_accel_command(self.packer, 0, 0, pcm_cancel_cmd, False, lead, CS.acc_type, False, CS.distance_btn, reverse_acc, False))
+        can_sends.append(toyotacan.create_accel_command(self.packer, 0, 0, pcm_cancel_cmd, False, lead, CS.acc_type, False, CS.distance_btn, reverse_acc))
 
     if self.frame % 2 == 0 and self.CP.enableGasInterceptor and self.CP.openpilotLongitudinalControl:
       # send exactly zero if gas cmd is zero. Interceptor will send the max between read value and gas cmd.
