@@ -11,6 +11,7 @@ from openpilot.common.filter_simple import FirstOrderFilter
 from openpilot.common.realtime import DT_MDL
 from openpilot.selfdrive.modeld.constants import ModelConstants
 from openpilot.selfdrive.car.interfaces import ACCEL_MIN, ACCEL_MAX
+from openpilot.selfdrive.car.toyota.values import TSS2_CAR
 from openpilot.selfdrive.controls.lib.longcontrol import LongCtrlState
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDXS as T_IDXS_MPC
@@ -141,10 +142,10 @@ class LongitudinalPlanner:
     prev_accel_constraint = not (reset_state or sm['carState'].standstill)
 
     if self.mpc.mode == 'acc':
-      if self.dynamic_follow:
-        accel_limits = [get_min_accel(v_ego), get_max_accel_df(v_ego)]
-      elif not self.dynamic_follow and self.CP.carName == "toyota":
+      if self.CP.carName == "toyota":
         accel_limits = [get_min_accel(v_ego), get_max_accel_toyota(v_ego)]
+      elif self.dynamic_follow and self.CP.carFingerprint in TSS2_CAR:
+        accel_limits = [get_min_accel(v_ego), get_max_accel_df(v_ego)]
       else:
         accel_limits = [A_CRUISE_MIN, get_max_accel(v_ego)]
       accel_limits_turns = limit_accel_in_turns(v_ego, sm['carState'].steeringAngleDeg, accel_limits, self.CP)
