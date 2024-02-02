@@ -117,7 +117,7 @@ void MapWindow::initLayers() {
     buildings["source-layer"] = "building";
     buildings["type"] = "fill-extrusion";
     buildings["minzoom"] = 15;
-    m_map->addLayer(buildings);
+    m_map->addLayer("buildingsLayer", buildings);
     m_map->setFilter("buildingsLayer", QVariantList({"==", "extrude", "true"}));
 
     QVariantList fillExtrusionHight = {
