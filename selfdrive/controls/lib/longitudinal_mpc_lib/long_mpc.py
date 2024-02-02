@@ -269,6 +269,8 @@ def gen_long_ocp():
 class LongitudinalMpc:
   def __init__(self, CP, mode='acc'):
     self.CP = CP
+    self.braking_offset = 1
+
     self.mode = mode
     self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
     self.reset()
@@ -427,6 +429,15 @@ class LongitudinalMpc:
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
 
     self.update_TF(carstate)
+
+    self.smoother_braking = True
+    if self.smoother_braking:
+      distance_factor = np.maximum(1, lead_xv_0[:,0] - (lead_xv_0[:,1] * t_follow))
+      self.braking_offset = np.clip((v_ego - lead_xv_0[:,1]) - COMFORT_BRAKE, 1, distance_factor)
+      t_follow = t_follow / self.braking_offset
+    else:
+      self.braking_offset = 1
+
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
     # and then treat that as a stopped car/obstacle at this new distance.
