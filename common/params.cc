@@ -248,6 +248,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     // PFEIFER - MTSC {{
     {"MapTargetVelocities", PERSISTENT},
     {"MTSCEnabled", PERSISTENT},
+    {"MTSCMaxVDiff", PERSISTENT},
     // }} PFEIFER - MTSC
     {"dp_otisserv", PERSISTENT},
     {"dp_nav_mapbox_token_pk", PERSISTENT},

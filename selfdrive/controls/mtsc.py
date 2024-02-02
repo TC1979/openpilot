@@ -11,8 +11,24 @@ params = Params()
 R = 6373000.0 # approximate radius of earth in meters
 TO_RADIANS = math.pi / 180
 TO_DEGREES = 180 / math.pi
-TARGET_JERK = -1.0 # m/s^3 should match up with the long planner
-MIN_ACCEL = -3.5 # m/s^2 should match up with the long planner
+TARGET_JERK = -0.6 # m/s^3 should match up with the long planner
+TARGET_ACCEL = -1.2 # m/s^2 should match up with the long planner
+TARGET_OFFSET = 1.0 # seconds - This controls how soon before the curve you reach the target velocity. It also helps
+                    # reach the target velocity when innacuracies in the distance modeling logic would cause overshoot.
+                    # The value is multiplied against the target velocity to determine the additional distance. This is
+                    # done to keep the distance calculations consistent but results in the offset actually being less
+                    # time than specified depending on how much of a speed diffrential there is between v_ego and the
+                    # target velocity.
+
+def calculate_accel(t, target_jerk, a_ego):
+  return a_ego  + target_jerk * t
+
+def calculate_velocity(t, target_jerk, a_ego, v_ego):
+  return v_ego + a_ego * t + target_jerk/2 * (t ** 2)
+
+def calculate_distance(t, target_jerk, a_ego, v_ego):
+  return t * v_ego + a_ego/2 * (t ** 2) + target_jerk/6 * (t ** 3)
+
 
 # points should be in radians
 # output is meters
@@ -26,6 +42,14 @@ class MapTurnSpeedController:
   def __init__(self):
     self.enabled = params.get_bool("MTSCEnabled")
     self.last_params_update = time()
+    self.target_lat = 0.0
+    self.target_lon = 0.0
+    self.target_v = 0.0
+    self.max_diff = 0.0
+    try:
+      self.max_diff = float(params.get("MTSCMaxVDiff"))
+    except Exception:
+      pass
 
   def update_params(self):
     t = time()
@@ -33,7 +57,7 @@ class MapTurnSpeedController:
       self.enabled = params.get_bool("MTSCEnabled")
       self.last_params_update = t
 
-  def target_speed(self, v_ego, a_ego) -> float:
+  def target_speed(self, v_max, v_ego, a_ego, j_ego) -> float:
     self.update_params()
 
     if not self.enabled:
@@ -79,40 +103,83 @@ class MapTurnSpeedController:
       tlat = target_velocity["latitude"]
       tlon = target_velocity["longitude"]
       tv = target_velocity["velocity"]
+      if tv > v_max:
+        continue
       if tv > v_ego:
         continue
 
       d = forward_distances[i]
-      min_accel_t = max(0.1, (MIN_ACCEL - a_ego) / TARGET_JERK) # seconds to reach min accel
-      min_jerk_v = 0.5 * TARGET_JERK * min_accel_t ** 2 + a_ego + v_ego # the minimum v we can reach before hitting the min accel limit
-      t = 0.0
-      if tv > min_jerk_v:
-        # calculate time needed based on jerk
+
+      a_diff = (a_ego - TARGET_ACCEL)
+      accel_t = abs(a_diff / TARGET_JERK)
+      if tv > v_ego:
+        v_calc = v_max
+      else:
+        v_calc = v_ego
+
+      min_accel_v = calculate_velocity(accel_t, TARGET_JERK, a_ego, v_calc)
+
+      max_d = 0
+      if tv > min_accel_v:
+        # calculate time needed based on target jerk
         a = 0.5 * TARGET_JERK
         b = a_ego
-        c = v_ego - tv
-        t_a = (-1 * b - math.sqrt((b ** 2) - 4 * a * c)) / (2 * a)
-        t_b = (-1 * b + math.sqrt((b ** 2) - 4 * a * c)) / (2 * a)
-        if t_a > 0:
+        c = v_calc - tv
+        t_a = -1 * ((b**2 - 4 * a * c) ** 0.5 + b) / 2 * a
+        t_b = ((b**2 - 4 * a * c) ** 0.5 - b) / 2 * a
+        if not isinstance(t_a, complex) and t_a > 0:
           t = t_a
         else:
           t = t_b
-      else:
-        # calculate time needed based on hitting the min accel
-        t = min_accel_t + ((min_jerk_v - tv) / (-1 * MIN_ACCEL))
+        if isinstance(t, complex):
+          continue
 
-      # Adjust slightly early so we get to the speed before hitting the curve
-      t += 3.0
-      max_d = t * v_ego
-      if d < max_d:
-        valid_velocities.append(float(tv))
+        max_d = max_d + calculate_distance(t, TARGET_JERK, a_ego, v_calc)
+
+      else:
+        t = accel_t
+        max_d = calculate_distance(t, TARGET_JERK, a_ego, v_calc)
+
+        # calculate additional time needed based on target accel
+        t = abs((min_accel_v - tv) / TARGET_ACCEL)
+        max_d += calculate_distance(t, 0, TARGET_ACCEL, min_accel_v)
+
+      if d < max_d + tv * TARGET_OFFSET:
+        valid_velocities.append((float(tv), tlat, tlon))
 
     # Find the smallest velocity we need to adjust for
     min_v = 100.0
-    for tv in valid_velocities:
+    target_lat = 0.0
+    target_lon = 0.0
+    for tv, lat, lon in valid_velocities:
       if tv < min_v:
         min_v = tv
+        target_lat = lat
+        target_lon = lon
 
+    if self.target_v < min_v and not (self.target_lat == 0 and self.target_lon == 0):
+      for i in range(len(forward_points)):
+        target_velocity = forward_points[i]
+        tlat = target_velocity["latitude"]
+        tlon = target_velocity["longitude"]
+        tv = target_velocity["velocity"]
+        if tv > v_max:
+          continue
+
+        if tlat == self.target_lat and tlon == self.target_lon and tv == self.target_v:
+          return float(self.target_v)
+      # not found so lets reset
+      self.target_v = 0.0
+      self.target_lat = 0.0
+      self.target_lon = 0.0
+
+    self.target_v = min_v
+    self.target_lat = target_lat
+    self.target_lon = target_lon
+
+    # Ignore if we are exceeding the max v diff to help reject bad calculations
+    if self.max_diff != 0 and v_ego - min_v > self.max_diff:
+      return 100.0
 
     return min_v
 

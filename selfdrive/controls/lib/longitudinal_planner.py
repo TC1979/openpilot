@@ -202,7 +202,7 @@ class LongitudinalPlanner:
     # }} PFEIFER - VTSC
 
     # PFEIFER - MTSC {{
-    mtsc_v = mtsc.target_speed(v_ego, sm['carState'].aEgo)
+    mtsc_v = mtsc.target_speed(v_cruise, v_ego, sm['carState'].aEgo, self.j_desired_trajectory.tolist()[0])
     if v_cruise > mtsc_v and mtsc_v != 0:
       v_cruise = mtsc_v
     # }} PFEIFER - MTSC
