@@ -536,8 +536,7 @@ void AnnotatedCameraWidget::drawHud(QPainter &p) {
   p.setPen(QPen(brakeLights ? QColor(0xff, 0x7c, 0x80) : QColor(0xff, 0xff, 0xff)));
   p.drawText(rect().center().x(), 210, speedStr);
   p.setFont(InterFont(66));
-  p.setPen(QPen(brakeLights ? QColor(0xff, 0x7c, 0x80) : QColor(0xff, 0xff, 0xff)));
-  p.drawText(rect().center().x(), 290, speedUnit, 200);
+  p.drawText(rect().center().x(), 290, speedUnit);
 
   // Bottom bar road name
   if (!roadName.isEmpty()) {
