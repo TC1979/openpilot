@@ -71,9 +71,9 @@ class LatControlTorque(LatControl):
     self.torque_from_lateral_accel = CI.torque_from_lateral_accel()
     self.use_steering_angle = self.torque_params.useSteeringAngle
     self.steering_angle_deadzone_deg = self.torque_params.steeringAngleDeadzoneDeg
-    
+
     self.use_lateral_jerk = True # TODO: make this a parameter in the UI
-    
+
     # Twilsonco's Lateral Neural Network Feedforward
     self.use_nn = CI.has_lateral_torque_nn
 
@@ -92,7 +92,7 @@ class LatControlTorque(LatControl):
       # Increase for a stronger response, decrease for a weaker response.
       self.lat_jerk_friction_factor = 0.4
       self.lat_accel_friction_factor = 0.7 # in [0, 3], in 0.05 increments. 3 is arbitrary safety limit
-      
+
       # precompute time differences between ModelConstants.T_IDXS
       self.t_diffs = np.diff(ModelConstants.T_IDXS)
       self.desired_lat_jerk_time = CP.steerActuatorDelay + 0.3
@@ -155,7 +155,7 @@ class LatControlTorque(LatControl):
       low_speed_factor = interp(CS.vEgo, LOW_SPEED_X, LOW_SPEED_Y if not self.use_nn else LOW_SPEED_Y_NN)**2
       setpoint = desired_lateral_accel + low_speed_factor * desired_curvature
       measurement = actual_lateral_accel + low_speed_factor * actual_curvature
-      
+
       lateral_jerk_setpoint = 0
       lateral_jerk_measurement = 0
 
