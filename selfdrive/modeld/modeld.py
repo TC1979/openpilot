@@ -241,8 +241,9 @@ def main(demo=False):
       vec_desire[desire] = 1
 
     # Enable/disable nav features
-    timestamp_llk = sm["navModel"].locationMonoTime
-    nav_valid = sm.valid["navModel"] # and (nanos_since_boot() - timestamp_llk < 1e9)
+    # timestamp_llk = sm["navModel"].locationMonoTime
+    # nav_valid = sm.valid["navModel"] # and (nanos_since_boot() - timestamp_llk < 1e9)
+    # nav_enabled = nav_valid and params.get_bool("ExperimentalMode")
     nav_enabled = True
 
     if not nav_enabled:
