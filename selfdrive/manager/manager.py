@@ -59,7 +59,7 @@ def manager_init() -> None:
     ("MapSpeedLimitControl", "1"),
     ("NavSpeedLimitControl", "1"),
     ("Marc_Dynamic_Follow", "0"),
-    ("MTSCEnabled", "1"),
+    ("MTSCEnabled", "0"),
     ("NudgelessLaneChange", "0"),
     ("NNFF", "0"),
     ("opwebd", "1"),
