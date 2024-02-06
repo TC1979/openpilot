@@ -38,7 +38,7 @@ A_CRUISE_MIN_BP_DF =   [0.,    0.01,   0.04,   0.12,    0.30,   5.,     16.,   2
 A_CRUISE_MAX_VALS_DF =     [1.5, 2.4, 2.4, 2.2, 1.56, 1.23, .88, .65, .46, .328, .09]  # Sets the limits of the planner accel, PID may exceed
 A_CRUISE_MAX_BP_DF =       [0.,  0.1,  3.,  6.,  8.,    11.,   15.,   20.,  25.,  30.,  55.]
 # A_CRUISE_MAX_VALS_TOYOTA = [2.0, 1.68, 1.58, 1.3,  1.15, 0.92, 0.72, 0.52, 0.34, 0.11]  # Sets the limits of the planner accel, PID may exceed
-A_CRUISE_MAX_VALS_TOYOTA =   [2.0, 1.52, 1.39, 1.15, 0.98, 0.81, 0.62, 0.44, 0.28, 0.08]  # Sets the limits of the planner accel, PID may exceed
+A_CRUISE_MAX_VALS_TOYOTA =   [2.0, 1.48, 1.35, 1.15, 0.98, 0.81, 0.62, 0.44, 0.28, 0.08]  # Sets the limits of the planner accel, PID may exceed
 # CRUISE_MAX_BP in kmh =     [0.,  10,   20,   30,   40,   53,   72,   90,   107,  150]
 A_CRUISE_MAX_BP_TOYOTA =     [0.,  3,    6.,   8.,   11.,  15.,  20.,  25.,  30.,  55.]
 

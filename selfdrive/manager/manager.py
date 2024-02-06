@@ -51,8 +51,8 @@ def manager_init() -> None:
     ("CarModel", ""),
     ("dp_atl", "0"),
     ("dp_jetson", "0"),
-    ("dp_nav_gmap_enable", "0"),
-    ("dp_otisserv", "1"),
+    ("SearchInput", "0"),
+    ("fleetmanager", "1"),
     ("DrivingPersonalitiesUIWheel", "1"),
     ("e2e_link", "1"),
     ("SpeedLimitControl", "0"),
@@ -62,7 +62,6 @@ def manager_init() -> None:
     ("MTSCEnabled", "0"),
     ("NudgelessLaneChange", "0"),
     ("NNFF", "0"),
-    ("opwebd", "1"),
     ("PrimeAd", "1"),
     ("ReverseAccChange", "1"),
     ("TimSignals", "1"),
@@ -154,10 +153,8 @@ def manager_thread() -> None:
   params = Params()
 
   ignore: List[str] = []
-  dp_otisserv = params.get_bool("dp_otisserv")
   dp_jetson = params.get_bool("dp_jetson")
   ignore += ['dmonitoringmodeld', 'dmonitoringd'] if dp_jetson else []
-  ignore += ['otisserv'] if not dp_otisserv else []
   if dp_jetson:
     ignore += ['logcatd', 'proclogd', 'loggerd', 'logmessaged', 'encoderd', 'uploader']
 
@@ -166,8 +163,8 @@ def manager_thread() -> None:
   if os.getenv("NOBOARD") is not None:
     ignore.append("pandad")
   ignore += [x for x in os.getenv("BLOCK", "").split(",") if len(x) > 0]
-  if not params.get_bool("opwebd"):
-    ignore += ["opwebd"]
+  if not params.get_bool("fleetmanager"):
+    ignore += ["fleetmanager"]
 
   sm = messaging.SubMaster(['deviceState', 'carParams'], poll=['deviceState'])
   pm = messaging.PubMaster(['managerState'])

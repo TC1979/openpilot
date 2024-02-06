@@ -64,13 +64,13 @@ class RouteEngine:
     self.smallest_total_distance_remaining = math.inf
     self.distance_delta = 0
 
-    if self.params.get_bool("dp_otisserv"):
-      self.mapbox_token = self.params.get("dp_nav_mapbox_token_pk", encoding='utf8')
-      self.mapbox_host = "https://api.mapbox.com"
-    elif "MAPBOX_TOKEN" in os.environ:
-      self.params.put("dp_nav_mapbox_token_pk", "")
-      self.params.put("dp_nav_mapbox_token_sk", "")
+    if "MAPBOX_TOKEN" in os.environ:
       self.mapbox_token = os.environ["MAPBOX_TOKEN"]
+      self.mapbox_host = "https://api.mapbox.com"
+      self.params.put("MapboxPublicKey", self.mapbox_token)
+    # NAV
+    elif self.params.get_int("PrimeType") == 0:
+      self.mapbox_token = self.params.get("MapboxPublicKey", encoding='utf8')
       self.mapbox_host = "https://api.mapbox.com"
     else:
       try:

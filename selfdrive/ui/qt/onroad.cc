@@ -157,7 +157,7 @@ void OnroadWindow::mousePressEvent(QMouseEvent* e) {
 void OnroadWindow::offroadTransition(bool offroad) {
 #ifdef ENABLE_MAPS
   if (!offroad) {
-    bool custom_mapbox = Params().getBool("dp_otisserv") && QString::fromStdString(Params().get("dp_nav_mapbox_token_sk")) != "";
+    bool custom_mapbox = Params().getBool("fleetmanager") && QString::fromStdString(Params().get("MapboxSecretKey")) != "";
     if (map == nullptr && (uiState()->hasPrime() || !MAPBOX_TOKEN.isEmpty() || custom_mapbox)) {
       auto m = new MapPanel(get_mapbox_settings());
       map = m;

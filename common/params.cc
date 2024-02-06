@@ -245,21 +245,21 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"toyota_bsm", PERSISTENT},
     {"TurnVisionControl", PERSISTENT},
     {"QuietDrive", PERSISTENT},
+    {"RoadName", PERSISTENT},
+    {"opwebd", PERSISTENT},
     // PFEIFER - MTSC {{
     {"MapTargetVelocities", PERSISTENT},
     {"MTSCEnabled", PERSISTENT},
     {"MTSCMaxVDiff", PERSISTENT},
     // }} PFEIFER - MTSC
-    {"dp_otisserv", PERSISTENT},
-    {"dp_nav_mapbox_token_pk", PERSISTENT},
-    {"dp_nav_mapbox_token_sk", PERSISTENT},
-    {"dp_nav_gmap_enable", PERSISTENT},
-    {"dp_nav_gmap_key", PERSISTENT},
-    {"RoadName", PERSISTENT},
-    {"dp_nav_amap_enable", PERSISTENT},
-    {"dp_nav_amap_key", PERSISTENT},
-    {"dp_nav_amap_key_2", PERSISTENT},
-    {"opwebd", PERSISTENT},
+    // NAV
+    {"AMapKey1", PERSISTENT},
+    {"AMapKey2", PERSISTENT},
+    {"fleetmanager", PERSISTENT},
+    {"GMapKey", PERSISTENT},
+    {"MapboxPublicKey", PERSISTENT},
+    {"MapboxSecretKey", PERSISTENT},
+    {"SearchInput", PERSISTENT},
 };
 
 } // namespace
