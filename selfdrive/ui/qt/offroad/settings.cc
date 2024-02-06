@@ -23,7 +23,6 @@
 #include "selfdrive/ui/ui.h"
 #include "selfdrive/ui/qt/util.h"
 #include "selfdrive/ui/qt/qt_window.h"
-#include "selfdrive/ui/qt/offroad/nav_settings.h"
 
 TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
   // param, title, desc, icon
@@ -401,7 +400,6 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     {tr("Toggles"), toggles},
     {tr("Software"), new SoftwarePanel(this)},
     {tr("T.O.P"), new TimpilotPanel(this)},
-    {tr("Navigation"), new NavigationPanel(this)},
   };
 
   nav_btns = new QButtonGroup(this);
@@ -577,9 +575,21 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/img_experimental_white.svg",
                                   this));
 
-  toggles.append(new ParamControl("fleetmanager",
-                                  tr("Enable Local Nav and File Server"),
-                                  tr("This will allow you to use the Navigation feature with your own access key and access openpilot data and files.\nUse web interface to control it: *http://&lt;device_ip&gt;:8082*.\nYou will need to apply your own mapbox token at https://www.mapbox.com/.\nInternet access from mobile phone (tethering) is required."),
+  toggles.append(new ParamControl("dp_otisserv",
+                                  tr("Enable Local Nav Server"),
+                                  tr("This will let use Navigation feature with your own access key.\nUse web interface to control it: *http://&lt;device_ip&gt;:8082*.\nYou will need to apply your own mapbox token at https://www.mapbox.com/.\nInternet access from mobile phone (tethering) is required."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("dp_nav_gmap_enable",
+                                  tr("Search Destination using Google Map"),
+                                  tr("This will allow you to search destination in google map api. Before turning on this function, please confirm that you have entered the mapbox token and completed the reboot.\nYou will need to apply your own google map api key. Enter your key detail in web interface once to enable."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("opwebd",
+                                  tr("Enable Local File Server"),
+                                  tr("A webserver for accessing openpilot data and files. Use web interface to control it: *http://&lt;device_ip&gt;:8082/fleetmanager*."),
                                   "../assets/offroad/icon_road.png",
                                   this));
 

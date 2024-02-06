@@ -447,21 +447,6 @@
     </message>
 </context>
 <context>
-    <name>NavigationPanel</name>
-    <message>
-        <source>Manage Primeless Navigation Settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>MANAGE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Manage primeless navigate on openpilot settings.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Networking</name>
     <message>
         <source>Advanced</source>
@@ -625,77 +610,6 @@
     </message>
 </context>
 <context>
-    <name>Primeless</name>
-    <message>
-        <source>Back</source>
-        <translation type="unfinished">Voltar</translation>
-    </message>
-    <message>
-        <source>Manage Your Settings At</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>MapBox</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Amap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Google</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Destination Search Provider</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select a search provider for destination queries in Navigate on Openpilot. Options include MapBox (recommended), Amap, and Google Maps.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Public Mapbox Key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Secret Mapbox Key</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mapbox Setup Instructions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>VIEW</source>
-        <translation type="unfinished">VER</translation>
-    </message>
-    <message>
-        <source>View the instructions to set up MapBox for Primeless Navigation.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Device Offline</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>REMOVE</source>
-        <translation type="unfinished">REMOVER</translation>
-    </message>
-    <message>
-        <source>ADD</source>
-        <translation type="unfinished">ADICIONAR</translation>
-    </message>
-    <message>
-        <source>Manage your %1.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enter your %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>QObject</name>
     <message>
         <source>Reboot</source>
@@ -812,10 +726,6 @@ Isso pode levar até um minuto.</translation>
     </message>
     <message>
         <source>T.O.P</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Navigation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1298,14 +1208,31 @@ Other makes: Double tapping the screen.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enable Local Nav and File Server</source>
+        <source>Enable Local Nav Server</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This will allow you to use the Navigation feature with your own access key and access openpilot data and files.
+        <source>Search Destination using Google Map</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This will allow you to search destination in google map api. Before turning on this function, please confirm that you have entered the mapbox token and completed the reboot.
+You will need to apply your own google map api key. Enter your key detail in web interface once to enable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This will let use Navigation feature with your own access key.
 Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:8082*.
 You will need to apply your own mapbox token at https://www.mapbox.com/.
 Internet access from mobile phone (tethering) is required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Local File Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A webserver for accessing openpilot data and files. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:8082/fleetmanager*.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1,10 +1,3 @@
-{% extends "layout.html" %}
-
-{% block title %}
-    addr_input
-{% endblock %}
-
-{% block main %}
 <div><img src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s-l+000({{lon}},{{lat}})/{{lon}},{{lat}},14/300x300?access_token={{token}}" /></div>
 <div style="padding: 5px; font-size: 10px;">{{addr}}</div>
 <form name="navForm" method="post">
@@ -25,4 +18,3 @@
         </div>
     </fieldset>
 </form>
-{% endblock %}

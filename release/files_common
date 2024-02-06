@@ -300,8 +300,6 @@ system/camerad/cameras/camera_common.cc
 system/camerad/sensors/*.h
 system/camerad/sensors/*.cc
 
-system/fleetmanager/*
-
 selfdrive/manager/__init__.py
 selfdrive/manager/build.py
 selfdrive/manager/helpers.py
