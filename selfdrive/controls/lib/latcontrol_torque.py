@@ -74,9 +74,9 @@ class LatControlTorque(LatControl):
 
     # Twilsonco's Lateral Neural Network Feedforward
     self.use_nn = CI.has_lateral_torque_nn
-    self.use_lateral_jerk = CI.use_lateral_jerk
+    # self.use_lateral_jerk = CI.use_lateral_jerk
 
-    if self.use_nn or self.use_lateral_jerk:
+    if self.use_nn:
       # Instantaneous lateral jerk changes very rapidly, making it not useful on its own,
       # however, we can "look ahead" to the future planned lateral jerk in order to guage
       # whether the current desired lateral jerk will persist into the future, i.e.
@@ -137,7 +137,7 @@ class LatControlTorque(LatControl):
       if self.use_steering_angle:
         actual_curvature = actual_curvature_vm
         curvature_deadzone = abs(VM.calc_curvature(math.radians(self.steering_angle_deadzone_deg), CS.vEgo, 0.0))
-        if self.use_nn or self.use_lateral_jerk:
+        if self.use_nn:
           actual_curvature_rate = -VM.calc_curvature(math.radians(CS.steeringRateDeg), CS.vEgo, 0.0)
           actual_lateral_jerk = actual_curvature_rate * CS.vEgo ** 2
       else:
@@ -158,7 +158,7 @@ class LatControlTorque(LatControl):
       lateral_jerk_setpoint = 0
       lateral_jerk_measurement = 0
 
-      if self.use_nn or self.use_lateral_jerk:
+      if self.use_nn:
         # prepare "look-ahead" desired lateral jerk
         lookahead = interp(CS.vEgo, self.friction_look_ahead_bp, self.friction_look_ahead_v)
         friction_upper_idx = next((i for i, val in enumerate(ModelConstants.T_IDXS) if val > lookahead), 16)
