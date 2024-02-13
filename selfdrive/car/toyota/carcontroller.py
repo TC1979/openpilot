@@ -28,7 +28,10 @@ MAX_LTA_ANGLE = 94.9461  # deg
 MAX_LTA_DRIVER_TORQUE_ALLOWANCE = 150  # slightly above steering pressed allows some resistance when changing lanes
 
 # PCM compensatory force calculation threshold
-COMPENSATORY_CALCULATION_THRESHOLD = -0.25  # m/s^2
+# a variation in accel command is more pronounced at higher speeds, let compensatory forces ramp to zero before
+# applying when speed is high
+COMPENSATORY_CALCULATION_THRESHOLD_V = [-0.3, -0.25, 0.]  # m/s^2
+COMPENSATORY_CALCULATION_THRESHOLD_BP = [0., 11., 23.]  # m/s
 
 GearShifter = car.CarState.GearShifter
 UNLOCK_CMD = b'\x40\x05\x30\x11\x00\x40\x00\x00'
@@ -225,10 +228,10 @@ class CarController:
     # prohibit negative compensatory calculations when first activating long after accelerator depression or engagement
     if not CC.longActive:
       self.prohibit_neg_calculation = True
+    comp_thresh = interp(CS.out.vEgo, COMPENSATORY_CALCULATION_THRESHOLD_BP, COMPENSATORY_CALCULATION_THRESHOLD_V)
     # don't reset until a reasonable compensatory value is reached
-    if CS.pcm_neutral_force > COMPENSATORY_CALCULATION_THRESHOLD * self.CP.mass:
+    if CS.pcm_neutral_force > comp_thresh * self.CP.mass:
       self.prohibit_neg_calculation = False
-
     # NO_STOP_TIMER_CAR will creep if compensation is applied when stopping or stopped, don't compensate when stopped or stopping
     should_compensate = True
     if (self.CP.carFingerprint in NO_STOP_TIMER_CAR and actuators.accel < 1e-3 or stopping) or CS.out.vEgo < 1e-3:
@@ -252,7 +255,6 @@ class CarController:
     if not CC.enabled and CS.pcm_acc_status:
       pcm_cancel_cmd = 1
 
-    # resume request
     # on entering standstill, send standstill request
     if CS.out.standstill and not self.last_standstill and (self.CP.carFingerprint not in NO_STOP_TIMER_CAR or self.CP.enableGasInterceptor) and \
       not self.topsng:

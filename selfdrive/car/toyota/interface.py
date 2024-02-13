@@ -281,16 +281,16 @@ class CarInterface(CarInterfaceBase):
 
     tune = ret.longitudinalTuning
     tune.deadzoneBP = [0., 16., 20., 30.]
-    tune.deadzoneV = [0., .03, .06, .15]
-    ret.stoppingDecelRate = 0.2  # This is okay for TSS-P
+    tune.deadzoneV = [.04, .05, .08, .15]
+    ret.stoppingDecelRate = 0.17  # This is okay for TSS-P
     if candidate in TSS2_CAR:
-      ret.vEgoStopping = 0.2
-      ret.vEgoStarting = 0.2
-      ret.stoppingDecelRate = 0.006  # reach stopping target smoothly on TSS2.0
-    tune.kpBP = [0.]
-    tune.kpV =  [1.]
-    tune.kiBP = [0.]
-    tune.kiV =  [1.]
+      ret.vEgoStopping = 0.25
+      ret.vEgoStarting = 0.25
+      ret.stoppingDecelRate = 0.009  # reach stopping target smoothly
+    tune.kpBP = [0., 5.]
+    tune.kpV = [0.8, 1.]
+    tune.kiBP = [0., 5.]
+    tune.kiV = [0.3, 1.]
 
     return ret
 
