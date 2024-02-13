@@ -160,24 +160,29 @@ class LatControlTorque(LatControl):
 
       if self.use_nn:
         # prepare "look-ahead" desired lateral jerk
-        lookahead = interp(CS.vEgo, self.friction_look_ahead_bp, self.friction_look_ahead_v)
-        friction_upper_idx = next((i for i, val in enumerate(ModelConstants.T_IDXS) if val > lookahead), 16)
-        predicted_lateral_jerk = get_predicted_lateral_jerk(list(model_data.acceleration.y), self.t_diffs)
-        desired_lateral_jerk = (interp(self.desired_lat_jerk_time, ModelConstants.T_IDXS, model_data.acceleration.y) - actual_lateral_accel) / self.desired_lat_jerk_time
-        lookahead_lateral_jerk = get_lookahead_value(predicted_lateral_jerk[LAT_PLAN_MIN_IDX:friction_upper_idx], desired_lateral_jerk)
         lat_accel_friction_factor = self.lat_accel_friction_factor
-        if self.use_steering_angle or lookahead_lateral_jerk == 0.0:
+        if len(model_data.acceleration.y) == ModelConstants.IDX_N:
+          lookahead = interp(CS.vEgo, self.friction_look_ahead_bp, self.friction_look_ahead_v)
+          friction_upper_idx = next((i for i, val in enumerate(ModelConstants.T_IDXS) if val > lookahead), 16)
+          predicted_lateral_jerk = get_predicted_lateral_jerk(model_data.acceleration.y, self.t_diffs)
+          desired_lateral_jerk = (interp(self.desired_lat_jerk_time, ModelConstants.T_IDXS, model_data.acceleration.y) - actual_lateral_accel) / self.desired_lat_jerk_time
+          lookahead_lateral_jerk = get_lookahead_value(predicted_lateral_jerk[LAT_PLAN_MIN_IDX:friction_upper_idx], desired_lateral_jerk)
+          if self.use_steering_angle or lookahead_lateral_jerk == 0.0:
+            lookahead_lateral_jerk = 0.0
+            actual_lateral_jerk = 0.0
+            lat_accel_friction_factor = 1.0
+          lateral_jerk_setpoint = self.lat_jerk_friction_factor * lookahead_lateral_jerk
+          lateral_jerk_measurement = self.lat_jerk_friction_factor * actual_lateral_jerk
+        else:
+          lateral_jerk_setpoint = 0.0
+          lateral_jerk_measurement = 0.0
           lookahead_lateral_jerk = 0.0
-          actual_lateral_jerk = 0.0
-          lat_accel_friction_factor = 1.0
-        lateral_jerk_setpoint = self.lat_jerk_friction_factor * lookahead_lateral_jerk
-        lateral_jerk_measurement = self.lat_jerk_friction_factor * actual_lateral_jerk
 
       model_good = model_data is not None and len(model_data.orientation.x) >= CONTROL_N
       if self.use_nn and model_good:
         # update past data
         roll = params.roll
-        pitch = self.pitch.update(llk.calibratedOrientationNED.value[1])
+        pitch = self.pitch.update(llk.calibratedOrientationNED.value[1]) if len(llk.calibratedOrientationNED.value) > 1 else 0.0
         roll = roll_pitch_adjust(roll, pitch)
         self.roll_deque.append(roll)
         self.lateral_accel_desired_deque.append(desired_lateral_accel)

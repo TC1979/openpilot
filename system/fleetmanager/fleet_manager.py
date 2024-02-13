@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
 import secrets
-from flask import Flask, render_template, Response, request
+from flask import Flask, render_template, Response, request, send_from_directory, redirect, url_for
 from openpilot.common.realtime import set_core_affinity
 import openpilot.system.fleetmanager.helpers as fleet
 from openpilot.system.hardware.hw import Paths
 from openpilot.common.swaglog import cloudlog
+import traceback
 
 app = Flask(__name__)
 
-
 @app.route("/")
-@app.route("/index")
 def home_page():
   return render_template("index.html")
 
+@app.errorhandler(500)
+def internal_error(exception):
+  print('500 error caught')
+  tberror = traceback.format_exc()
+  return render_template("error.html", error=tberror)
 
 @app.route("/footage/full/<cameratype>/<route>")
 def full(cameratype, route):
@@ -69,7 +73,7 @@ def about():
 
 @app.route("/error_logs")
 def error_logs():
-  return render_template("error_logs.html", rows=fleet.list_files(fleet.ERROR_LOGS_PATH))
+  return render_template("error_logs.html", rows=fleet.list_file(fleet.ERROR_LOGS_PATH))
 
 
 @app.route("/error_logs/<file_name>")
@@ -78,6 +82,153 @@ def open_error_log(file_name):
   error = f.read()
   return render_template("error_log.html", file_name=file_name, file_content=error)
 
+@app.route("/addr_input", methods=['GET', 'POST'])
+def addr_input():
+  preload = fleet.preload_favs()
+  SearchInput = fleet.get_SearchInput()
+  token = fleet.get_public_token()
+  s_token = fleet.get_app_token()
+  gmap_key = fleet.get_gmap_key()
+  PrimeType = fleet.get_PrimeType()
+  lon = float(0.0)
+  lat = float(0.0)
+  if request.method == 'POST':
+    valid_addr = False
+    postvars = request.form.to_dict()
+    addr, lon, lat, valid_addr, token = fleet.parse_addr(postvars, lon, lat, valid_addr, token)
+    if not valid_addr:
+      # If address is not found, try searching
+      postvars = request.form.to_dict()
+      addr = request.form.get('addr_val')
+      addr, lon, lat, valid_addr, token = fleet.search_addr(postvars, lon, lat, valid_addr, token)
+    if valid_addr:
+      # If a valid address is found, redirect to nav_confirmation
+      return redirect(url_for('nav_confirmation', addr=addr, lon=lon, lat=lat))
+    else:
+      return render_template("error.html")
+  elif PrimeType != 0:
+    return render_template("prime.html")
+  # amap stuff
+  elif SearchInput == 1:
+    amap_key, amap_key_2 = fleet.get_amap_key()
+    if amap_key == "" or amap_key is None or amap_key_2 == "" or amap_key_2 is None:
+      return redirect(url_for('amap_key_input'))
+    elif token == "" or token is None:
+      return redirect(url_for('public_token_input'))
+    elif s_token == "" or s_token is None:
+      return redirect(url_for('app_token_input'))
+    else:
+      return redirect(url_for('amap_addr_input'))
+  elif fleet.get_nav_active():
+    if SearchInput == 2:
+      return render_template("nonprime.html", gmap_key=gmap_key, lon=lon, lat=lat, home=preload[0], work=preload[1], fav1=preload[2], fav2=preload[3], fav3=preload[4])
+    else:
+      return render_template("nonprime.html", gmap_key=None, lon=None, lat=None, home=preload[0], work=preload[1], fav1=preload[2], fav2=preload[3], fav3=preload[4])
+  elif token == "" or token is None:
+    return redirect(url_for('public_token_input'))
+  elif s_token == "" or s_token is None:
+    return redirect(url_for('app_token_input'))
+  elif SearchInput == 2:
+    lon, lat = fleet.get_last_lon_lat()
+    if gmap_key == "" or gmap_key is None:
+      return redirect(url_for('gmap_key_input'))
+    else:
+      return render_template("addr.html", gmap_key=gmap_key, lon=lon, lat=lat, home=preload[0], work=preload[1], fav1=preload[2], fav2=preload[3], fav3=preload[4])
+  else:
+      return render_template("addr.html", gmap_key=None, lon=None, lat=None, home=preload[0], work=preload[1], fav1=preload[2], fav2=preload[3], fav3=preload[4])
+
+@app.route("/nav_confirmation", methods=['GET', 'POST'])
+def nav_confirmation():
+  token = fleet.get_public_token()
+  lon = request.args.get('lon')
+  lat = request.args.get('lat')
+  addr = request.args.get('addr')
+  if request.method == 'POST':
+    postvars = request.form.to_dict()
+    fleet.nav_confirmed(postvars)
+    return redirect(url_for('addr_input'))
+  else:
+    return render_template("nav_confirmation.html", addr=addr, lon=lon, lat=lat, token=token)
+
+@app.route("/public_token_input", methods=['GET', 'POST'])
+def public_token_input():
+  if request.method == 'POST':
+    postvars = request.form.to_dict()
+    fleet.public_token_input(postvars)
+    return redirect(url_for('addr_input'))
+  else:
+    return render_template("public_token_input.html")
+
+@app.route("/app_token_input", methods=['GET', 'POST'])
+def app_token_input():
+  if request.method == 'POST':
+    postvars = request.form.to_dict()
+    fleet.app_token_input(postvars)
+    return redirect(url_for('addr_input'))
+  else:
+    return render_template("app_token_input.html")
+
+@app.route("/gmap_key_input", methods=['GET', 'POST'])
+def gmap_key_input():
+  if request.method == 'POST':
+    postvars = request.form.to_dict()
+    fleet.gmap_key_input(postvars)
+    return redirect(url_for('addr_input'))
+  else:
+    return render_template("gmap_key_input.html")
+
+@app.route("/amap_key_input", methods=['GET', 'POST'])
+def amap_key_input():
+  if request.method == 'POST':
+    postvars = request.form.to_dict()
+    fleet.amap_key_input(postvars)
+    return redirect(url_for('amap_addr_input'))
+  else:
+    return render_template("amap_key_input.html")
+
+@app.route("/amap_addr_input", methods=['GET', 'POST'])
+def amap_addr_input():
+  if request.method == 'POST':
+    postvars = request.form.to_dict()
+    fleet.nav_confirmed(postvars)
+    return redirect(url_for('amap_addr_input'))
+  else:
+    lon, lat = fleet.get_last_lon_lat()
+    amap_key, amap_key_2 = fleet.get_amap_key()
+    return render_template("amap_addr_input.html", lon=lon, lat=lat, amap_key=amap_key, amap_key_2=amap_key_2)
+
+@app.route("/CurrentStep.json", methods=['GET'])
+def find_CurrentStep():
+  directory = "/data/openpilot/selfdrive/manager/"
+  filename = "CurrentStep.json"
+  return send_from_directory(directory, filename, as_attachment=True)
+
+@app.route("/navdirections.json", methods=['GET'])
+def find_nav_directions():
+  directory = "/data/openpilot/selfdrive/manager/"
+  filename = "navdirections.json"
+  return send_from_directory(directory, filename, as_attachment=True)
+
+@app.route("/locations", methods=['GET'])
+def get_locations():
+  data = fleet.get_locations()
+  return Response(data, content_type="application/json")
+
+@app.route("/set_destination", methods=['POST'])
+def set_destination():
+  valid_addr = False
+  postvars = request.get_json()
+  data, valid_addr = fleet.set_destination(postvars, valid_addr)
+  if valid_addr:
+    return Response('{"success": true}', content_type='application/json')
+  else:
+    return Response('{"success": false}', content_type='application/json')
+
+@app.route("/navigation/<file_name>", methods=['GET'])
+def find_navicon(file_name):
+  directory = "/data/openpilot/selfdrive/assets/navigation/"
+  return send_from_directory(directory, file_name, as_attachment=True)
+
 
 def main():
   try:
@@ -85,7 +236,7 @@ def main():
   except Exception:
     cloudlog.exception("fleet_manager: failed to set core affinity")
   app.secret_key = secrets.token_hex(32)
-  app.run(host="0.0.0.0", port=5050)
+  app.run(host="0.0.0.0", port=8082)
 
 
 if __name__ == '__main__':

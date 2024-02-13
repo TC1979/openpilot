@@ -135,7 +135,7 @@ void MyFootageQRWidget::hideEvent(QHideEvent *event) {
 void MyFootageQRWidget::refresh() {
   wifi = new WifiManager(this);
   QString myIp = wifi->getIp4Address();
-  QString qrString = "http://" + myIp + ":8082/fleetmanager/footage";
+  QString qrString = "http://" + myIp + ":8082/footage";
   this->updateQrCode(qrString);
   update();
 }

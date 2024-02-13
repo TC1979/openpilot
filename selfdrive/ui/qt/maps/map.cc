@@ -137,7 +137,7 @@ void MapWindow::initLayers() {
     };
 
     QVariantList fillExtrusionOpacity = {
-      "interpolate", 
+      "interpolate",
       QVariantList{"linear"},
       QVariantList{"zoom"},
       15, 0,

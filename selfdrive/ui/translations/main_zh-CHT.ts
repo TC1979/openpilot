@@ -446,6 +446,21 @@
     </message>
 </context>
 <context>
+    <name>NavigationPanel</name>
+    <message>
+        <source>Manage Primeless Navigation Settings</source>
+        <translation>管理免付費導航設置</translation>
+    </message>
+    <message>
+        <source>MANAGE</source>
+        <translation>管理</translation>
+    </message>
+    <message>
+        <source>Manage primeless navigate on openpilot settings.</source>
+        <translation>在 openpilot 設定上管理免付費導航。</translation>
+    </message>
+</context>
+<context>
     <name>Networking</name>
     <message>
         <source>Advanced</source>
@@ -609,6 +624,77 @@
     </message>
 </context>
 <context>
+    <name>Primeless</name>
+    <message>
+        <source>Back</source>
+        <translation>回上頁</translation>
+    </message>
+    <message>
+        <source>Manage Your Settings At</source>
+        <translation>管理您的設置</translation>
+    </message>
+    <message>
+        <source>MapBox</source>
+        <translation>MapBox</translation>
+    </message>
+    <message>
+        <source>Amap</source>
+        <translation>Amap</translation>
+    </message>
+    <message>
+        <source>Google</source>
+        <translation>Google</translation>
+    </message>
+    <message>
+        <source>Destination Search Provider</source>
+        <translation>目的地搜尋提供者</translation>
+    </message>
+    <message>
+        <source>Select a search provider for destination queries in Navigate on Openpilot. Options include MapBox (recommended), Amap, and Google Maps.</source>
+        <translation>選擇導航目的地查詢的搜尋提供者。選項包括 MapBox（建議）、Amap 和 Google 地圖。</translation>
+    </message>
+    <message>
+        <source>Public Mapbox Key</source>
+        <translation>Mapbox 公鑰</translation>
+    </message>
+    <message>
+        <source>Secret Mapbox Key</source>
+        <translation>Mapbox 私鑰</translation>
+    </message>
+    <message>
+        <source>Mapbox Setup Instructions</source>
+        <translation>Mapbox 設定說明</translation>
+    </message>
+    <message>
+        <source>VIEW</source>
+        <translation>觀看</translation>
+    </message>
+    <message>
+        <source>View the instructions to set up MapBox for Primeless Navigation.</source>
+        <translation>查看 MapBox 導覽設定說明。</translation>
+    </message>
+    <message>
+        <source>Device Offline</source>
+        <translation>裝置離線</translation>
+    </message>
+    <message>
+        <source>REMOVE</source>
+        <translation>移除</translation>
+    </message>
+    <message>
+        <source>ADD</source>
+        <translation>新增</translation>
+    </message>
+    <message>
+        <source>Manage your %1.</source>
+        <translation>管理您的 %1.</translation>
+    </message>
+    <message>
+        <source>Enter your %1</source>
+        <translation>輸入您的 %1.</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>Reboot</source>
@@ -723,6 +809,10 @@ This may take up to a minute.</source>
     <message>
         <source>T.O.P</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Navigation</source>
+        <translation>導航</translation>
     </message>
 </context>
 <context>
@@ -1211,36 +1301,18 @@ Toyota/Lexus：按下 ECO 按鈕。
 其他車廠：輕觸螢幕兩次。</translation>
     </message>
     <message>
-        <source>Enable Local Nav Server</source>
-        <translation>開啟免付費導航操控服務</translation>
+        <source>Enable Local Nav and File Server</source>
+        <translation>開啟免付費導航操控與檔案服務器</translation>
     </message>
     <message>
-        <source>Search Destination using Google Map</source>
-        <translation>使用 Google 地圖搜尋目的地</translation>
-    </message>
-    <message>
-        <source>This will allow you to search destination in google map api. Before turning on this function, please confirm that you have entered the mapbox token and completed the reboot.
-You will need to apply your own google map api key. Enter your key detail in web interface once to enable.</source>
-        <translation>這將允許您以 google 地圖 api 搜尋目的地。在開啟這個功能前，請先確認您已輸入 Mapbox 身分驗證並完成重新開機。
-您將需要應用自己的 google 地圖 api 密鑰。在網路界面中輸入您的密鑰詳細訊息。</translation>
-    </message>
-    <message>
-        <source>This will let use Navigation feature with your own access key.
+        <source>This will allow you to use the Navigation feature with your own access key and access openpilot data and files.
 Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:8082*.
 You will need to apply your own mapbox token at https://www.mapbox.com/.
 Internet access from mobile phone (tethering) is required.</source>
-        <translation>這將使您不需透過官方的Prime服務，而是以自己的密鑰使用導航功能。
+        <translation>這將使您不需透過官方的Prime服務，而是以自己的密鑰使用導航功能，並且可透過本地檔案服務器存取 openpilot 的資料及檔案。
 使用瀏覽器的Web界面連結下面網址以操作導航服務： *http://&lt;device_ip&gt;:8082*.
 您需要在 https://www.mapbox.com/ 上申請自己的 Mapbox 身分驗證。
 開啟此服務需要讓機器連接到網際網路才可運作。</translation>
-    </message>
-    <message>
-        <source>Enable Local File Server</source>
-        <translation>開啟本地檔案服務器</translation>
-    </message>
-    <message>
-        <source>A webserver for accessing openpilot data and files. Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:8082/fleetmanager*.</source>
-        <translation>以本地檔案服務器存取 openpilot 的資料及檔案。使用瀏覽器的Web界面連結下面網址以存取檔案： *http://&lt;device_ip&gt;:8082/fleetmanager*.</translation>
     </message>
 </context>
 <context>
