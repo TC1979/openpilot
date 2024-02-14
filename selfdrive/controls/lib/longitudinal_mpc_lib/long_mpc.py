@@ -323,6 +323,7 @@ class LongitudinalMpc:
 
   def set_weights(self, prev_accel_constraint=True, personality=log.LongitudinalPersonality.standard, v_lead0=0, v_lead1=0):
     jerk_factor = get_jerk_factor(personality)
+    jerk_factor /= np.mean(self.braking_offset)
     v_ego = self.x0[1]
     v_ego_bps = [0, 10]
     # KRKeegan adjustments to improve sluggish acceleration
