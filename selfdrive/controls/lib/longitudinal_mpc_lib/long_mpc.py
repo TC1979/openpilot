@@ -4,9 +4,8 @@ import time
 import numpy as np
 from cereal import log
 from openpilot.common.conversions import Conversions as CV
-from openpilot.common.params import Params
 from openpilot.common.numpy_fast import clip
-from openpilot.selfdrive.car.toyota.values import ToyotaFlags, TSS2_CAR, RADAR_ACC_CAR
+from openpilot.selfdrive.car.toyota.values import ToyotaFlags
 from openpilot.common.swaglog import cloudlog
 # WARNING: imports outside of constants will not trigger a rebuild
 from openpilot.selfdrive.modeld.constants import index_function
@@ -390,33 +389,7 @@ class LongitudinalMpc:
     self.cruise_min_a = min_a
     self.max_a = max_a
 
-  def update_TF(self, carstate, personality=log.LongitudinalPersonality.standard):
-    if personality==log.LongitudinalPersonality.relaxed:
-      op_profile_key = 3
-    elif personality==log.LongitudinalPersonality.standard:
-      op_profile_key = 2
-    elif personality==log.LongitudinalPersonality.aggressive:
-      op_profile_key = 1
-    else:
-      raise NotImplementedError("Longitudinal personality not supported")
-
-    self.adjustable_follow_car = True if (self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR) or (self.CP.flags & ToyotaFlags.SMART_DSU)) else False
-    if self.adjustable_follow_car or personality is not None:
-      if self.adjustable_follow_car:
-        profile_key = carstate.distanceLines
-      else:
-        profile_key = op_profile_key
-
-      if profile_key == 1: # No Cut In
-        Params().put_nonblocking("LongitudinalPersonality", str(0))
-
-      elif profile_key == 2: # Relaxed
-        Params().put_nonblocking("LongitudinalPersonality", str(1))
-
-      elif profile_key == 3: # Let You Cut In
-        Params().put_nonblocking("LongitudinalPersonality", str(2))
-
-  def update(self, carstate, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, dynamic_follow=False):
+  def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard, dynamic_follow=False):
     # t_follow = get_T_FOLLOW(personality)
     v_ego = self.x0[1]
     t_follow = get_T_FOLLOW(personality) if not dynamic_follow else get_dynamic_follow(v_ego, personality)
@@ -428,8 +401,6 @@ class LongitudinalMpc:
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
-
-    self.update_TF(carstate)
 
     self.smoother_braking = True
     if self.smoother_braking:

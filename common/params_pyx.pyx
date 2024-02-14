@@ -22,6 +22,7 @@ cdef extern from "common/params.h":
     int put(string, string) nogil
     void putNonBlocking(string, string) nogil
     void putBoolNonBlocking(string, bool) nogil
+    void putIntNonBlocking(string, int) nogil
     int putBool(string, bool) nogil
     int putInt(string, int) nogil
     bool checkKey(string) nogil
@@ -118,6 +119,11 @@ cdef class Params:
     cdef string k = self.check_key(key)
     with nogil:
       self.p.putBoolNonBlocking(k, val)
+
+  def put_int_nonblocking(self, key, int val):
+    cdef string k = self.check_key(key)
+    with nogil:
+      self.p.putIntNonBlocking(k, val)
 
   def remove(self, key):
     cdef string k = self.check_key(key)

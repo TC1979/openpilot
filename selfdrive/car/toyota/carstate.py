@@ -43,17 +43,19 @@ class CarState(CarStateBase):
 
     self.low_speed_lockout = False
     self.acc_type = 1
+    self.lkas_hud = {}
     self.params = Params()
-    self.experimental_mode_via_wheel = self.CP.experimentalModeViaWheel
 
     # KRKeegan - Add support for toyota distance button
+    self.distance_lines = 0
+    self.previous_distance_lines = 0
     self.distance_btn = 0
     self.e2e_link = Params().get_bool("e2e_link")
+    self.experimental_mode_via_wheel = self.CP.experimentalModeViaWheel
     self.ispressed_prev = 2
     self.ispressed_init = 0
     self.e2e_init = 0
     self.topsng = Params().get_bool("topsng")
-    self.lkas_hud = {}
 
     # bsm
     self.toyota_bsm = Params().get_bool("toyota_bsm")
@@ -252,10 +254,15 @@ class CarState(CarStateBase):
     if self.CP.carFingerprint in (TSS2_CAR | RADAR_ACC_CAR):
       if not (self.CP.flags & ToyotaFlags.SMART_DSU.value):
         self.distance_btn = 1 if cp_acc.vl["ACC_CONTROL"]["DISTANCE"] == 1 else 0
-    if self.CP.flags & ToyotaFlags.SMART_DSU.value:
+        self.distance_lines = max(cp.vl["PCM_CRUISE_SM"]["DISTANCE_LINES"] - 1, 0)
+    elif self.CP.flags & ToyotaFlags.SMART_DSU.value:
       self.distance_btn = 1 if cp_acc.vl["SDSU"]["FD_BUTTON"] == 1 else 0
 
-    ret.distanceLines = cp.vl["PCM_CRUISE_SM"]["DISTANCE_LINES"]
+      self.distance_lines = max(cp.vl["PCM_CRUISE_SM"]["DISTANCE_LINES"] - 1, 0)
+
+    if self.distance_lines != self.previous_distance_lines:
+      self.params.put_int_nonblocking('LongitudinalPersonality', self.distance_lines)
+      self.previous_distance_lines = self.distance_lines
 
     if self.e2e_link:
       self.ispressed = cp.vl["GEAR_PACKET"]["ECON_ON"]

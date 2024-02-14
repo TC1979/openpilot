@@ -258,7 +258,6 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"GMapKey", PERSISTENT},
     {"MapboxPublicKey", PERSISTENT},
     {"MapboxSecretKey", PERSISTENT},
-    {"NavEnable", PERSISTENT},
     {"SearchInput", PERSISTENT},
 };
 

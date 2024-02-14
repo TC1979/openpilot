@@ -64,6 +64,10 @@ public:
   inline void putBoolNonBlocking(const std::string &key, bool val) {
     putNonBlocking(key, val ? "1" : "0");
   }
+  void putIntNonBlocking(const std::string &key, const std::string &val);
+  inline void putIntNonBlocking(const std::string &key, int val) {
+    putNonBlocking(key, std::to_string(val));
+  }
 
 private:
   void asyncWriteThread();
