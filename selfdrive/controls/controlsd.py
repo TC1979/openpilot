@@ -77,6 +77,10 @@ class Controls:
     self.can_sock = messaging.sub_sock('can', timeout=20)
 
     # self.params = Params()
+
+    if self.dp_jetson:
+      IGNORE_PROCESSES.update({"dmonitoringd", "dmonitoringmodeld", "uploader"})
+
     ignore = self.sensor_packets + ['testJoystick']
     if SIMULATION:
       ignore += ['driverCameraState', 'managerState']

@@ -24,8 +24,7 @@ from openpilot.system.version import is_dirty, get_commit, get_version, get_orig
 
 
 def manager_init() -> None:
-  if not Params().get_bool("dp_jetson"):
-    save_bootlog()
+  save_bootlog()
 
   params = Params()
   params.clear_all(ParamKeyType.CLEAR_ON_MANAGER_START)
@@ -153,16 +152,15 @@ def manager_thread() -> None:
   params = Params()
 
   ignore: List[str] = []
-  dp_jetson = params.get_bool("dp_jetson")
-  ignore += ['dmonitoringmodeld', 'dmonitoringd'] if dp_jetson else []
-  if dp_jetson:
-    ignore += ['logcatd', 'proclogd', 'loggerd', 'logmessaged', 'encoderd', 'uploader']
-
   if params.get("DongleId", encoding='utf8') in (None, UNREGISTERED_DONGLE_ID):
     ignore += ["manage_athenad", "uploader"]
   if os.getenv("NOBOARD") is not None:
     ignore.append("pandad")
   ignore += [x for x in os.getenv("BLOCK", "").split(",") if len(x) > 0]
+
+  if params.get_bool("dp_jetson"):
+    ignore += ["dmonitoringmodeld", "dmonitoringd", "uploader"]
+
   if not params.get_bool("fleetmanager"):
     ignore += ["fleetmanager"]
 
