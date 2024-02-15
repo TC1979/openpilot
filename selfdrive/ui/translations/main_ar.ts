@@ -667,6 +667,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Google Map Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Mapbox Setup Instructions</source>
         <translation type="unfinished"></translation>
     </message>

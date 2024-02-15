@@ -50,9 +50,11 @@ Primeless::Primeless(QWidget *parent) : QWidget(parent) {
 
   createMapboxKeyControl(publicMapboxKeyControl, tr("Public Mapbox Key"), "MapboxPublicKey", "pk.");
   createMapboxKeyControl(secretMapboxKeyControl, tr("Secret Mapbox Key"), "MapboxSecretKey", "sk.");
+  createMapboxKeyControl(googleMapKeyControl, tr("Google Map Key"), "GMapKey", "gmap.");
 
   mapboxPublicKeySet = !params.get("MapboxPublicKey").empty();
   mapboxSecretKeySet = !params.get("MapboxSecretKey").empty();
+  gMapKeySet = !params.get("GMapKey").empty();
   setupCompleted = mapboxPublicKeySet && mapboxSecretKeySet;
 
   QHBoxLayout *setupLayout = new QHBoxLayout();
@@ -119,10 +121,12 @@ void Primeless::updateState() {
 
   mapboxPublicKeySet = !params.get("MapboxPublicKey").empty();
   mapboxSecretKeySet = !params.get("MapboxSecretKey").empty();
+  gMapKeySet = !params.get("GMapKey").empty();
   setupCompleted = mapboxPublicKeySet && mapboxSecretKeySet && setupCompleted;
 
   publicMapboxKeyControl->setText(mapboxPublicKeySet ? tr("REMOVE") : tr("ADD"));
   secretMapboxKeyControl->setText(mapboxSecretKeySet ? tr("REMOVE") : tr("ADD"));
+  googleMapKeyControl->setText(gMapKeySet ? tr("REMOVE") : tr("ADD"));
 
   if (imageLabel->isVisible()) {
     updateStep();

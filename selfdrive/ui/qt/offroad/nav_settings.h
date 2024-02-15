@@ -29,12 +29,14 @@ private:
 
   ButtonControl *publicMapboxKeyControl;
   ButtonControl *secretMapboxKeyControl;
+  ButtonControl *googleMapKeyControl;
   LabelControl *ipLabel;
 
   WifiManager *wifi;
 
   bool mapboxPublicKeySet;
   bool mapboxSecretKeySet;
+  bool gMapKeySet;
   bool setupCompleted;
   QPixmap pixmap;
   QString currentStep = "../assets/images/setup_completed.png";

@@ -662,6 +662,10 @@
         <translation>Mapbox 私鑰</translation>
     </message>
     <message>
+        <source>Google Map Key</source>
+        <translation>Google 地圖金鑰</translation>
+    </message>
+    <message>
         <source>Mapbox Setup Instructions</source>
         <translation>Mapbox 設定說明</translation>
     </message>
