@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 
-from common.params import Params
 from openpilot.system.hardware import PC
 
 DEFAULT_DOWNLOAD_CACHE_ROOT = "/tmp/comma_download_cache"
@@ -17,8 +16,6 @@ class Paths:
       return os.environ['LOG_ROOT']
     elif PC:
       return str(Path(Paths.comma_home()) / "media" / "0" / "realdata")
-    elif Params().get_bool("dp_jetson"):
-      return '/data/media/0/fakedata/'
     else:
       return '/data/media/0/realdata/'
 
