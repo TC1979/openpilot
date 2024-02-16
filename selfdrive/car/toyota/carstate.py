@@ -251,12 +251,11 @@ class CarState(CarStateBase):
         ret.rightBlindspot = self.right_blindspot
 
     # Driving personalities function
-    if self.CP.carFingerprint in TSS2_CAR and not self.CP.flags & ToyotaFlags.DISABLE_RADAR.value:
+    if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
       self.distance_btn = 1 if cp_acc.vl["ACC_CONTROL"]["DISTANCE"] == 1 else 0
-      self.distance_lines = max(cp.vl["PCM_CRUISE_SM"]["DISTANCE_LINES"] - 1, 0)
     elif self.CP.flags & ToyotaFlags.SMART_DSU.value:
       self.distance_btn = 1 if cp_acc.vl["SDSU"]["FD_BUTTON"] == 1 else 0
-      self.distance_lines = max(cp.vl["PCM_CRUISE_SM"]["DISTANCE_LINES"] - 1, 0)
+    self.distance_lines = max(cp.vl["PCM_CRUISE_SM"]["DISTANCE_LINES"] - 1, 0)
 
     if self.distance_lines != self.previous_distance_lines:
       self.params.put_int_nonblocking('LongitudinalPersonality', self.distance_lines)
