@@ -79,7 +79,7 @@ class Controls:
     # self.params = Params()
 
     if self.dp_jetson:
-      IGNORE_PROCESSES.update({"dmonitoringd", "dmonitoringmodeld", "uploader"})
+      IGNORE_PROCESSES.update({"dmonitoringd", "dmonitoringmodeld", "logcatd", "logmessaged", "loggerd", "tombstoned", "uploader"})
 
     ignore = self.sensor_packets + ['testJoystick']
     if SIMULATION:

@@ -4,7 +4,6 @@
 
 #include "system/hardware/base.h"
 #include "common/util.h"
-#include "common/params.h"
 
 #if QCOM2
 #include "system/hardware/tici/hardware.h"
@@ -27,11 +26,7 @@ namespace Path {
     if (const char *env = getenv("LOG_ROOT")) {
       return env;
     }
-    if (Params().getBool("dp_jetson")) {
-      return "/data/media/0/fakedata";
-    } else {
-      return Hardware::PC() ? Path::comma_home() + "/media/0/realdata" : "/data/media/0/realdata";
-    }
+    return Hardware::PC() ? Path::comma_home() + "/media/0/realdata" : "/data/media/0/realdata";
   }
 
   inline std::string params() {

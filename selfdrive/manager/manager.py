@@ -159,7 +159,7 @@ def manager_thread() -> None:
   ignore += [x for x in os.getenv("BLOCK", "").split(",") if len(x) > 0]
 
   if params.get_bool("dp_jetson"):
-    ignore += ["dmonitoringmodeld", "dmonitoringd", "uploader"]
+    ignore += ["dmonitoringmodeld", "dmonitoringd", "logcatd", "logmessaged", "loggerd", "tombstoned", "uploader"]
 
   if not params.get_bool("fleetmanager"):
     ignore += ["fleetmanager"]
