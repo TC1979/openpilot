@@ -45,12 +45,6 @@ echo "[-] committing version $VERSION T=$SECONDS"
 git add -f .
 git commit -a -m "T.O.P v$VERSION release"
 
-# ACADOS
-wget https://github.com/acados/tera_renderer/releases/download/v0.0.34/t_renderer-v0.0.34-linux -P /data/openpilot/third_party/acados/x86_64
-strip -s /data/openpilot/third_party/acados/x86_64/t_renderer-v0.0.34-linux -o /data/openpilot/third_party/acados/x86_64/t_renderer
-
-chmod +x /data/openpilot/third_party/acados/x86_64/t_renderer
-
 # Build
 export PYTHONPATH="$BUILD_DIR"
 scons -j$(nproc)
