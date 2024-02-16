@@ -17,7 +17,7 @@ class Paths:
       return os.environ['LOG_ROOT']
     elif PC:
       return str(Path(Paths.comma_home()) / "media" / "0" / "realdata")
-    elif Params().getBool("dp_jetson"):
+    elif Params().get_bool("dp_jetson"):
       return '/data/media/0/fakedata/'
     else:
       return '/data/media/0/realdata/'
