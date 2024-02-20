@@ -786,8 +786,8 @@ EVENTS: Dict[int, Dict[str, Union[Alert, AlertCallbackType]]] = {
     ET.NO_ENTRY: comm_issue_alert,
   },
   EventName.commIssueAvgFreq: {
-    ET.SOFT_DISABLE: soft_disable_alert("運行中通信速率過低"),
-    ET.NO_ENTRY: NoEntryAlert("運行中通信速率過低"),
+    ET.SOFT_DISABLE: soft_disable_alert("運行中出現通信率過低問題"),
+    ET.NO_ENTRY: NoEntryAlert("運行中出現通信率過低問題"),
   },
 
   EventName.controlsdLagging: {
