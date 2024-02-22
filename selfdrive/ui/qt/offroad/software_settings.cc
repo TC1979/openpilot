@@ -161,7 +161,7 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
   // error log button
   errorLogBtn = new ButtonControl(tr("Error Log"), tr("VIEW"), "View the error log for debugging purposes when openpilot crashes.");
   connect(errorLogBtn, &ButtonControl::clicked, [=]() {
-    const std::string txt = util::read_file("/data/community/crashes/error.txt");
+    std::string txt = util::read_file("/data/community/crashes/error.txt");
     ConfirmationDialog::rich(QString::fromStdString(txt), this);
   });
   addItem(errorLogBtn);

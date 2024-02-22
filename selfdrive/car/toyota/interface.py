@@ -15,10 +15,9 @@ GearShifter = car.CarState.GearShifter
 
 
 class CarInterface(CarInterfaceBase):
-  prev_atl = False
-
   def __init__(self, CP, CarController, CarState):
     super().__init__(CP, CarController, CarState)
+    self.prev_atl = False
 
     # init for low speed re-write (dp)
     self.low_cruise_speed = 0.

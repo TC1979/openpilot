@@ -13,14 +13,13 @@ from openpilot.common.swaglog import cloudlog
 from openpilot.system.version import get_branch, get_commit, get_origin, get_version, \
                               is_comma_remote, is_dirty, is_tested_branch
 
+CRASHES_DIR = '/data/community/crashes/'
 
 class SentryProject(Enum):
   # python project
   SELFDRIVE = "https://6f3c7076c1e14b2aa10f5dde6dda0cc4@o33823.ingest.sentry.io/77924"
   # native project
   SELFDRIVE_NATIVE = "https://3e4b586ed21a4479ad5d85083b639bc6@o33823.ingest.sentry.io/157615"
-
-CRASHES_DIR = '/data/community/crashes/'
 
 
 def report_tombstone(fn: str, message: str, contents: str) -> None:
