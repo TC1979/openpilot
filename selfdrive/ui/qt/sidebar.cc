@@ -91,7 +91,8 @@ void Sidebar::updateState(const UIState &s) {
                         : ItemStatus{{tr("CONNECT"), tr("ERROR")}, danger_color};
   }
   setProperty("connectStatus", QVariant::fromValue(connectStatus));
-  int temp = (int)deviceState.getAmbientTempC();
+
+  int temp = (int)deviceState.getMaxTempC();
   QString good_disp = QString::number(temp) + "°C";
   ItemStatus tempStatus = {{tr("TEMP"), good_disp.toUtf8().data()}, danger_color};
   auto ts = deviceState.getThermalStatus();
