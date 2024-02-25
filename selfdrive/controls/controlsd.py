@@ -96,6 +96,10 @@ class CarD:
     if dp_atl:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.ALKA
 
+    auto_brakehold = self.params.get_bool("AleSato_AutomaticBrakeHold")
+    if auto_brakehold:
+      self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.ALLOW_AEB
+
     car_recognized = self.CP.carName != 'mock'
     openpilot_enabled_toggle = self.params.get_bool("OpenpilotEnabledToggle")
 
