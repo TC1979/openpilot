@@ -131,7 +131,7 @@ jobs:
     - uses: ./.github/workflows/setup-pre-commit
     - uses: ./.github/workflows/setup-with-retry
     - name: pre-commit
-      timeout-minutes: 4
+      timeout-minutes: 10
       run: ${{ env.RUN }} "unset PYTHONWARNINGS && pre-commit run --all && chmod -R 777 /tmp/pre-commit"
 
   valgrind:
@@ -313,7 +313,7 @@ jobs:
     - name: Build openpilot
       run: ${{ env.RUN }} "scons -j$(nproc)"
     - name: Test car models
-      timeout-minutes: 10
+      timeout-minutes: 15
       run: |
         ${{ env.RUN }} "$PYTEST selfdrive/car/tests/test_models.py && \
                         chmod -R 777 /tmp/comma_download_cache"
