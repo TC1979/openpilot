@@ -206,6 +206,54 @@ class CarState(CarStateBase):
       ret.leftBlindspot = (cp.vl["BSM"]["L_ADJACENT"] == 1) or (cp.vl["BSM"]["L_APPROACHING"] == 1)
       ret.rightBlindspot = (cp.vl["BSM"]["R_ADJACENT"] == 1) or (cp.vl["BSM"]["R_APPROACHING"] == 1)
 
+    if self.CP.carFingerprint != CAR.PRIUS_V:
+      self.lkas_hud = copy.copy(cp_cam.vl["LKAS_HUD"])
+
+    # Driving personalities function
+    if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
+      self.distance_btn = 1 if cp_acc.vl["ACC_CONTROL"]["DISTANCE"] == 1 else 0
+    elif self.CP.flags & ToyotaFlags.SMART_DSU.value:
+      self.distance_btn = 1 if cp_acc.vl["SDSU"]["FD_BUTTON"] == 1 else 0
+    self.distance_lines = max(cp.vl["PCM_CRUISE_SM"]["DISTANCE_LINES"] - 1, 0)
+
+    if self.distance_lines != self.previous_distance_lines:
+      self.params.put_int_nonblocking('LongitudinalPersonality', self.distance_lines)
+      self.previous_distance_lines = self.distance_lines
+
+    if self.e2e_link:
+      self.ispressed = cp.vl["GEAR_PACKET"]["ECON_ON"]
+      self.ispressed_init += int(self.ispressed)
+      self.e2e_init += int(self.params.get_bool("ExperimentalMode"))
+      self.status_check = int(self.ispressed_init + self.e2e_init)
+      if (self.status_check == 1 or self.status_check >= 4) and self.ispressed != self.ispressed_prev:
+        self.e2eLongButton = not self.params.get_bool("ExperimentalMode")
+        self.params.put_bool("ExperimentalMode", self.e2eLongButton)
+      self.ispressed_prev = self.ispressed
+      self.ispressed_init = 2
+      self.e2e_init = 2
+
+    ret.steeringWheelCar = True if self.CP.carName == "toyota" else False
+
+    # Automatic BrakeHold
+    if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
+      self.stock_aeb = copy.copy(cp_cam.vl["PRE_COLLISION_2"])
+      self.brakehold_condition_satisfied =  (ret.standstill and ret.cruiseState.available and not ret.gasPressed and \
+                                            not ret.cruiseState.enabled and (ret.gearShifter not in (self.GearShifter.reverse,\
+                                            self.GearShifter.park)) and self.params.get_bool('AleSato_AutomaticBrakeHold'))
+      if self.brakehold_condition_satisfied:
+        if self.brakehold_condition_counter > self.time_to_brakehold and not self.reset_brakehold:
+          self.brakehold_governor = True
+        else:
+          self.brakehold_governor = False
+        if not self.prev_brakePressed and ret.brakePressed: # disable automatic brakehold in second brakePress
+          self.reset_brakehold = True
+        self.brakehold_condition_counter += 1
+      else:
+        self.brakehold_governor = False
+        self.reset_brakehold = False
+        self.brakehold_condition_counter = 0
+      self.prev_brakePressed = ret.brakePressed
+
     # DP: Enable blindspot debug mode once (@arne182)
     # let's keep all the commented out code for easy debug purpose for future.
     if self.toyota_bsm and self.frame > 199: #self.CP.carFingerprint == CAR.PRIUS_TSS2: #not (self.CP.carFingerprint in TSS2_CAR or self.CP.carFingerprint == CAR.CAMRY or self.CP.carFingerprint == CAR.CAMRYH):
@@ -250,54 +298,6 @@ class CarState(CarStateBase):
         ret.leftBlindspot = self.left_blindspot
         ret.rightBlindspot = self.right_blindspot
 
-    # Driving personalities function
-    if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
-      self.distance_btn = 1 if cp_acc.vl["ACC_CONTROL"]["DISTANCE"] == 1 else 0
-    elif self.CP.flags & ToyotaFlags.SMART_DSU.value:
-      self.distance_btn = 1 if cp_acc.vl["SDSU"]["FD_BUTTON"] == 1 else 0
-    self.distance_lines = max(cp.vl["PCM_CRUISE_SM"]["DISTANCE_LINES"] - 1, 0)
-
-    if self.distance_lines != self.previous_distance_lines:
-      self.params.put_int_nonblocking('LongitudinalPersonality', self.distance_lines)
-      self.previous_distance_lines = self.distance_lines
-
-    if self.e2e_link:
-      self.ispressed = cp.vl["GEAR_PACKET"]["ECON_ON"]
-      self.ispressed_init += int(self.ispressed)
-      self.e2e_init += int(self.params.get_bool("ExperimentalMode"))
-      self.status_check = int(self.ispressed_init + self.e2e_init)
-      if (self.status_check == 1 or self.status_check >= 4) and self.ispressed != self.ispressed_prev:
-        self.e2eLongButton = not self.params.get_bool("ExperimentalMode")
-        self.params.put_bool("ExperimentalMode", self.e2eLongButton)
-      self.ispressed_prev = self.ispressed
-      self.ispressed_init = 2
-      self.e2e_init = 2
-
-    ret.steeringWheelCar = True if self.CP.carName == "toyota" else False
-
-    # Automatic BrakeHold
-    if self.params.get_bool("AleSato_AutomaticBrakeHold") and self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
-      self.stock_aeb = copy.copy(cp_cam.vl["PRE_COLLISION_2"])
-      self.brakehold_condition_satisfied =  ret.standstill and ret.cruiseState.available and not ret.gasPressed and \
-                                            not ret.cruiseState.enabled and (ret.gearShifter not in (self.GearShifter.reverse,\
-                                            self.GearShifter.park))
-      if self.brakehold_condition_satisfied:
-        if self.brakehold_condition_counter > self.time_to_brakehold and not self.reset_brakehold:
-          self.brakehold_governor = True
-        else:
-          self.brakehold_governor = False
-        if not self.prev_brakePressed and ret.brakePressed: # disable automatic brakehold in second brakePress
-          self.reset_brakehold = True
-        self.brakehold_condition_counter += 1
-      else:
-        self.brakehold_governor = False
-        self.reset_brakehold = False
-        self.brakehold_condition_counter = 0
-      self.prev_brakePressed = ret.brakePressed
-
-    if self.CP.carFingerprint != CAR.PRIUS_V:
-      self.lkas_hud = copy.copy(cp_cam.vl["LKAS_HUD"])
-
     self.frame += 1
     return ret
 
@@ -332,14 +332,8 @@ class CarState(CarStateBase):
     if CP.enableGasInterceptor:
       messages.append(("GAS_SENSOR", 50))
 
-
-    toyota_bsm = Params().get_bool("toyota_bsm")
-
     if CP.enableBsm:
       messages.append(("BSM", 1))
-
-    if toyota_bsm:
-      messages.append(("DEBUG", 65))
 
     if CP.carFingerprint in RADAR_ACC_CAR and not CP.flags & ToyotaFlags.DISABLE_RADAR.value:
       if not CP.flags & ToyotaFlags.SMART_DSU.value:
@@ -359,6 +353,8 @@ class CarState(CarStateBase):
     if CP.flags & ToyotaFlags.SMART_DSU.value:
       messages.append(("SDSU", 0))
 
+    if Params().get_bool("toyota_bsm"):
+      messages.append(("DEBUG", 65))
 
     return CANParser(DBC[CP.carFingerprint]["pt"], messages, 0)
 
