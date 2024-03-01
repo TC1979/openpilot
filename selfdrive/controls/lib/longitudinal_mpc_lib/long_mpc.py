@@ -401,14 +401,17 @@ class LongitudinalMpc:
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
+    lead = radarstate.leadOne
 
-    self.smoother_braking = True if self.mode == 'acc' and np.any(lead_xv_0[:,0] < 40) else False
+    self.smoother_braking = True if self.mode == 'acc' and not np.any(lead.dRel < (v_ego - 1) * t_follow) else False
     if self.smoother_braking:
       distance_factor = np.maximum(1, lead_xv_0[:,0] - (lead_xv_0[:,1] * t_follow))
       self.braking_offset = np.clip((v_ego - lead_xv_0[:,1]) - COMFORT_BRAKE, 1, distance_factor)
       t_follow = t_follow / self.braking_offset
+      print("smoother_braking On")
     else:
       self.braking_offset = 1
+      print("smoother_braking Off")
 
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
