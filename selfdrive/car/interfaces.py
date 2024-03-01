@@ -6,7 +6,7 @@ from abc import abstractmethod, ABC
 from difflib import SequenceMatcher
 from json import load
 from enum import StrEnum
-from typing import Any, Dict, Optional, Tuple, List, Callable, NamedTuple, Union
+from typing import Any, NamedTuple, Tuple, Union
 from collections.abc import Callable
 
 from cereal import car
