@@ -215,7 +215,7 @@ class CarState(CarStateBase):
     if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
       self.distance_button = cp_acc.vl["ACC_CONTROL"]["DISTANCE"]
     elif self.CP.flags & ToyotaFlags.SMART_DSU.value:
-      self.distance_button = cp.vl["SDSU"]["FD_BUTTON"] or cp_acc.vl["ACC_CONTROL"]["DISTANCE"]
+      self.distance_button = cp.vl["SDSU"]["FD_BUTTON"]
     self.prev_distance_button = self.distance_button
 
     if self.e2e_link:
