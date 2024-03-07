@@ -197,7 +197,7 @@ class CarInterface(CarInterfaceBase):
       else:
         self.low_cruise_speed = 0.
 
-    if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR or (self.CP.flags & ToyotaFlags.SMART_DSU)):
+    if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR) or (self.CP.flags & ToyotaFlags.SMART_DSU):
       ret.buttonEvents = create_button_events(self.CS.distance_button, self.CS.prev_distance_button, {1: ButtonType.gapAdjustCruise})
 
     # events
