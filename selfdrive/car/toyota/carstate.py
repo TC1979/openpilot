@@ -41,7 +41,7 @@ class CarState(CarStateBase):
     self.accurate_steer_angle_seen = False
     self.angle_offset = FirstOrderFilter(None, 60.0, DT_CTRL, initialized=False)
 
-    # self.prev_distance_button = 0
+    self.prev_distance_button = 0
     self.distance_button = 0
 
     self.low_speed_lockout = False
@@ -49,8 +49,6 @@ class CarState(CarStateBase):
     self.lkas_hud = {}
     self.params = Params()
 
-    self.distance_lines = 0
-    self.previous_distance_lines = 0
     self.e2e_link = Params().get_bool("e2e_link")
     self.experimental_mode_via_wheel = self.CP.experimentalModeViaWheel
     self.ispressed_prev = 2
@@ -212,14 +210,10 @@ class CarState(CarStateBase):
 
     # distance button is wired to the ACC module (camera or radar)
     if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
-      self.distance_button = 1 if cp_acc.vl["ACC_CONTROL"]["DISTANCE"] == 1 else 0
+      self.distance_button = cp_acc.vl["ACC_CONTROL"]["DISTANCE"]
     elif self.CP.flags & ToyotaFlags.SMART_DSU:
-      self.distance_button = 1 if cp_acc.vl["SDSU"]["FD_BUTTON"] == 1 else 0
-    self.distance_lines = max(cp.vl["PCM_CRUISE_SM"]["DISTANCE_LINES"] - 1, 0)
-
-    if self.distance_lines != self.previous_distance_lines:
-      self.params.put_int_nonblocking('LongitudinalPersonality', self.distance_lines)
-      self.previous_distance_lines = self.distance_lines
+      self.distance_button = cp.vl['SDSU']['FD_BUTTON'] or cp_acc.vl["ACC_CONTROL"]["DISTANCE"]
+    self.prev_distance_button = self.distance_button
 
     if self.e2e_link:
       self.ispressed = cp.vl["GEAR_PACKET"]["ECON_ON"]
@@ -350,9 +344,11 @@ class CarState(CarStateBase):
         ("PRE_COLLISION", 33),
       ]
 
-    # KRKeegan - Add support for toyota distance button
-    if CP.flags & ToyotaFlags.SMART_DSU.value:
-      messages.append(("SDSU", 0))
+    if CP.flags & ToyotaFlags.SMART_DSU:
+      messages += [
+        ("SDSU", 0),
+        ("ACC_CONTROL", 33),
+      ]
 
     if Params().get_bool("toyota_bsm"):
       messages.append(("DEBUG", 65))

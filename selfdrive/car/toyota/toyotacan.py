@@ -38,7 +38,7 @@ def create_accel_command(packer, accel, accel_raw, pcm_cancel, standstill_req, l
   values = {
     "ACCEL_CMD": accel,  # compensated accel command
     "ACC_TYPE": acc_type,
-    "DISTANCE": distance_button,
+    "DISTANCE": 0,
     "MINI_CAR": lead,
     "PERMIT_BRAKING": 1,
     "RELEASE_STANDSTILL": not standstill_req,
