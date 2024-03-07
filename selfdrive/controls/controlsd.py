@@ -29,8 +29,6 @@ from openpilot.selfdrive.controls.lib.latcontrol_torque import LatControlTorque
 from openpilot.selfdrive.controls.lib.longcontrol import LongControl
 from openpilot.selfdrive.controls.lib.vehicle_model import VehicleModel
 
-from openpilot.selfdrive.car.toyota.values import TSS2_CAR
-
 from openpilot.system.hardware import HARDWARE
 from openpilot.system.version import get_short_branch
 

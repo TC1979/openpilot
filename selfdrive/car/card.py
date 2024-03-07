@@ -14,6 +14,7 @@ from openpilot.common.realtime import DT_CTRL
 from openpilot.selfdrive.boardd.boardd import can_list_to_can_capnp
 from openpilot.selfdrive.car.car_helpers import get_car, get_one_can
 from openpilot.selfdrive.car.interfaces import CarInterfaceBase
+from openpilot.selfdrive.car.toyota.values import TSS2_CAR
 
 
 REPLAY = "REPLAY" in os.environ
