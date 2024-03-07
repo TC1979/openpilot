@@ -214,8 +214,8 @@ class CarState(CarStateBase):
     # distance button is wired to the ACC module (camera or radar)
     if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
       self.distance_button = cp_acc.vl["ACC_CONTROL"]["DISTANCE"]
-    elif self.CP.flags & ToyotaFlags.SMART_DSU:
-      self.distance_button = cp.vl['SDSU']['FD_BUTTON'] or cp_acc.vl["ACC_CONTROL"]["DISTANCE"]
+    elif self.CP.flags & ToyotaFlags.SMART_DSU.value:
+      self.distance_button = cp.vl["SDSU"]["FD_BUTTON"] or cp_acc.vl["ACC_CONTROL"]["DISTANCE"]
     self.prev_distance_button = self.distance_button
 
     if self.e2e_link:
@@ -347,11 +347,8 @@ class CarState(CarStateBase):
         ("PRE_COLLISION", 33),
       ]
 
-    if CP.flags & ToyotaFlags.SMART_DSU:
-      messages += [
-        ("SDSU", 0),
-        ("ACC_CONTROL", 33),
-      ]
+    if CP.flags & ToyotaFlags.SMART_DSU.value:
+      messages.append(("SDSU", 0))
 
     if Params().get_bool("toyota_bsm"):
       messages.append(("DEBUG", 65))
