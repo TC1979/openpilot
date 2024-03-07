@@ -109,7 +109,7 @@ class CarState(CarStateBase):
     if self.CP.carFingerprint == CAR.PRIUS_V:
       ret.vEgoCluster = ret.vEgo * 1.087654321
     else:
-    ret.vEgoCluster = ret.vEgo * 1.015  # minimum of all the cars
+      ret.vEgoCluster = ret.vEgo * 1.015  # minimum of all the cars
 
     ret.standstill = abs(ret.vEgoRaw) < 1e-3
 
