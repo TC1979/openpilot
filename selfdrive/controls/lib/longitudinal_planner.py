@@ -2,6 +2,7 @@
 import math
 import numpy as np
 from openpilot.common.numpy_fast import clip, interp
+from openpilot.common.params import Params
 
 import cereal.messaging as messaging
 from openpilot.common.conversions import Conversions as CV
@@ -90,7 +91,7 @@ class LongitudinalPlanner:
     self.a_desired_trajectory = np.zeros(CONTROL_N)
     self.j_desired_trajectory = np.zeros(CONTROL_N)
     self.solverExecutionTime = 0.0
-
+    self.params = Params()
     self.override_slc = False
     self.overridden_speed = 0
     self.slc_target = 0
