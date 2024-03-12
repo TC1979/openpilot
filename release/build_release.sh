@@ -100,11 +100,10 @@ top-dev(priv) master commit: $GIT_HASH
 #RELEASE=1 selfdrive/test/test_onroad.py
 #selfdrive/manager/test/test_manager.py
 #selfdrive/car/tests/test_car_interfaces.py
-#rm -rf $TEST_FILES
+rm -rf $TEST_FILES
 
 if [ ! -z "$RELEASE_BRANCH" ]; then
   echo "[-] pushing release T=$SECONDS"
-  git branch -m release3
   git push -f origin $RELEASE_BRANCH:$RELEASE_BRANCH
 fi
 
