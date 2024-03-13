@@ -188,6 +188,7 @@ system/hardware/pc/hardware.py
 
 system/ubloxd/.gitignore
 system/ubloxd/SConscript
+system/ubloxd/pigeond.py
 system/ubloxd/generated/*
 system/ubloxd/*.h
 system/ubloxd/*.cc
@@ -247,7 +248,6 @@ system/sensord/SConscript
 system/sensord/sensors_qcom2.cc
 system/sensord/sensors/*.cc
 system/sensord/sensors/*.h
-system/sensord/pigeond.py
 
 system/webrtc/__init__.py
 system/webrtc/webrtcd.py
