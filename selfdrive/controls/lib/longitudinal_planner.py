@@ -96,7 +96,6 @@ class LongitudinalPlanner:
     self.overridden_speed = 0
     self.slc_target = 0
     self.dynamic_follow = False
-
     self.dynamic_follow = self.params.get_bool("Marc_Dynamic_Follow")
 
   @staticmethod
