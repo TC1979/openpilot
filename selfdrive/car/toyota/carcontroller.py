@@ -32,8 +32,8 @@ MAX_LTA_DRIVER_TORQUE_ALLOWANCE = 150  # slightly above steering pressed allows 
 # PCM compensatory force calculation threshold
 # a variation in accel command is more pronounced at higher speeds, let compensatory forces ramp to zero before
 # applying when speed is high
-COMPENSATORY_CALCULATION_THRESHOLD_V = [-0.3, -0.25, 0.]  # m/s^2
-COMPENSATORY_CALCULATION_THRESHOLD_BP = [0., 11., 23.]  # m/s
+COMPENSATORY_CALCULATION_THRESHOLD_V = [-0.2, 0.]  # m/s^2
+COMPENSATORY_CALCULATION_THRESHOLD_BP = [0., 23.]  # m/s
 
 # Time values for hysteresis
 RESUME_HYSTERESIS_TIME = 3.  # seconds
