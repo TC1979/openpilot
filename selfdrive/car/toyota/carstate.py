@@ -51,11 +51,13 @@ class CarState(CarStateBase):
     self.lkas_hud = {}
     self.params = Params()
 
-    self.e2e_link = Params().get_bool("e2e_link")
     self.experimental_mode_via_wheel = self.CP.experimentalModeViaWheel
-    self.ispressed_prev = 2
-    self.ispressed_init = 0
-    self.e2e_init = 0
+    # Change between chill/experimental mode using steering wheel
+    self.ispressed_prev = False
+    self.distance_button_hold = 0
+    self.gap_button_counter = 0
+    self.short_press_button_counter = 0
+
     self.topsng = Params().get_bool("topsng")
 
     # bsm
@@ -218,23 +220,30 @@ class CarState(CarStateBase):
 
     if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR) or (self.CP.flags & ToyotaFlags.SMART_DSU and not self.CP.flags & ToyotaFlags.RADAR_CAN_FILTER):
       # distance button is wired to the ACC module (camera or radar)
-      self.prev_distance_button = self.distance_button
+      # self.prev_distance_button = self.distance_button
+      self.prev_distance_button = self.distance_button_hold
       if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
         self.distance_button = cp_acc.vl["ACC_CONTROL"]["DISTANCE"]
       else:
         self.distance_button = cp.vl["SDSU"]["FD_BUTTON"]
 
-    if self.e2e_link:
-      self.ispressed = cp.vl["GEAR_PACKET"]["ECON_ON"]
-      self.ispressed_init += int(self.ispressed)
-      self.e2e_init += int(self.params.get_bool("ExperimentalMode"))
-      self.status_check = int(self.ispressed_init + self.e2e_init)
-      if (self.status_check == 1 or self.status_check >= 4) and self.ispressed != self.ispressed_prev:
-        self.e2eLongButton = not self.params.get_bool("ExperimentalMode")
-        self.params.put_bool("ExperimentalMode", self.e2eLongButton)
-      self.ispressed_prev = self.ispressed
-      self.ispressed_init = 2
-      self.e2e_init = 2
+    # change experimental/chill mode on fly with long press
+    if self.distance_button:
+      self.short_press_button_counter += 1
+      if not self.distance_button_hold:
+        self.gap_button_counter += 1
+        if self.gap_button_counter > 100:  # 50 miliseconds
+          self.params.put_bool_nonblocking('ExperimentalMode', not self.params.get_bool("ExperimentalMode"))  # change experimental/chill mode on fly with long press
+          self.gap_button_counter = 0
+
+    if not self.distance_button and self.ispressed_prev and self.short_press_button_counter < 50:
+      # Switch to follow distances on short press
+      self.distance_button_hold = True
+
+    if not self.ispressed_prev and not self.distance_button:
+      self.distance_button_hold = False
+      self.short_press_button_counter = 0
+    self.ispressed_prev = self.distance_button
 
     ret.steeringWheelCar = True if self.CP.carName == "toyota" else False
 

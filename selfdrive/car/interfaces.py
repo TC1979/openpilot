@@ -324,7 +324,7 @@ class CarInterfaceBase(ABC):
     ret.longitudinalActuatorDelayUpperBound = 0.15
     ret.steerLimitTimer = 1.0
     params = Params()
-    ret.experimentalModeViaWheel = params.get_bool("e2e_link")
+    ret.experimentalModeViaWheel = True
     ret.twilsoncoNNFF = params.get_bool("NNFF")
     return ret
 
