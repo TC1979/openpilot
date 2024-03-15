@@ -408,10 +408,8 @@ class LongitudinalMpc:
       distance_factor = np.maximum(1, lead_xv_0[:,0] - (lead_xv_0[:,1] * t_follow))
       self.braking_offset = np.clip((v_ego - lead_xv_0[:,1]) - COMFORT_BRAKE, 1, distance_factor)
       t_follow = t_follow / self.braking_offset
-      print("smoother_braking On")
     else:
       self.braking_offset = 1
-      print("smoother_braking Off")
 
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
