@@ -1305,18 +1305,6 @@ Enabled: Short and Long = 5.</source>
         <translation>如果您打算在 Nvidia Jetson NX 上跑 TOP ，請開啟這個選項，但此選項可能造成駕駛監控被關閉，且需重新啟動後生效。</translation>
     </message>
     <message>
-        <source>Experimental Mode Via ECO Button / Screen</source>
-        <translation>以ECO鍵或輕觸螢幕快速啟動實驗模式</translation>
-    </message>
-    <message>
-        <source>Quick enable Experimental Mode (End-to-End longitudinal).
-Toyota/Lexus: Press the ECO button.
-Other makes: Double tapping the screen.</source>
-        <translation>快速啟動實驗模式(端到端蹤向控制)。
-Toyota/Lexus：按下 ECO 按鈕。
-其他車廠：輕觸螢幕兩次。</translation>
-    </message>
-    <message>
         <source>Enable Local Nav and File Server</source>
         <translation>開啟免付費導航操控與檔案服務器</translation>
     </message>

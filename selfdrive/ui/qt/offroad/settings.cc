@@ -588,12 +588,6 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/offroad/icon_road.png",
                                   this));
 
-  toggles.append(new ParamControl("e2e_link",
-                                  tr("Experimental Mode Via ECO Button / Screen"),
-                                  tr("Quick enable Experimental Mode (End-to-End longitudinal).\nToyota/Lexus: Press the ECO button.\nOther makes: Double tapping the screen."),
-                                  "../assets/img_experimental_white.svg",
-                                  this));
-
   toggles.append(new ParamControl("fleetmanager",
                                   tr("Enable Local Nav and File Server"),
                                   tr("This will allow you to use the Navigation feature with your own access key and access openpilot data and files.\nUse web interface to control it: *http://&lt;device_ip&gt;:8082*.\nYou will need to apply your own mapbox token at https://www.mapbox.com/.\nInternet access from mobile phone (tethering) is required."),

@@ -1240,16 +1240,6 @@ Speed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Experimental Mode Via ECO Button / Screen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Quick enable Experimental Mode (End-to-End longitudinal).
-Toyota/Lexus: Press the ECO button.
-Other makes: Double tapping the screen.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Enable Local Nav and File Server</source>
         <translation type="unfinished"></translation>
     </message>
