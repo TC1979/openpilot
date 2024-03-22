@@ -93,7 +93,7 @@ function launch {
   # write tmux scrollback to a file
   tmux capture-pane -pq -S-1000 > /tmp/launch_log
 
-  python ./selfdrive/car/toyota/values.py > /data/openpilot/selfdrive/car/top_tmp/ToyotaCars
+  python ./selfdrive/car/fingerprints.py > /data/openpilot/selfdrive/car/top_tmp/AllCars
 
   python ./force_car_recognition.py
 

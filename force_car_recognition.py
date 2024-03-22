@@ -1,4 +1,4 @@
-filenames = ['/data/openpilot/selfdrive/car/top_tmp/ToyotaCars']
+filenames = ['/data/openpilot/selfdrive/car/top_tmp/AllCars']
 
 with open('/data/openpilot/selfdrive/car/top_tmp/Cars', 'w') as outfile:
   for names in filenames:

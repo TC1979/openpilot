@@ -350,3 +350,10 @@ def create_platform_map(func: MapFunc):
     ret[m] = ret[MIGRATION[m]]
 
   return ret
+
+def main():
+  for value in sorted(set(MIGRATION.values())):
+    print(value)
+
+if __name__ == "__main__":
+  main()
