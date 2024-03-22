@@ -789,9 +789,6 @@ UNSUPPORTED_LONGITUDINAL_CAR = CAR.with_flags(HyundaiFlags.LEGACY) | CAR.with_fl
 
 DBC = CAR.create_dbc_map()
 
-if __name__ == "__main__":
-  CAR.print_debug(HyundaiFlags)
-
 def main():
   for member, value in vars(CAR).items():
     if not member.startswith("_"):
@@ -802,4 +799,5 @@ def main():
         print(value)
 
 if __name__ == "__main__":
+  CAR.print_debug(HyundaiFlags)
   main()
