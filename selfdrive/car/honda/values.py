@@ -340,11 +340,3 @@ HONDA_BOSCH_RADARLESS = CAR.with_flags(HondaFlags.BOSCH_RADARLESS)
 
 
 DBC = CAR.create_dbc_map()
-
-def main():
-  for member, value in vars(CAR).items():
-    if not member.startswith("_"):
-      print(value)
-
-if __name__ == "__main__":
-  main()
