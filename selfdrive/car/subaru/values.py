@@ -276,12 +276,3 @@ DBC = CAR.create_dbc_map()
 
 if __name__ == "__main__":
   CAR.print_debug(SubaruFlags)
-
-def main():
-  for member, value in vars(CAR).items():
-    if not member.startswith("_"):
-      print(value)
-
-
-if __name__ == "__main__":
-  main()
