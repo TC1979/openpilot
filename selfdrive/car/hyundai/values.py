@@ -795,7 +795,7 @@ if __name__ == "__main__":
 def main():
   for member, value in vars(CAR).items():
     if not member.startswith("_"):
-      if 'HyundaiFlags' not in str(value):
+      if not hasattr(value, 'flags') or 'HyundaiFlags' not in str(value.flags):
         print(value)
 
 if __name__ == "__main__":
