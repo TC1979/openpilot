@@ -794,7 +794,7 @@ if __name__ == "__main__":
 
 def main():
   for member, value in vars(CAR).items():
-    if not member.startswith("_"):
+    if not member.startswith("_") and not member.startswith("Flag"):
       print(value)
 
 if __name__ == "__main__":
