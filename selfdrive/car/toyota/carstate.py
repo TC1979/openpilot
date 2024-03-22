@@ -106,7 +106,7 @@ class CarState(CarStateBase):
     )
     ret.vEgoRaw = mean([ret.wheelSpeeds.fl, ret.wheelSpeeds.fr, ret.wheelSpeeds.rl, ret.wheelSpeeds.rr])
     ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
-    if self.CP.carFingerprint == CAR.PRIUS_V:
+    if self.CP.carFingerprint == CAR.TOYOTA_PRIUS_V:
       ret.vEgoCluster = ret.vEgo * 1.08987654321
     else:
       ret.vEgoCluster = ret.vEgo * 1.015  # minimum of all the cars
