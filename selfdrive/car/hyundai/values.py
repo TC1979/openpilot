@@ -796,3 +796,7 @@ def main():
 
 if __name__ == "__main__":
   main()
+
+if __name__ == "__main__":
+  CAR.print_debug(HyundaiFlags)
+
