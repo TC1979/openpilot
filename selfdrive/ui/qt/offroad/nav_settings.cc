@@ -155,7 +155,7 @@ void Primeless::createMapboxKeyControl(ButtonControl *&control, const QString &l
 void Primeless::updateStep() {
   currentStep = setupCompleted ? "../assets/training/navigation/SetupComplete.png" :
                 (mapboxPublicKeySet && mapboxSecretKeySet) ? "../assets/training/navigation/SetupComplete.png" :
-                mapboxPublicKeySet ? "../assets/training/navigation/PublicKey.png" : "../assets/training/navigation/PrivateKey.png";
+                mapboxPublicKeySet ? "../assets/training/navigation/PrivateKey.png" :  "../assets/training/navigation/PublicKey.png";
 
   pixmap.load(currentStep);
   imageLabel->setPixmap(pixmap.scaledToWidth(1500, Qt::SmoothTransformation));
