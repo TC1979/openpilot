@@ -294,6 +294,18 @@
         <translation>確認</translation>
     </message>
     <message>
+        <source>Pair your device with comma connect (connect.comma.ai) and claim your comma prime offer.</source>
+        <translation>デバイスを comma connect (connect.comma.ai)でペアリングし、comma primeの特典を申請してください。</translation>
+    </message>
+    <message>
+        <source>Pair Device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pair</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Navigate on Openpilot</source>
         <translation type="unfinished"></translation>
     </message>
@@ -744,6 +756,10 @@
     <message>
         <source>ft</source>
         <translation>ﾌｨｰﾄ</translation>
+    </message>
+    <message>
+        <source>now</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

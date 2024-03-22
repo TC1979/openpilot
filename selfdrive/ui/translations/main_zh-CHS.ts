@@ -294,6 +294,18 @@
         <translation>预览</translation>
     </message>
     <message>
+        <source>Pair your device with comma connect (connect.comma.ai) and claim your comma prime offer.</source>
+        <translation>将您的设备与comma connect （connect.comma.ai）配对并领取您的comma prime优惠。</translation>
+    </message>
+    <message>
+        <source>Pair Device</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pair</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Navigate on Openpilot</source>
         <translation type="unfinished"></translation>
     </message>
@@ -745,6 +757,10 @@
     <message>
         <source>ft</source>
         <translation>ft</translation>
+    </message>
+    <message>
+        <source>now</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

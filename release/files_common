@@ -56,7 +56,7 @@ selfdrive/sentry.py
 selfdrive/tombstoned.py
 selfdrive/statsd.py
 
-selfdrive/updated/*
+selfdrive/updated/**
 
 system/logmessaged.py
 system/micd.py
@@ -192,6 +192,8 @@ system/ubloxd/pigeond.py
 system/ubloxd/generated/*
 system/ubloxd/*.h
 system/ubloxd/*.cc
+
+system/updated/*
 
 selfdrive/locationd/__init__.py
 selfdrive/locationd/SConscript
