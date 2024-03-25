@@ -93,8 +93,7 @@ def footage():
     fleet.video_to_img(input_path, output_path)
     gif_path = route_path + "--0/preview.gif"
     gifs.append(gif_path)
-  assert len(route_paths) == len(gifs), "The lists route_paths and gifs must have the same length."
-  zipped = zip(route_paths, gifs)
+  zipped = zip(route_paths, gifs, strict=True)
   return render_template("footage.html", zipped=zipped)
 
 @app.route("/about")
