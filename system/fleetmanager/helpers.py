@@ -46,11 +46,6 @@ a = 6378245.0
 ee = 0.00669342162296594323
 
 params = Params()
-
-PRESERVE_ATTR_NAME = 'user.preserve'
-PRESERVE_ATTR_VALUE = b'1'
-PRESERVE_COUNT = 5
-
 # path to T.O.P screen recordings and error logs
 if PC:
   ERROR_LOGS_PATH = os.path.join(str(Path.home()), ".comma", "community", "crashes", "")
@@ -100,33 +95,6 @@ def all_routes():
   route_times = [route_name.time_str for route_name in route_names]
   unique_routes = list(dict.fromkeys(route_times))
   return sorted(unique_routes, reverse=True)
-
-def preserved_routes():
-  dirs = listdir_by_creation(Paths.log_root())
-  preserved_segments = get_preserved_segments(dirs)
-  return sorted(preserved_segments, reverse=True)
-
-def has_preserve_xattr(d: str) -> bool:
-  return getxattr(os.path.join(Paths.log_root(), d), PRESERVE_ATTR_NAME) == PRESERVE_ATTR_VALUE
-
-def get_preserved_segments(dirs_by_creation: List[str]) -> List[str]:
-  preserved = []
-  for n, d in enumerate(filter(has_preserve_xattr, reversed(dirs_by_creation))):
-    if n == PRESERVE_COUNT:
-      break
-    date_str, _, seg_str = d.rpartition("--")
-
-    # ignore non-segment directories
-    if not date_str:
-      continue
-    try:
-      seg_num = int(seg_str)
-    except ValueError:
-      continue
-    # preserve segment and its prior
-    preserved.append(d)
-
-  return preserved
 
 def video_to_gif(input_path, output_path, fps=1, duration=6): # not used right now but can if want longer animated gif
   if os.path.exists(output_path):

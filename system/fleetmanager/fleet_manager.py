@@ -103,25 +103,6 @@ def footage():
   zipped = zip(route_paths, gifs)
   return render_template("footage.html", zipped=zipped)
 
-@app.route("/preserved/")
-@app.route("/preserved")
-def preserved():
-  query_type = "qcamera"
-  route_paths = []
-  gifs = []
-  segments = fleet.preserved_routes()
-  for segment in segments:
-    input_path = Paths.log_root() + segment + "/qcamera.ts"
-    output_path = Paths.log_root() + segment + "/preview.gif"
-    fleet.video_to_img(input_path, output_path)
-    split_segment = segment.split("--")
-    route_paths.append(f"{split_segment[0]}--{split_segment[1]}?{split_segment[2]},{query_type}")
-    gif_path = segment + "/preview.gif"
-    gifs.append(gif_path)
-
-  zipped = zip(route_paths, gifs, segments)
-  return render_template("preserved.html", zipped=zipped)
-
 @app.route("/about")
 def about():
   return render_template("about.html")
