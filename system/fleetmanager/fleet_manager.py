@@ -1,6 +1,35 @@
 #!/usr/bin/env python3
+# otisserv - Copyright (c) 2019-, Rick Lan, dragonpilot community, and a number of other of contributors.
+# Fleet Manager - [actuallylemoncurd](https://github.com/actuallylemoncurd), [AlexandreSato](https://github.com/alexandreSato), [ntegan1](https://github.com/ntegan1), [royjr](https://github.com/royjr), and [sunnyhaibin] (https://github.com/sunnypilot)
+# Almost everything else - ChatGPT
+# dirty PR pusher - mike8643
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+import os
+import random
 import secrets
-from flask import Flask, render_template, Response, request, send_from_directory, redirect, url_for
+import threading
+import time
+
+from flask import Flask, jsonify, render_template, Response, request, send_from_directory, session, redirect, url_for
+import requests
+from requests.exceptions import ConnectionError
 from openpilot.common.realtime import set_core_affinity
 import openpilot.system.fleetmanager.helpers as fleet
 from openpilot.system.hardware.hw import Paths
@@ -63,8 +92,35 @@ def route(route):
 @app.route("/footage/")
 @app.route("/footage")
 def footage():
-  return render_template("footage.html", rows=fleet.all_routes())
+  route_paths = fleet.all_routes()
+  gifs = []
+  for route_path in route_paths:
+    input_path = Paths.log_root() + route_path + "--0/qcamera.ts"
+    output_path = Paths.log_root() + route_path + "--0/preview.gif"
+    fleet.video_to_img(input_path, output_path)
+    gif_path = route_path + "--0/preview.gif"
+    gifs.append(gif_path)
+  zipped = zip(route_paths, gifs)
+  return render_template("footage.html", zipped=zipped)
 
+@app.route("/preserved/")
+@app.route("/preserved")
+def preserved():
+  query_type = "qcamera"
+  route_paths = []
+  gifs = []
+  segments = fleet.preserved_routes()
+  for segment in segments:
+    input_path = Paths.log_root() + segment + "/qcamera.ts"
+    output_path = Paths.log_root() + segment + "/preview.gif"
+    fleet.video_to_img(input_path, output_path)
+    split_segment = segment.split("--")
+    route_paths.append(f"{split_segment[0]}--{split_segment[1]}?{split_segment[2]},{query_type}")
+    gif_path = segment + "/preview.gif"
+    gifs.append(gif_path)
+
+  zipped = zip(route_paths, gifs, segments)
+  return render_template("preserved.html", zipped=zipped)
 
 @app.route("/about")
 def about():
@@ -73,7 +129,10 @@ def about():
 
 @app.route("/error_logs")
 def error_logs():
-  return render_template("error_logs.html", rows=fleet.list_file(fleet.ERROR_LOGS_PATH))
+  rows = fleet.list_file(fleet.ERROR_LOGS_PATH)
+  if not rows:
+    return render_template("error.html", error="no error logs found at:<br><br>" + fleet.ERROR_LOGS_PATH)
+  return render_template("error_logs.html", rows=rows)
 
 
 @app.route("/error_logs/<file_name>")
@@ -228,6 +287,11 @@ def set_destination():
 def find_navicon(file_name):
   directory = "/data/openpilot/selfdrive/assets/navigation/"
   return send_from_directory(directory, file_name, as_attachment=True)
+
+@app.route("/previewgif/<path:file_path>", methods=['GET'])
+def find_previewgif(file_path):
+  directory = "/data/media/0/realdata/"
+  return send_from_directory(directory, file_path, as_attachment=True)
 
 
 def main():

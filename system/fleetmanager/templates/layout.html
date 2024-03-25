@@ -67,7 +67,7 @@
   </nav>
   <main class="container-fluid p-7 text-center"> {% block main %}{% endblock %} </main>
   {% block unformated %}{% endblock %}
-  
+
   <button class="uk-button uk-button-default uk-margin-small-right" onclick="toggleDarkMode()">Toggle Dark Mode</button>
 
   <script>
@@ -92,6 +92,6 @@
       htmlElement.classList.toggle('dark-mode', getCookie('darkMode') === 'true');
     });
   </script>
-  
+
 </body>
 </html>
