@@ -46,8 +46,6 @@ a = 6378245.0
 ee = 0.00669342162296594323
 
 params = Params()
-params_memory = Params("/dev/shm/params")
-params_storage = Params("/persist/comma/params")
 
 PRESERVE_ATTR_NAME = 'user.preserve'
 PRESERVE_ATTR_VALUE = b'1'
