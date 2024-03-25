@@ -25,20 +25,15 @@ import math
 import os
 import requests
 import subprocess
-import time
-from flask import render_template, request, session
-from functools import wraps
 from pathlib import Path
 from openpilot.system.hardware import PC
 from openpilot.system.hardware.hw import Paths
 from openpilot.system.loggerd.uploader import listdir_by_creation
 from openpilot.tools.lib.route import SegmentName
-from typing import List
-from openpilot.system.loggerd.xattr_cache import getxattr
 
 # otisserv conversion
 from openpilot.common.params import Params
-from urllib.parse import parse_qs, quote
+from urllib.parse import quote
 
 pi = 3.1415926535897932384626
 x_pi = 3.14159265358979324 * 3000.0 / 180.0

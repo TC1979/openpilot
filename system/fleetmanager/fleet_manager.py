@@ -21,15 +21,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-import os
-import random
 import secrets
-import threading
-import time
-
-from flask import Flask, jsonify, render_template, Response, request, send_from_directory, session, redirect, url_for
-import requests
-from requests.exceptions import ConnectionError
+from flask import Flask, render_template, Response, request, send_from_directory, redirect, url_for
 from openpilot.common.realtime import set_core_affinity
 import openpilot.system.fleetmanager.helpers as fleet
 from openpilot.system.hardware.hw import Paths
