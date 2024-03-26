@@ -15,10 +15,6 @@
 #include "selfdrive/ui/qt/widgets/scrollview.h"
 #include "selfdrive/ui/qt/widgets/ssh_keys.h"
 #include "selfdrive/ui/qt/offroad/timpilot.h"
-#include "selfdrive/ui/qt/widgets/toggle.h"
-#include "selfdrive/ui/ui.h"
-#include "selfdrive/ui/qt/util.h"
-#include "selfdrive/ui/qt/qt_window.h"
 #include "selfdrive/ui/qt/offroad/nav_settings.h"
 
 TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
