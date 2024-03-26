@@ -11,7 +11,6 @@
 #include <QWidget>
 #include <QStackedLayout>
 
-
 #include "selfdrive/ui/ui.h"
 #include "selfdrive/ui/qt/util.h"
 #include "selfdrive/ui/qt/widgets/controls.h"

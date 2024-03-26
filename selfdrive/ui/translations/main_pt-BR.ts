@@ -299,11 +299,11 @@
     </message>
     <message>
         <source>Pair Device</source>
-        <translation type="unfinished"></translation>
+        <translation>Parear Dispositivo</translation>
     </message>
     <message>
-        <source>Pair</source>
-        <translation type="unfinished"></translation>
+        <source>PAIR</source>
+        <translation>PAREAR</translation>
     </message>
     <message>
         <source>Navigate on Openpilot</source>
@@ -764,7 +764,7 @@
     </message>
     <message>
         <source>now</source>
-        <translation type="unfinished"></translation>
+        <translation>agora</translation>
     </message>
 </context>
 <context>
