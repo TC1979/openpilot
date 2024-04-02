@@ -52,6 +52,7 @@ tools/replay/*.cc
 tools/replay/*.h
 
 selfdrive/__init__.py
+selfdrive/mapd.py
 selfdrive/sentry.py
 selfdrive/tombstoned.py
 selfdrive/statsd.py
@@ -308,6 +309,8 @@ system/camerad/sensors/*.h
 system/camerad/sensors/*.cc
 
 system/fleetmanager/*
+system/fleetmanager/static/*
+system/fleetmanager/templates/*
 
 selfdrive/manager/__init__.py
 selfdrive/manager/build.py
@@ -372,6 +375,7 @@ selfdrive/navd/**
 
 selfdrive/assets/.gitignore
 selfdrive/assets/assets.qrc
+selfdrive/assets/*.jpg
 selfdrive/assets/*.png
 selfdrive/assets/*.svg
 selfdrive/assets/body/*
