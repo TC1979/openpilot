@@ -71,6 +71,7 @@ OnroadWindow::OnroadWindow(QWidget *parent) : QWidget(parent) {
   QObject::connect(uiState(), &UIState::primeChanged, this, &OnroadWindow::primeChanged);
 }
 
+bool mapVisible;
 void OnroadWindow::updateState(const UIState &s) {
   if (!s.scene.started) {
     return;
@@ -84,6 +85,7 @@ void OnroadWindow::updateState(const UIState &s) {
 
   alerts->updateState(s);
   nvg->updateState(s);
+  mapVisible = isMapVisible();
 
   QColor bgColor = bg_colors[s.status];
   if (s.status == STATUS_DISENGAGED && Params().getBool("LateralAllowed")){
