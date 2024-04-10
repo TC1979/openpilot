@@ -71,7 +71,6 @@ OnroadWindow::OnroadWindow(QWidget *parent) : QWidget(parent) {
   QObject::connect(uiState(), &UIState::primeChanged, this, &OnroadWindow::primeChanged);
 }
 
-bool mapVisible;
 void OnroadWindow::updateState(const UIState &s) {
   if (!s.scene.started) {
     return;
@@ -85,7 +84,6 @@ void OnroadWindow::updateState(const UIState &s) {
 
   alerts->updateState(s);
   nvg->updateState(s);
-  mapVisible = isMapVisible();
 
   QColor bgColor = bg_colors[s.status];
   if (s.status == STATUS_DISENGAGED && Params().getBool("LateralAllowed")){
@@ -137,11 +135,9 @@ void OnroadWindow::mousePressEvent(QMouseEvent* e) {
 
 #ifdef ENABLE_MAPS
   if (map != nullptr) {
-    // Switch between map and sidebar when using navigate on openpilot
     bool sidebarVisible = geometry().x() > 0;
-    bool show_map = uiState()->scene.navigate_on_openpilot ? sidebarVisible : !sidebarVisible;
-    map->setVisible(show_map && !map->isVisible() && !clickedOnWidget);
-    map_open = map->isVisible();
+    bool show_map = !sidebarVisible;
+    map->setVisible(show_map && !map->isVisible());
   }
 #endif
   // propagation event to parent(HomeWindow)
@@ -155,7 +151,6 @@ void OnroadWindow::createMapWidget() {
   auto m = new MapPanel(get_mapbox_settings());
   map = m;
   QObject::connect(m, &MapPanel::mapPanelRequested, this, &OnroadWindow::mapPanelRequested);
-  QObject::connect(m, &MapPanel::mapPanelRequested, this, [=] { map_open = true; });
   QObject::connect(nvg->map_settings_btn, &MapSettingsButton::clicked, m, &MapPanel::toggleMapSettings);
   nvg->map_settings_btn->setEnabled(true);
 
