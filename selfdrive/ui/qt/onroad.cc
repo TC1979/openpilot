@@ -139,7 +139,7 @@ void OnroadWindow::mousePressEvent(QMouseEvent* e) {
   if (map != nullptr) {
     bool sidebarVisible = geometry().x() > 0;
     bool show_map = !sidebarVisible;
-    map->setVisible(show_map && !map->isVisible());
+    map->setVisible(show_map && !map->isVisible() && !clickedOnWidget);
   }
 #endif
   // propagation event to parent(HomeWindow)
