@@ -1485,7 +1485,7 @@ Internet access from mobile phone (tethering) is required.</source>
         <translation>推薦使用標準模式。在積極模式中，openpilot 會更靠近前車並在加速和剎車方面更積極。在舒適模式中，openpilot 會與前車保持較遠的距離。在支援的汽車上，您可以使用方向盤距離按鈕在這些模式之間循環切換。</translation>
     </message>
     <message>
-        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner. </source>
+        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
