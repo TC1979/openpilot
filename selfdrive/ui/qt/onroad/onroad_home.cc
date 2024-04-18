@@ -1,6 +1,9 @@
 #include "selfdrive/ui/qt/onroad/onroad_home.h"
 
+#include <chrono>
+#include <QElapsedTimer>
 #include <QPainter>
+#include <QTimer>
 
 #ifdef ENABLE_MAPS
 #include "selfdrive/ui/qt/maps/map_helpers.h"
@@ -49,6 +52,7 @@ OnroadWindow::OnroadWindow(QWidget *parent) : QWidget(parent) {
   QObject::connect(uiState(), &UIState::primeChanged, this, &OnroadWindow::primeChanged);
 }
 
+bool mapVisible;
 void OnroadWindow::updateState(const UIState &s) {
   if (!s.scene.started) {
     return;
@@ -62,8 +66,13 @@ void OnroadWindow::updateState(const UIState &s) {
 
   alerts->updateState(s);
   nvg->updateState(s);
+  mapVisible = isMapVisible();
 
   QColor bgColor = bg_colors[s.status];
+  if (s.status == STATUS_DISENGAGED && Params().getBool("LateralAllowed")){
+    bgColor = bg_colors[STATUS_LAT_ALLOWED];
+  }
+
   if (bg != bgColor) {
     // repaint border
     bg = bgColor;
@@ -72,15 +81,52 @@ void OnroadWindow::updateState(const UIState &s) {
 }
 
 void OnroadWindow::mousePressEvent(QMouseEvent* e) {
+  const auto &scene = uiState()->scene;
+  // const SubMaster &sm = *uiState()->sm;
+  static auto params = Params();
+  // const bool isDrivingPersonalitiesViaUI = scene.driving_personalities_ui_wheel;
+  const bool isExperimentalModeViaUI = scene.experimental_mode_via_wheel && !scene.steering_wheel_car;
+  static bool propagateEvent = false;
+  static bool recentlyTapped = false;
+  const bool isToyotaCar = scene.steering_wheel_car;
+  const int y_offset = scene.mute_dm ? 70 : 300;
+  // bool rightHandDM = sm["driverMonitoringState"].getDriverMonitoringState().getIsRHD();
+
+  // Driving personalities button
+  int x = rect().left() + (btn_size - 24) / 2 - (UI_BORDER_SIZE * 2) + 100;
+  const int y = rect().bottom() - y_offset;
+  // Give the button a 25% offset so it doesn't need to be clicked on perfectly
+  bool isDrivingPersonalitiesClicked = (e->pos() - QPoint(x, y)).manhattanLength() <= btn_size * 2 && !isToyotaCar;
+
+  // Check if the button was clicked
+  if (isDrivingPersonalitiesClicked) {
+    personalityProfile = (params.getInt("LongitudinalPersonality") + 2) % 3;
+    params.putInt("LongitudinalPersonality", personalityProfile);
+    propagateEvent = false;
+  // If the click wasn't on the button for drivingPersonalities, change the value of "ExperimentalMode"
+  } else if (recentlyTapped && isExperimentalModeViaUI) {
+    bool experimentalMode = params.getBool("ExperimentalMode");
+    params.putBool("ExperimentalMode", !experimentalMode);
+    recentlyTapped = false;
+    propagateEvent = true;
+  } else {
+    recentlyTapped = true;
+    propagateEvent = true;
+  }
+
+  const bool clickedOnWidget = isDrivingPersonalitiesClicked;
+
 #ifdef ENABLE_MAPS
   if (map != nullptr) {
     bool sidebarVisible = geometry().x() > 0;
     bool show_map = !sidebarVisible;
-    map->setVisible(show_map && !map->isVisible());
+    map->setVisible(show_map && !map->isVisible() && !clickedOnWidget);
   }
 #endif
   // propagation event to parent(HomeWindow)
-  QWidget::mousePressEvent(e);
+  if (propagateEvent) {
+    QWidget::mousePressEvent(e);
+  }
 }
 
 void OnroadWindow::createMapWidget() {
@@ -101,7 +147,8 @@ void OnroadWindow::createMapWidget() {
 void OnroadWindow::offroadTransition(bool offroad) {
 #ifdef ENABLE_MAPS
   if (!offroad) {
-    if (map == nullptr && (uiState()->hasPrime() || !MAPBOX_TOKEN.isEmpty())) {
+    bool custom_mapbox = Params().getBool("fleetmanager") && QString::fromStdString(Params().get("MapboxSecretKey")) != "";
+    if (map == nullptr && (uiState()->hasPrime() || !MAPBOX_TOKEN.isEmpty() || custom_mapbox)) {
       createMapWidget();
     }
   }
