@@ -406,7 +406,7 @@ class LongitudinalMpc:
     self.smoother_braking = True if self.mode == 'acc' and np.any(v_ego < 16) and np.any(lead_xv_0[:,0] < 40) and not np.any(lead.dRel < (v_ego - 1) * t_follow) else False
     if self.smoother_braking:
       distance_factor = np.maximum(1, lead_xv_0[:,0] - (lead_xv_0[:,1] * t_follow))
-      far_lead_offset = max((lead_xv_0[:,0] - (v_ego * t_follow)) - stop_distance, 0)
+      far_lead_offset = np.amax((lead_xv_0[:,0] - (v_ego * t_follow)) - stop_distance, 0)
       self.braking_offset = np.clip((v_ego - lead_xv_0[:,1]) + far_lead_offset - COMFORT_BRAKE, 1, distance_factor)
       t_follow = t_follow / self.braking_offset
     else:
