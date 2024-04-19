@@ -3,6 +3,7 @@
 #include "selfdrive/ui/qt/onroad/alerts.h"
 #include "selfdrive/ui/qt/onroad/annotated_camera.h"
 
+static int personalityProfile;
 class OnroadWindow : public QWidget {
   Q_OBJECT
 

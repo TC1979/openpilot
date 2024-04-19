@@ -322,7 +322,7 @@ class LongitudinalMpc:
 
   def set_weights(self, prev_accel_constraint=True, personality=log.LongitudinalPersonality.standard, v_lead0=0, v_lead1=0):
     jerk_factor = get_jerk_factor(personality)
-    jerk_factor /= np.mean(self.braking_offset)
+    jerk_factor *= np.mean(self.braking_offset)
     v_ego = self.x0[1]
     v_ego_bps = [0, 10]
     # KRKeegan adjustments to improve sluggish acceleration
@@ -406,7 +406,8 @@ class LongitudinalMpc:
     self.smoother_braking = True if self.mode == 'acc' and np.any(v_ego < 16) and np.any(lead_xv_0[:,0] < 40) and not np.any(lead.dRel < (v_ego - 1) * t_follow) else False
     if self.smoother_braking:
       distance_factor = np.maximum(1, lead_xv_0[:,0] - (lead_xv_0[:,1] * t_follow))
-      self.braking_offset = np.clip((v_ego - lead_xv_0[:,1]) - COMFORT_BRAKE, 1, distance_factor)
+      far_lead_offset = max((lead_xv_0[:,0] - (v_ego * t_follow)) - stop_distance, 0)
+      self.braking_offset = np.clip((v_ego - lead_xv_0[:,1]) + far_lead_offset - COMFORT_BRAKE, 1, distance_factor)
       t_follow = t_follow / self.braking_offset
     else:
       self.braking_offset = 1

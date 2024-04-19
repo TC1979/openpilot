@@ -3,6 +3,7 @@
 #include <chrono>
 #include <QElapsedTimer>
 #include <QPainter>
+#include <QMouseEvent>
 #include <QTimer>
 
 #ifdef ENABLE_MAPS

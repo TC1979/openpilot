@@ -3,6 +3,9 @@
 #include <QVBoxLayout>
 #include <memory>
 
+#include <utility>
+#include <vector>
+
 #include "selfdrive/ui/qt/onroad/buttons.h"
 #include "selfdrive/ui/qt/widgets/cameraview.h"
 

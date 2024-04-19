@@ -6,7 +6,9 @@
 #include <chrono>
 #include <cmath>
 
+#include <QElapsedTimer>
 #include "common/swaglog.h"
+#include "selfdrive/ui/qt/maps/map_helpers.h"
 #include "selfdrive/ui/qt/onroad/buttons.h"
 #include "selfdrive/ui/qt/util.h"
 
@@ -57,7 +59,7 @@ AnnotatedCameraWidget::AnnotatedCameraWidget(VisionStreamType type, QWidget* par
   animationTimer->start(totalFrames * 100);
 }
 
-static float vc_speed;
+float vc_speed;
 void AnnotatedCameraWidget::updateState(const UIState &s) {
   const int SET_SPEED_NA = 255;
   const SubMaster &sm = *(s.sm);
@@ -138,6 +140,7 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
   setProperty("turnSignalRight", s.scene.turn_signal_right);
 }
 
+extern bool mapVisible;
 void AnnotatedCameraWidget::drawHud(QPainter &p) {
   p.save();
 
