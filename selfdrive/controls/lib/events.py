@@ -448,7 +448,7 @@ EVENTS: dict[int, dict[str, Alert | AlertCallbackType]] = {
   },
 
   EventName.preDriverDistracted: {
-    ET.WARNING: Alert(
+    ET.PERMANENT: Alert(
       "注意",
       "",
       AlertStatus.normal, AlertSize.small,
@@ -456,7 +456,7 @@ EVENTS: dict[int, dict[str, Alert | AlertCallbackType]] = {
   },
 
   EventName.promptDriverDistracted: {
-    ET.WARNING: Alert(
+    ET.PERMANENT: Alert(
       "注意",
       "偵測到駕駛分心",
       AlertStatus.userPrompt, AlertSize.mid,
@@ -464,7 +464,7 @@ EVENTS: dict[int, dict[str, Alert | AlertCallbackType]] = {
   },
 
   EventName.driverDistracted: {
-    ET.WARNING: Alert(
+    ET.PERMANENT: Alert(
       "立刻手動接管車輛",
       "駕駛分心",
       AlertStatus.critical, AlertSize.full,
@@ -472,7 +472,7 @@ EVENTS: dict[int, dict[str, Alert | AlertCallbackType]] = {
   },
 
   EventName.preDriverUnresponsive: {
-    ET.WARNING: Alert(
+    ET.PERMANENT: Alert(
       "手握方向盤：未檢測到人臉",
       "",
       AlertStatus.normal, AlertSize.small,
@@ -480,7 +480,7 @@ EVENTS: dict[int, dict[str, Alert | AlertCallbackType]] = {
   },
 
   EventName.promptDriverUnresponsive: {
-    ET.WARNING: Alert(
+    ET.PERMANENT: Alert(
       "手握方向盤",
       "駕駛無反應",
       AlertStatus.userPrompt, AlertSize.mid,
@@ -488,7 +488,7 @@ EVENTS: dict[int, dict[str, Alert | AlertCallbackType]] = {
   },
 
   EventName.driverUnresponsive: {
-    ET.WARNING: Alert(
+    ET.PERMANENT: Alert(
       "立即手動接管車輛",
       "駕駛無反應",
       AlertStatus.critical, AlertSize.full,

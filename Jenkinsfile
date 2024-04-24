@@ -9,26 +9,9 @@ def retryWithDelay(int maxRetries, int delay, Closure body) {
   throw Exception("Failed after ${maxRetries} retries")
 }
 
-// check if started by timer: https://stackoverflow.com/questions/43516025/how-to-handle-nightly-build-in-jenkins-declarative-pipeline
-@NonCPS
+// check if started by timer: https://gist.github.com/aaclarker/75b8a0eb2b4d600779f84f8e849f2c37
 def isJobStartedByTimer() {
-  def startedByTimer = false
-  try {
-    def buildCauses = currentBuild.rawBuild.getCauses()
-    for ( buildCause in buildCauses ) {
-      if (buildCause != null) {
-        def causeDescription = buildCause.getShortDescription()
-        echo "shortDescription: ${causeDescription}"
-        if (causeDescription.contains("Started by timer")) {
-          startedByTimer = true
-        }
-      }
-    }
-  } catch(theError) {
-    echo "Error getting build cause"
-  }
-
-  return startedByTimer
+  return currentBuild.getBuildCauses()[0]["shortDescription"].matches("Started by timer");
 }
 
 def device(String ip, String step_label, String cmd) {
@@ -63,6 +46,7 @@ if [ -f /TICI ]; then
   rm -rf /tmp/tmp*
   rm -rf ~/.commacache
   rm -rf /dev/shm/*
+  rm -rf /dev/tmp/tmp*
 
   if ! systemctl is-active --quiet systemd-resolved; then
     echo "restarting resolved"
@@ -179,12 +163,14 @@ def build_git_release(String channel_name) {
 
 
 def build_casync_release(String channel_name, def is_release) {
-  def extra_env = is_release ? "RELEASE=1" : ""
+  def extra_env = is_release ? "RELEASE=1 " : ""
+  def build_dir = "/data/openpilot"
+
+  extra_env += "TMPDIR=/data/tmp PYTHONPATH=$SOURCE_DIR"
 
   return deviceStage("build casync", "tici-needs-can", [], [
-    ["build", "${extra_env} BUILD_DIR=/data/openpilot CASYNC_DIR=/data/casync/openpilot $SOURCE_DIR/release/create_casync_build.sh"],
-    ["create manifest", "$SOURCE_DIR/release/create_release_manifest.py /data/openpilot /data/manifest.json && cat /data/manifest.json"],
-    ["upload and cleanup", "PYTHONWARNINGS=ignore $SOURCE_DIR/release/upload_casync_release.py /data/casync && rm -rf /data/casync"],
+    ["build", "${extra_env} $SOURCE_DIR/release/build_release.sh ${build_dir}"],
+    ["package + upload", "${extra_env} $SOURCE_DIR/release/package_casync_build.py ${build_dir}"],
   ])
 }
 
@@ -199,8 +185,7 @@ def build_stage() {
     },
     'publish agnos': {
       pcStage("publish agnos") {
-        sh "release/create_casync_agnos_release.py /tmp/casync/agnos /tmp/casync_tmp"
-        sh "PYTHONWARNINGS=ignore ${env.WORKSPACE}/release/upload_casync_release.py /tmp/casync"
+        sh "PYTHONWARNINGS=ignore release/package_casync_agnos.py"
       }
     }
   )
@@ -226,7 +211,7 @@ node {
 
   if (env.BRANCH_NAME == nightlyBranch) {
     props.add(pipelineTriggers([
-      cron('0 2 * * *')     // at 2am every night
+      cron('0 9 * * *')     // at 2am PST (9am UTC) every night
     ]))
   }
 
