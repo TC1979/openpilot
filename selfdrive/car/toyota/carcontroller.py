@@ -1,6 +1,5 @@
 from cereal import car
 from openpilot.common.numpy_fast import clip, interp
-from openpilot.common.realtime import DT_CTRL
 from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, common_fault_avoidance, make_can_msg
 from openpilot.selfdrive.car.interfaces import CarControllerBase
 from openpilot.selfdrive.car.toyota import toyotacan
@@ -34,9 +33,6 @@ MAX_LTA_DRIVER_TORQUE_ALLOWANCE = 150  # slightly above steering pressed allows 
 COMPENSATORY_CALCULATION_THRESHOLD_V = [-0.2, 0.]  # m/s^2
 COMPENSATORY_CALCULATION_THRESHOLD_BP = [0., 23.]  # m/s
 
-# Time values for hysteresis
-RESUME_HYSTERESIS_TIME = 3.  # seconds
-
 GearShifter = car.CarState.GearShifter
 UNLOCK_CMD = b'\x40\x05\x30\x11\x00\x40\x00\x00'
 LOCK_CMD = b'\x40\x05\x30\x11\x00\x80\x00\x00'
@@ -66,6 +62,8 @@ class CarController(CarControllerBase):
     self.last_steer = 0
     self.last_angle = 0
     self.alert_active = False
+    self.last_standstill = False
+    self.standstill_req = False
     self.steer_rate_counter = 0
     self.distance_button = 0
     self.prohibit_neg_calculation = True
@@ -73,9 +71,6 @@ class CarController(CarControllerBase):
     self.packer = CANPacker(dbc_name)
     self.gas = 0
     self.accel = 0
-
-    self.standstill_req = False
-    self.resume_off_frames = 0.
 
     self.toyotaautolock = Params().get_bool("toyotaautolock")
     self.toyotaautounlock = Params().get_bool("toyotaautounlock")
@@ -239,19 +234,15 @@ class CarController(CarControllerBase):
     if not CC.enabled and CS.pcm_acc_status:
       pcm_cancel_cmd = 1
 
-    # *** standstill entrance logic ***
-    # mimic stock behaviour, set standstill_req to False only when openpilot wants to resume
-    if not CC.cruiseControl.resume:
-        self.resume_off_frames += 1  # frame counter for hysteresis
-        # add a 3 second hysteresis to when CC.cruiseControl.resume turns off in order to prevent
-        # vehicle's dash from blinking
-        if self.resume_off_frames >= RESUME_HYSTERESIS_TIME / DT_CTRL:
-            self.standstill_req = True
-    else:
-        self.resume_off_frames = 0
-        self.standstill_req = False
-    # ignore standstill on NO_STOP_TIMER_CAR, and never ignore if self.CP.enableGasInterceptor
-    standstill = self.standstill_req and (self.CP.carFingerprint not in NO_STOP_TIMER_CAR) and not self.topsng
+    # on entering standstill, send standstill request
+    if CS.out.standstill and not self.last_standstill and (self.CP.carFingerprint not in NO_STOP_TIMER_CAR or self.CP.enableGasInterceptor) and \
+      not self.topsng:
+      self.standstill_req = True
+    if CS.pcm_acc_status != 8:
+      # pcm entered standstill or it's disabled
+      self.standstill_req = False
+
+    self.last_standstill = CS.out.standstill
 
     # AleSato's Automatic Brake Hold
     if Params().get_bool("AleSato_AutomaticBrakeHold") and self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR) and self.frame % 2 == 0:
@@ -284,7 +275,7 @@ class CarController(CarControllerBase):
       if pcm_cancel_cmd and self.CP.carFingerprint in UNSUPPORTED_DSU_CAR:
         can_sends.append(toyotacan.create_acc_cancel_command(self.packer))
       elif self.CP.openpilotLongitudinalControl:
-        can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, accel_raw, pcm_cancel_cmd, standstill,
+        can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, accel_raw, pcm_cancel_cmd, self.standstill_req,
                                                         lead, CS.acc_type, fcw_alert, self.distance_button, reverse_acc))
         self.accel = pcm_accel_cmd
       else:
