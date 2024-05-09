@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 import secrets
-from flask import Flask, render_template, Response, request, send_from_directory, redirect, url_for
+from flask import render_template, Response, request, send_from_directory, redirect, url_for
 from openpilot.common.realtime import set_core_affinity
 import openpilot.system.fleetmanager.helpers as fleet
 from openpilot.system.hardware.hw import Paths
