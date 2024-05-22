@@ -2,8 +2,9 @@
 
 #include <chrono>
 #include <QElapsedTimer>
-#include <QPainter>
 #include <QMouseEvent>
+#include <QPainter>
+#include <QStackedLayout>
 #include <QTimer>
 
 #ifdef ENABLE_MAPS
