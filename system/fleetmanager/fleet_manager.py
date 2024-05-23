@@ -68,7 +68,7 @@ def route(route):
     return render_template("error.html", error="route not found")
 
   if str(request.query_string) == "b''":
-    query_segment = str("0")
+    query_segment = "0"
     query_type = "qcamera"
   else:
     query_segment = (str(request.query_string).split(","))[0][2:]
@@ -123,8 +123,8 @@ def addr_input():
   s_token = fleet.get_app_token()
   gmap_key = fleet.get_gmap_key()
   PrimeType = fleet.get_PrimeType()
-  lon = float(0.0)
-  lat = float(0.0)
+  lon = 0.0
+  lat = 0.0
   if request.method == 'POST':
     valid_addr = False
     postvars = request.form.to_dict()

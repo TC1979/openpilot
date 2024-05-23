@@ -14,7 +14,7 @@ params = Params()
 TARGET_LAT_A = 2.3 # m/s^2
 MIN_TARGET_V = 5 # m/s
 
-class VisionTurnController():
+class VisionTurnController:
   def __init__(self):
     self.op_enabled = False
     self.gas_pressed = False

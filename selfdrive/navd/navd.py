@@ -4,7 +4,7 @@ import json
 import math
 import os
 import threading
-from typing import Tuple, Optional
+from typing import Optional
 
 import requests
 
@@ -396,7 +396,7 @@ class RouteEngine:
     self.recompute_backoff = 0
     self.recompute_countdown = 0
 
-  def should_recompute(self, new_destination: Optional[Coordinate]) -> Tuple[bool, Optional[RECOMPUTE_REASON]]:
+  def should_recompute(self, new_destination: Optional | Coordinate) -> tuple[bool, Optional | RECOMPUTE_REASON]:
     # Don't recompute when GPS drifts in tunnels
     if not self.gps_ok and self.step_idx is not None:
       return False, None

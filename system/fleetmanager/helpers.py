@@ -257,7 +257,7 @@ def search_addr(postvars, lon, lat, valid_addr, token):
       query = f"https://api.mapbox.com/geocoding/v5/mapbox.places/{addr_encoded}.json?access_token={token}&limit=1"
       # focus on place around last gps position
       lngi, lati = get_last_lon_lat()
-      query += "&proximity=%s,%s" % (lngi, lati)
+      query += "&proximity={},{}".format(lngi, lati)
       r = requests.get(query)
       if r.status_code != 200:
         return (addr, lon, lat, valid_addr, token)
@@ -296,7 +296,7 @@ def nav_confirmed(postvars):
     name = postvars.get("name") if postvars.get("name") is not None else ""
     if params.get_int("SearchInput") == 1:
       lng, lat = gcj02towgs84(lng, lat)
-    params.put("NavDestination", "{\"latitude\": %f, \"longitude\": %f, \"place_name\": \"%s\"}" % (lat, lng, name))
+    params.put("NavDestination", "{{\"latitude\": {}, \"longitude\": {}, \"place_name\": \"{}\"}}".format(lat, lng, name))
     if name == "":
       name =  str(lat) + "," + str(lng)
     new_dest = {"latitude": float(lat), "longitude": float(lng), "place_name": name}
