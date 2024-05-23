@@ -6,7 +6,7 @@ from abc import abstractmethod, ABC
 from difflib import SequenceMatcher
 from json import load
 from enum import StrEnum
-from typing import Any, NamedTuple, Tuple, Union
+from typing import Any, NamedTuple, Union
 from collections.abc import Callable
 
 from cereal import car
@@ -77,7 +77,7 @@ class FluxModel:
   # dict used to rename activation functions whose names aren't valid python identifiers
   activation_function_names = {'σ': 'sigmoid'}
   def __init__(self, params_file, zero_bias=False):
-    with open(params_file, "r") as f:
+    with open(params_file) as f:
       params = load(f)
 
     self.input_size = params["input_size"]
@@ -141,7 +141,7 @@ class FluxModel:
     y = self.evaluate([10.0, 0.0, 0.2])
     self.friction_override = (y < 0.1)
 
-def get_nn_model_path(car, eps_firmware) -> Tuple[Union[str, None], float]:
+def get_nn_model_path(car, eps_firmware) -> tuple[str | None, float]:
   def check_nn_path(check_model):
     model_path = None
     max_similarity = -1.0
@@ -167,7 +167,7 @@ def get_nn_model_path(car, eps_firmware) -> Tuple[Union[str, None], float]:
       model_path = None
   return model_path, max_similarity
 
-def get_nn_model(car, eps_firmware) -> Tuple[Union[FluxModel, None], float]:
+def get_nn_model(car, eps_firmware) -> tuple[FluxModel | None, float]:
   model_path, similarity_score = get_nn_model_path(car, eps_firmware)
   if model_path is not None:
     model = FluxModel(model_path)
