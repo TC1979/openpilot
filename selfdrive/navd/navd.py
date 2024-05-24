@@ -395,7 +395,7 @@ class RouteEngine:
     self.recompute_backoff = 0
     self.recompute_countdown = 0
 
-  def should_recompute(self, new_destination: Coordinate | None) -> tuple(bool, RECOMPUTE_REASON | None):
+  def should_recompute(self, new_destination: Coordinate | None) -> tuple[bool, RECOMPUTE_REASON | None]:
     # Don't recompute when GPS drifts in tunnels
     if not self.gps_ok and self.step_idx is not None:
       return False, None
