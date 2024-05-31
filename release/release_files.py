@@ -12,7 +12,6 @@ ROOT = HERE + "/.."
 blacklist = [
   "^scripts/",
   "body/STL/",
-  "selfdrive/car/torque_data/lat_models/",
   "tools/cabana/",
   "panda/examples/",
   "opendbc/generator/",
@@ -33,6 +32,7 @@ blacklist = [
 # gets you through the blacklist
 whitelist = [
   "tools/lib/",
+  "selfdrive/car/torque_data/lat_models/*",
 
   "tinygrad_repo/openpilot/compile2.py",
   "tinygrad_repo/extra/onnx.py",
