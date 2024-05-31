@@ -12,6 +12,7 @@ ROOT = HERE + "/.."
 blacklist = [
   "^scripts/",
   "body/STL/",
+  "selfdrive/car/torque_data/lat_models/",
   "tools/cabana/",
   "panda/examples/",
   "opendbc/generator/",
