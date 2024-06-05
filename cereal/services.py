@@ -18,7 +18,7 @@ class Service:
     self.decimation = decimation
 
 
-services: dict[str, tuple] = {
+_services: dict[str, tuple] = {
   # service: (should_log, frequency, qlog decimation (optional))
   # note: the "EncodeIdx" packets will still be in the log
   "gyroscope": (True, 104., 104),
@@ -46,6 +46,7 @@ services: dict[str, tuple] = {
   "androidLog": (True, 0.),
   "carState": (True, 100., 10),
   "carControl": (True, 100., 10),
+  "carOutput": (True, 100., 10),
   "longitudinalPlan": (True, 20., 5),
   "procLog": (True, 0.5, 15),
   "gpsLocationExternal": (True, 10., 10),
@@ -53,14 +54,13 @@ services: dict[str, tuple] = {
   "ubloxGnss": (True, 10.),
   "qcomGnss": (True, 2.),
   "gnssMeasurements": (True, 10., 10),
-  "clocks": (True, 1., 1),
+  "clocks": (True, 0.1, 1),
   "ubloxRaw": (True, 20.),
   "liveLocationKalman": (True, 20., 5),
   "liveParameters": (True, 20., 5),
   "cameraOdometry": (True, 20., 5),
-  "lateralPlan": (True, 20., 5),
   "thumbnail": (True, 0.2, 1),
-  "carEvents": (True, 1., 1),
+  "onroadEvents": (True, 1., 1),
   "carParams": (True, 0.02, 1),
   "roadCameraState": (True, 20., 20),
   "driverCameraState": (True, 20., 20),
@@ -75,8 +75,6 @@ services: dict[str, tuple] = {
   "navInstruction": (True, 1., 10),
   "navRoute": (True, 0.),
   "navThumbnail": (True, 0.),
-  "navModel": (True, 2., 4.),
-  "mapRenderState": (True, 2., 1.),
   "uiPlan": (True, 20., 40.),
   "qRoadEncodeIdx": (False, 20.),
   "userFlag": (True, 0., 1),
@@ -100,7 +98,7 @@ services: dict[str, tuple] = {
   "customReservedRawData2": (True, 0.),
 }
 SERVICE_LIST = {name: Service(new_port(idx), *vals) for
-                idx, (name, vals) in enumerate(services.items())}
+                idx, (name, vals) in enumerate(_services.items())}
 
 
 def build_header():

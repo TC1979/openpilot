@@ -9,16 +9,16 @@ source "$BASEDIR/launch_env.sh"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 function agnos_init {
-  # wait longer for weston to come up
-  if [ -f "$BASEDIR/prebuilt" ]; then
-    sleep 3
-  fi
-
   # TODO: move this to agnos
   sudo rm -f /data/etc/NetworkManager/system-connections/*.nmmeta
 
   # set success flag for current boot slot
   sudo abctl --set_success
+
+  # TODO: do this without udev in AGNOS
+  # udev does this, but sometimes we startup faster
+  sudo chgrp gpu /dev/adsprpc-smd /dev/ion /dev/kgsl-3d0
+  sudo chmod 660 /dev/adsprpc-smd /dev/ion /dev/kgsl-3d0
 
   # Check if AGNOS update is required
   if [ $(< /VERSION) != "$AGNOS_VERSION" ]; then
@@ -29,14 +29,23 @@ function agnos_init {
     fi
     $DIR/system/hardware/tici/updater $AGNOS_PY $MANIFEST
   fi
+
+  #top: change splash logo
+  if [ -f "/usr/comma/.top_splash" ]; then
+      echo "TOP splash exists."
+  else
+      echo "TOP splash not deployed yet"
+      sudo mount -o rw,remount /
+      sudo cp /data/openpilot/selfdrive/assets/bg.jpg /usr/comma/bg.jpg
+      sudo touch /usr/comma/.top_splash
+      sudo mount -o ro,remount /
+      sudo reboot
+  fi
 }
 
 function launch {
   # Remove orphaned git lock if it exists on boot
   [ -f "$DIR/.git/index.lock" ] && rm -f $DIR/.git/index.lock
-
-  # Pull time from panda
-  $DIR/selfdrive/boardd/set_time.py
 
   # Check to see if there's a valid overlay-based update available. Conditions
   # are as follows:
@@ -77,14 +86,23 @@ function launch {
   export PYTHONPATH="$PWD"
 
   # hardware specific init
-  agnos_init
+  if [ -f /AGNOS ]; then
+    agnos_init
+  fi
 
   # write tmux scrollback to a file
   tmux capture-pane -pq -S-1000 > /tmp/launch_log
 
+  python ./selfdrive/car/fingerprints.py > /data/openpilot/selfdrive/car/top_tmp/AllCars
+
+  python ./force_car_recognition.py
+
   # start manager
-  cd selfdrive/manager
-  ./build.py && ./manager.py
+  cd system/manager
+  if [ ! -f $DIR/prebuilt ]; then
+    ./build.py
+  fi
+  ./manager.py
 
   # if broken, keep on screen error
   while true; do sleep 1; done

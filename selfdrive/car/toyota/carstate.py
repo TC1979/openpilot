@@ -4,6 +4,7 @@ from cereal import car
 from openpilot.common.conversions import Conversions as CV
 from openpilot.common.numpy_fast import mean
 from openpilot.common.filter_simple import FirstOrderFilter
+from openpilot.common.params import Params
 from openpilot.common.realtime import DT_CTRL
 from opendbc.can.can_define import CANDefine
 from opendbc.can.parser import CANParser
@@ -40,9 +41,49 @@ class CarState(CarStateBase):
     self.accurate_steer_angle_seen = False
     self.angle_offset = FirstOrderFilter(None, 60.0, DT_CTRL, initialized=False)
 
+    self.prev_distance_button = 0
+    self.distance_button = 0
+
+    self.pcm_follow_distance = 0
+
     self.low_speed_lockout = False
     self.acc_type = 1
     self.lkas_hud = {}
+    self.params = Params()
+
+    self.experimental_mode_via_wheel = self.CP.experimentalModeViaWheel
+    # Change between chill/experimental mode using steering wheel
+    self.ispressed_prev = False
+    self.distance_button_hold = 0
+    self.gap_button_counter = 0
+    self.short_press_button_counter = 0
+
+    self.topsng = Params().get_bool("topsng")
+
+    # bsm
+    self.toyota_bsm = Params().get_bool("toyota_bsm")
+    self.left_blindspot = False
+    self.left_blindspot_d1 = 0
+    self.left_blindspot_d2 = 0
+    self.left_blindspot_counter = 0
+
+    self.right_blindspot = False
+    self.right_blindspot_d1 = 0
+    self.right_blindspot_d2 = 0
+    self.right_blindspot_counter = 0
+
+    self.frame = 0
+
+    # AleSato's automatic brakehold
+    self.time_to_brakehold = 100 * .3   # .3 seconds stopped to activate
+    self.GearShifter = car.CarState.GearShifter # avoid Rear and Park gears
+    self.stock_aeb = {}
+    self.brakehold_condition_satisfied = False
+    self.brakehold_condition_counter = 0
+    self.reset_brakehold = False
+    self.prev_brakePressed = True
+    self.brakehold_governor = False
+
 
   def update(self, cp, cp_cam):
     ret = car.CarState.new_message()
@@ -54,12 +95,8 @@ class CarState(CarStateBase):
 
     ret.brakePressed = cp.vl["BRAKE_MODULE"]["BRAKE_PRESSED"] != 0
     ret.brakeHoldActive = cp.vl["ESP_CONTROL"]["BRAKE_HOLD_ACTIVE"] == 1
-    if self.CP.enableGasInterceptor:
-      ret.gas = (cp.vl["GAS_SENSOR"]["INTERCEPTOR_GAS"] + cp.vl["GAS_SENSOR"]["INTERCEPTOR_GAS2"]) // 2
-      ret.gasPressed = ret.gas > 805
-    else:
-      # TODO: find a common gas pedal percentage signal
-      ret.gasPressed = cp.vl["PCM_CRUISE"]["GAS_RELEASED"] == 0
+
+    ret.gasPressed = cp.vl["PCM_CRUISE"]["GAS_RELEASED"] == 0
 
     ret.wheelSpeeds = self.get_wheel_speeds(
       cp.vl["WHEEL_SPEEDS"]["WHEEL_SPEED_FL"],
@@ -69,9 +106,12 @@ class CarState(CarStateBase):
     )
     ret.vEgoRaw = mean([ret.wheelSpeeds.fl, ret.wheelSpeeds.fr, ret.wheelSpeeds.rl, ret.wheelSpeeds.rr])
     ret.vEgo, ret.aEgo = self.update_speed_kf(ret.vEgoRaw)
-    ret.vEgoCluster = ret.vEgo * 1.015  # minimum of all the cars
+    if self.CP.carFingerprint == CAR.TOYOTA_PRIUS_V:
+      ret.vEgoCluster = ret.vEgo * 1.08987654321
+    else:
+      ret.vEgoCluster = ret.vEgo * 1.015  # minimum of all the cars
 
-    ret.standstill = ret.vEgoRaw == 0
+    ret.standstill = abs(ret.vEgoRaw) < 1e-3
 
     ret.steeringAngleDeg = cp.vl["STEER_ANGLE_SENSOR"]["STEER_ANGLE"] + cp.vl["STEER_ANGLE_SENSOR"]["STEER_FRACTION"]
     ret.steeringRateDeg = cp.vl["STEER_ANGLE_SENSOR"]["STEER_RATE"]
@@ -95,10 +135,16 @@ class CarState(CarStateBase):
     ret.leftBlinker = cp.vl["BLINKERS_STATE"]["TURN_SIGNALS"] == 1
     ret.rightBlinker = cp.vl["BLINKERS_STATE"]["TURN_SIGNALS"] == 2
 
+    if self.CP.carFingerprint != CAR.TOYOTA_MIRAI:
+      ret.engineRpm = cp.vl["ENGINE_RPM"]["RPM"]
+
     ret.steeringTorque = cp.vl["STEER_TORQUE_SENSOR"]["STEER_TORQUE_DRIVER"]
     ret.steeringTorqueEps = cp.vl["STEER_TORQUE_SENSOR"]["STEER_TORQUE_EPS"] * self.eps_torque_scale
     # we could use the override bit from dbc, but it's triggered at too high torque values
     ret.steeringPressed = abs(ret.steeringTorque) > STEER_THRESHOLD
+
+    # brake lights
+    ret.brakeLights = bool(cp.vl["ESP_CONTROL"]['BRAKE_LIGHTS_ACC'] or cp.vl["BRAKE_MODULE"]["BRAKE_PRESSED"] != 0)
 
     # Check EPS LKA/LTA fault status
     ret.steerFaultTemporary = cp.vl["EPS_STATUS"]["LKA_STATE"] in TEMP_STEER_FAULTS
@@ -141,11 +187,16 @@ class CarState(CarStateBase):
       self.low_speed_lockout = cp.vl["PCM_CRUISE_2"]["LOW_SPEED_LOCKOUT"] == 2
 
     self.pcm_acc_status = cp.vl["PCM_CRUISE"]["CRUISE_STATE"]
-    if self.CP.carFingerprint not in (NO_STOP_TIMER_CAR - TSS2_CAR):
+    if self.topsng and (self.CP.flags & ToyotaFlags.HYBRID.value) and (self.CP.flags & ToyotaFlags.SMART_DSU.value):
+      # ignore standstill in hybrid vehicles, since pcm allows to restart without
+      # receiving any special command. Also if interceptor is detected
+      ret.cruiseState.standstill = False
+    elif not self.topsng and self.CP.carFingerprint not in (NO_STOP_TIMER_CAR - TSS2_CAR):
       # ignore standstill state in certain vehicles, since pcm allows to restart with just an acceleration request
       ret.cruiseState.standstill = self.pcm_acc_status == 7
     ret.cruiseState.enabled = bool(cp.vl["PCM_CRUISE"]["CRUISE_ACTIVE"])
-    ret.cruiseState.nonAdaptive = cp.vl["PCM_CRUISE"]["CRUISE_STATE"] in (1, 2, 3, 4, 5, 6)
+    ret.cruiseState.nonAdaptive = self.pcm_acc_status in (1, 2, 3, 4, 5, 6)
+    self.pcm_neutral_force = cp.vl["PCM_CRUISE"]["NEUTRAL_FORCE"]
 
     ret.genericToggle = bool(cp.vl["LIGHT_STALK"]["AUTO_HIGH_BEAM"])
     ret.espDisabled = cp.vl["ESP_CONTROL"]["TC_DISABLED"] != 0
@@ -157,9 +208,106 @@ class CarState(CarStateBase):
       ret.leftBlindspot = (cp.vl["BSM"]["L_ADJACENT"] == 1) or (cp.vl["BSM"]["L_APPROACHING"] == 1)
       ret.rightBlindspot = (cp.vl["BSM"]["R_ADJACENT"] == 1) or (cp.vl["BSM"]["R_APPROACHING"] == 1)
 
-    if self.CP.carFingerprint != CAR.PRIUS_V:
+    if self.CP.carFingerprint != CAR.TOYOTA_PRIUS_V:
       self.lkas_hud = copy.copy(cp_cam.vl["LKAS_HUD"])
 
+    if self.CP.carFingerprint not in UNSUPPORTED_DSU_CAR:
+      self.pcm_follow_distance = cp.vl["PCM_CRUISE_2"]["PCM_FOLLOW_DISTANCE"]
+
+    if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR) or (self.CP.flags & ToyotaFlags.SMART_DSU and not self.CP.flags & ToyotaFlags.RADAR_CAN_FILTER):
+      # distance button is wired to the ACC module (camera or radar)
+      # self.prev_distance_button = self.distance_button
+      self.prev_distance_button = self.distance_button_hold
+      if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
+        self.distance_button = cp_acc.vl["ACC_CONTROL"]["DISTANCE"]
+      else:
+        self.distance_button = cp.vl["SDSU"]["FD_BUTTON"]
+
+    # change experimental/chill mode on fly with long press
+    if self.distance_button:
+      self.short_press_button_counter += 1
+      if not self.distance_button_hold:
+        self.gap_button_counter += 1
+        if self.gap_button_counter > 100:  # 50 miliseconds
+          self.params.put_bool_nonblocking('ExperimentalMode', not self.params.get_bool("ExperimentalMode"))  # change experimental/chill mode on fly with long press
+          self.gap_button_counter = 0
+
+    if not self.distance_button and self.ispressed_prev and self.short_press_button_counter < 50:
+      # Switch to follow distances on short press
+      self.distance_button_hold = True
+
+    if not self.ispressed_prev and not self.distance_button:
+      self.distance_button_hold = False
+      self.short_press_button_counter = 0
+    self.ispressed_prev = self.distance_button
+
+    ret.steeringWheelCar = True if self.CP.carName == "toyota" else False
+
+    # Automatic BrakeHold
+    if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
+      self.stock_aeb = copy.copy(cp_cam.vl["PRE_COLLISION_2"])
+      self.brakehold_condition_satisfied =  (ret.standstill and ret.cruiseState.available and not ret.gasPressed and \
+                                            not ret.cruiseState.enabled and (ret.gearShifter not in (self.GearShifter.reverse,\
+                                            self.GearShifter.park)) and self.params.get_bool('AleSato_AutomaticBrakeHold'))
+      if self.brakehold_condition_satisfied:
+        if self.brakehold_condition_counter > self.time_to_brakehold and not self.reset_brakehold:
+          self.brakehold_governor = True
+        else:
+          self.brakehold_governor = False
+        if not self.prev_brakePressed and ret.brakePressed: # disable automatic brakehold in second brakePress
+          self.reset_brakehold = True
+        self.brakehold_condition_counter += 1
+      else:
+        self.brakehold_governor = False
+        self.reset_brakehold = False
+        self.brakehold_condition_counter = 0
+      self.prev_brakePressed = ret.brakePressed
+
+    # DP: Enable blindspot debug mode once (@arne182)
+    # let's keep all the commented out code for easy debug purpose for future.
+    if self.toyota_bsm and self.frame > 199: #self.CP.carFingerprint == CAR.PRIUS_TSS2: #not (self.CP.carFingerprint in TSS2_CAR or self.CP.carFingerprint == CAR.CAMRY or self.CP.carFingerprint == CAR.CAMRYH):
+      distance_1 = cp.vl["DEBUG"].get('BLINDSPOTD1')
+      distance_2 = cp.vl["DEBUG"].get('BLINDSPOTD2')
+      side = cp.vl["DEBUG"].get('BLINDSPOTSIDE')
+
+      if distance_1 is not None and distance_2 is not None and side is not None:
+        if side == 65: # Left blind spot
+          if distance_1 != self.left_blindspot_d1:
+            self.left_blindspot_d1 = distance_1
+            self.left_blindspot_counter = 100
+          if distance_2 != self.left_blindspot_d2:
+            self.left_blindspot_d2 = distance_2
+            self.left_blindspot_counter = 100
+          if self.left_blindspot_d1 > 10 or self.left_blindspot_d2 > 10:
+            self.left_blindspot = True
+        elif side == 66: # Right blind spot
+          if distance_1 != self.right_blindspot_d1:
+            self.right_blindspot_d1 = distance_1
+            self.right_blindspot_counter = 100
+          if distance_2 != self.right_blindspot_d2:
+            self.right_blindspot_d2 = distance_2
+            self.right_blindspot_counter = 100
+          if self.right_blindspot_d1 > 10 or self.right_blindspot_d2 > 10:
+            self.right_blindspot = True
+
+        if self.left_blindspot_counter > 0:
+          self.left_blindspot_counter -= 1
+        else:
+          self.left_blindspot = False
+          self.left_blindspot_d1 = 0
+          self.left_blindspot_d2 = 0
+
+        if self.right_blindspot_counter > 0:
+          self.right_blindspot_counter -= 1
+        else:
+          self.right_blindspot = False
+          self.right_blindspot_d1 = 0
+          self.right_blindspot_d2 = 0
+
+        ret.leftBlindspot = self.left_blindspot
+        ret.rightBlindspot = self.right_blindspot
+
+    self.frame += 1
     return ret
 
   @staticmethod
@@ -180,15 +328,14 @@ class CarState(CarStateBase):
       ("STEER_TORQUE_SENSOR", 50),
     ]
 
+    if CP.carFingerprint != CAR.TOYOTA_MIRAI:
+      messages.append(("ENGINE_RPM", 42))
+
     if CP.carFingerprint in UNSUPPORTED_DSU_CAR:
       messages.append(("DSU_CRUISE", 5))
       messages.append(("PCM_CRUISE_ALT", 1))
     else:
       messages.append(("PCM_CRUISE_2", 33))
-
-    # add gas interceptor reading if we are using it
-    if CP.enableGasInterceptor:
-      messages.append(("GAS_SENSOR", 50))
 
     if CP.enableBsm:
       messages.append(("BSM", 1))
@@ -207,13 +354,21 @@ class CarState(CarStateBase):
         ("PRE_COLLISION", 33),
       ]
 
+    if CP.flags & ToyotaFlags.SMART_DSU and not CP.flags & ToyotaFlags.RADAR_CAN_FILTER:
+      messages += [
+        ("SDSU", 100),
+      ]
+
+    if Params().get_bool("toyota_bsm"):
+      messages.append(("DEBUG", 65))
+
     return CANParser(DBC[CP.carFingerprint]["pt"], messages, 0)
 
   @staticmethod
   def get_cam_can_parser(CP):
     messages = []
 
-    if CP.carFingerprint != CAR.PRIUS_V:
+    if CP.carFingerprint != CAR.TOYOTA_PRIUS_V:
       messages += [
         ("LKAS_HUD", 1),
       ]
@@ -223,6 +378,12 @@ class CarState(CarStateBase):
         ("PRE_COLLISION", 33),
         ("ACC_CONTROL", 33),
         ("PCS_HUD", 1),
+      ]
+
+    # AleSato
+    if CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
+      messages += [
+        ("PRE_COLLISION_2", 33),
       ]
 
     return CANParser(DBC[CP.carFingerprint]["pt"], messages, 2)

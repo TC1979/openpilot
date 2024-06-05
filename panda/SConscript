@@ -7,7 +7,7 @@ BUILDER = "DEV"
 
 common_flags = []
 
-panda_root = Dir('.').abspath
+panda_root = Dir('.')
 
 if os.getenv("RELEASE"):
   BUILD_TYPE = "RELEASE"
@@ -16,7 +16,7 @@ if os.getenv("RELEASE"):
   assert os.path.exists(cert_fn), 'Certificate file not found. Please specify absolute path'
 else:
   BUILD_TYPE = "DEBUG"
-  cert_fn = File("./certs/debug").srcnode().abspath
+  cert_fn = File("./certs/debug").srcnode().relpath
   common_flags += ["-DALLOW_DEBUG"]
 
   if os.getenv("DEBUG"):
@@ -35,7 +35,7 @@ def get_version(builder, build_type):
 def get_key_header(name):
   from Crypto.PublicKey import RSA
 
-  public_fn = File(f'./certs/{name}.pub').srcnode().abspath
+  public_fn = File(f'./certs/{name}.pub').srcnode().get_path()
   with open(public_fn) as f:
     rsa = RSA.importKey(f.read())
   assert(rsa.size_in_bits() == 1024)
@@ -63,7 +63,7 @@ def to_c_uint32(x):
 
 
 def build_project(project_name, project, extra_flags):
-  linkerscript_fn = File(project["LINKER_SCRIPT"]).srcnode().abspath
+  linkerscript_fn = File(project["LINKER_SCRIPT"]).srcnode().relpath
 
   flags = project["PROJECT_FLAGS"] + extra_flags + common_flags + [
     "-Wall",
@@ -75,7 +75,7 @@ def build_project(project_name, project, extra_flags):
     "-nostdlib",
     "-fno-builtin",
     "-std=gnu11",
-    "-fmax-errors=3",
+    "-fmax-errors=1",
     f"-T{linkerscript_fn}",
   ]
 
@@ -84,8 +84,6 @@ def build_project(project_name, project, extra_flags):
     '..',
     panda_root,
     f"{panda_root}/board/",
-    f"{panda_root}/board/stm32fx/inc",
-    f"{panda_root}/board/stm32h7/inc",
   ]
 
   env = Environment(
@@ -101,7 +99,8 @@ def build_project(project_name, project, extra_flags):
     ASCOM="$AS $ASFLAGS -o $TARGET -c $SOURCES",
     BUILDERS={
       'Objcopy': Builder(generator=objcopy, suffix='.bin', src_suffix='.elf')
-    }
+    },
+    tools=["default", "compilation_db"],
   )
 
   startup = env.Object(f"obj/startup_{project_name}", project["STARTUP_FILE"])
@@ -123,20 +122,21 @@ def build_project(project_name, project, extra_flags):
   main_bin = env.Objcopy(f"obj/{project_name}.bin", main_elf)
 
   # Sign main
-  sign_py = File(f"{panda_root}/crypto/sign.py").srcnode().abspath
+  sign_py = File(f"{panda_root}/crypto/sign.py").srcnode().relpath
   env.Command(f"obj/{project_name}.bin.signed", main_bin, f"SETLEN=1 {sign_py} $SOURCE $TARGET {cert_fn}")
 
 
 base_project_f4 = {
   "MAIN": "main.c",
-  "STARTUP_FILE": File("./board/stm32fx/startup_stm32f413xx.s"),
-  "LINKER_SCRIPT": File("./board/stm32fx/stm32f4_flash.ld"),
+  "STARTUP_FILE": File("./board/stm32f4/startup_stm32f413xx.s"),
+  "LINKER_SCRIPT": File("./board/stm32f4/stm32f4_flash.ld"),
   "APP_START_ADDRESS": "0x8004000",
   "PROJECT_FLAGS": [
     "-mcpu=cortex-m4",
     "-mhard-float",
     "-DSTM32F4",
     "-DSTM32F413xx",
+    "-Iboard/stm32f4/inc",
     "-mfpu=fpv4-sp-d16",
     "-fsingle-precision-constant",
     "-Os",
@@ -154,6 +154,7 @@ base_project_h7 = {
     "-mhard-float",
     "-DSTM32H7",
     "-DSTM32H725xx",
+    "-Iboard/stm32h7/inc",
     "-mfpu=fpv5-d16",
     "-fsingle-precision-constant",
     "-Os",
@@ -178,9 +179,6 @@ with open("board/obj/cert.h", "w") as f:
 
 # panda fw
 SConscript('board/SConscript')
-
-# pedal fw
-SConscript('board/pedal/SConscript')
 
 # panda jungle fw
 SConscript('board/jungle/SConscript')

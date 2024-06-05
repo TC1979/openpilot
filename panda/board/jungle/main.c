@@ -2,7 +2,6 @@
 #include "board/config.h"
 
 #include "board/safety.h"
-#include "board/drivers/gmlan_alt.h"
 
 #include "board/drivers/pwm.h"
 #include "board/drivers/usb.h"
@@ -31,7 +30,7 @@
 
 void debug_ring_callback(uart_ring *ring) {
   char rcv;
-  while (getc(ring, &rcv)) {
+  while (get_char(ring, &rcv)) {
     (void)injectc(ring, rcv);
   }
 }
@@ -53,6 +52,29 @@ uint32_t loop_counter = 0U;
 uint16_t button_press_cnt = 0U;
 void tick_handler(void) {
   if (TICK_TIMER->SR != 0) {
+    if (generated_can_traffic) {
+      // queue up messages
+      for (uint16_t i = 0U; i < 100U; i++) {
+        CANPacket_t to_send;
+        to_send.returned = 0U;
+        to_send.rejected = 0U;
+        to_send.extended = 0U;
+        to_send.addr = 0x200U + i;
+        to_send.bus = i % 3U;
+        to_send.data_len_code = 8U;
+        (void)memcpy(to_send.data, "\xff\xff\xff\xff\xff\xff\xff\xff", dlc_to_len[to_send.data_len_code]);
+        can_set_checksum(&to_send);
+
+        can_send(&to_send, to_send.bus, true);
+      }
+
+      for (int i = 0; i < 3; i++) {
+        if (can_health[i].transmit_error_cnt >= 128) {
+          (void)llcan_init(CANIF_FROM_CAN_NUM(i));
+        }
+      }
+    }
+
     // tick drivers at 8Hz
     usb_tick();
 
@@ -155,7 +177,7 @@ int main(void) {
   }
 
   print("Config:\n");
-  print("  Board type: "); print(current_board->board_type); print("\n");
+  print("  Board type: 0x"); puth(hw_type); print("\n");
 
   // init board
   current_board->init();

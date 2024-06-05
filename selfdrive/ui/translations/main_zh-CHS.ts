@@ -66,6 +66,26 @@
         <source>Prevent large data uploads when on a metered connection</source>
         <translation>当使用按流量计费的连接时，避免上传大流量数据</translation>
     </message>
+    <message>
+        <source>Hidden Network</source>
+        <translation>隐藏的网络</translation>
+    </message>
+    <message>
+        <source>CONNECT</source>
+        <translation>连线</translation>
+    </message>
+    <message>
+        <source>Enter SSID</source>
+        <translation>输入 SSID</translation>
+    </message>
+    <message>
+        <source>Enter password</source>
+        <translation>输入密码</translation>
+    </message>
+    <message>
+        <source>for &quot;%1&quot;</source>
+        <translation>网络名称：&quot;%1&quot;</translation>
+    </message>
 </context>
 <context>
     <name>AnnotatedCameraWidget</name>
@@ -273,9 +293,37 @@
         <source>Review</source>
         <translation>预览</translation>
     </message>
+    <message>
+        <source>Pair your device with comma connect (connect.comma.ai) and claim your comma prime offer.</source>
+        <translation>将您的设备与comma connect （connect.comma.ai）配对并领取您的comma prime优惠。</translation>
+    </message>
+    <message>
+        <source>Pair Device</source>
+        <translation>配对设备</translation>
+    </message>
+    <message>
+        <source>PAIR</source>
+        <translation>配对</translation>
+    </message>
+    <message>
+        <source>Navigate on Openpilot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open the destination input web page for navigation on openpilot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DashCam footage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Watch and/or download recordings from comma device cameras</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
-    <name>DriverViewScene</name>
+    <name>DriverViewWindow</name>
     <message>
         <source>camera starting</source>
         <translation>正在启动相机</translation>
@@ -290,6 +338,17 @@
     <message>
         <source>CHILL MODE ON</source>
         <translation>轻松模式运行</translation>
+    </message>
+</context>
+<context>
+    <name>ForceCarRecognition</name>
+    <message>
+        <source>Back</source>
+        <translation>返回</translation>
+    </message>
+    <message>
+        <source>[-Not selected-]</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -337,6 +396,10 @@
         <source>Manage at connect.comma.ai</source>
         <translation>请在 connect.comma.ai 上管理</translation>
     </message>
+    <message>
+        <source>Manage at %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapWindow</name>
@@ -362,6 +425,51 @@
     <message>
         <source>Cancel</source>
         <translation>取消</translation>
+    </message>
+</context>
+<context>
+    <name>MyFootagePopup</name>
+    <message>
+        <source>Watch and/or download recordings from comma device cameras</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect your smartphone and comma device to the same Wi-Fi network and disconnect from the car&apos;s CAN signal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scan the QR code on the right</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MyNooPopup</name>
+    <message>
+        <source>Open the navigate on openpilot web page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect your smartphone and comma device to the same Wi-Fi network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scan the QR code on the right</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NavigationPanel</name>
+    <message>
+        <source>Manage Primeless Navigation Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MANAGE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage primeless navigate on openpilot settings.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -398,10 +506,6 @@
 %1</source>
         <translation>无法下载更新
 %1</translation>
-    </message>
-    <message>
-        <source>Invalid date and time settings, system won&apos;t start. Connect to internet to set time.</source>
-        <translation>日期和时间设置无效，系统无法启动。请连接至互联网以设置时间。</translation>
     </message>
     <message>
         <source>Taking camera snapshots. System won&apos;t start until finished.</source>
@@ -453,6 +557,29 @@
     <message>
         <source> ALERT</source>
         <translation> 警报</translation>
+    </message>
+</context>
+<context>
+    <name>OnroadAlerts</name>
+    <message>
+        <source>openpilot Unavailable</source>
+        <translation>无法使用 openpilot</translation>
+    </message>
+    <message>
+        <source>Waiting for controls to start</source>
+        <translation>等待控制服务啟動</translation>
+    </message>
+    <message>
+        <source>TAKE CONTROL IMMEDIATELY</source>
+        <translation>立即接管</translation>
+    </message>
+    <message>
+        <source>Controls Unresponsive</source>
+        <translation>控制服务无响应</translation>
+    </message>
+    <message>
+        <source>Reboot Device</source>
+        <translation>重启设备</translation>
     </message>
 </context>
 <context>
@@ -528,6 +655,81 @@
     </message>
 </context>
 <context>
+    <name>Primeless</name>
+    <message>
+        <source>Back</source>
+        <translation type="unfinished">返回</translation>
+    </message>
+    <message>
+        <source>Manage Your Settings At</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MapBox</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Google</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Destination Search Provider</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a search provider for destination queries in Navigate on Openpilot. Options include MapBox (recommended), Amap, and Google Maps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public Mapbox Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Secret Mapbox Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Google Map Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mapbox Setup Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VIEW</source>
+        <translation type="unfinished">查看</translation>
+    </message>
+    <message>
+        <source>View the instructions to set up MapBox for Primeless Navigation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Device Offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>REMOVE</source>
+        <translation type="unfinished">删除</translation>
+    </message>
+    <message>
+        <source>ADD</source>
+        <translation type="unfinished">添加</translation>
+    </message>
+    <message>
+        <source>Manage your %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter your %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>Reboot</source>
@@ -538,12 +740,8 @@
         <translation>退出</translation>
     </message>
     <message>
-        <source>dashcam</source>
-        <translation>行车记录仪</translation>
-    </message>
-    <message>
-        <source>openpilot</source>
-        <translation>openpilot</translation>
+        <source>T.O.P</source>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>%n minute(s) ago</source>
@@ -579,6 +777,10 @@
         <source>ft</source>
         <translation>ft</translation>
     </message>
+    <message>
+        <source>now</source>
+        <translation>现在</translation>
+    </message>
 </context>
 <context>
     <name>Reset</name>
@@ -611,14 +813,14 @@
         <translation>无法挂载数据分区。分区可能已经损坏。请确认是否要删除并重新设置。</translation>
     </message>
     <message>
-        <source>Press confirm to erase all content and settings. Press cancel to resume boot.</source>
-        <translation>按下确认以删除所有内容及设置。按下取消来继续开机。</translation>
-    </message>
-    <message>
         <source>Resetting device...
 This may take up to a minute.</source>
         <translation>设备重置中…
 这可能需要一分钟的时间。</translation>
+    </message>
+    <message>
+        <source>System reset triggered. Press confirm to erase all content and settings. Press cancel to resume boot.</source>
+        <translation>系统重置已触发。按下“确认”以清除所有内容和设置，按下“取消”以继续启动。</translation>
     </message>
 </context>
 <context>
@@ -642,6 +844,14 @@ This may take up to a minute.</source>
     <message>
         <source>Software</source>
         <translation>软件</translation>
+    </message>
+    <message>
+        <source>T.O.P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Navigation</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -726,6 +936,18 @@ This may take up to a minute.</source>
         <source>Select a language</source>
         <translation>选择语言</translation>
     </message>
+    <message>
+        <source>Choose Software to Install</source>
+        <translation>选择要安装的软件</translation>
+    </message>
+    <message>
+        <source>openpilot</source>
+        <translation>openpilot</translation>
+    </message>
+    <message>
+        <source>Custom Software</source>
+        <translation>定制软件</translation>
+    </message>
 </context>
 <context>
     <name>SetupWidget</name>
@@ -763,18 +985,6 @@ This may take up to a minute.</source>
     <message>
         <source>TEMP</source>
         <translation>设备温度</translation>
-    </message>
-    <message>
-        <source>HIGH</source>
-        <translation>过热</translation>
-    </message>
-    <message>
-        <source>GOOD</source>
-        <translation>良好</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>一般</translation>
     </message>
     <message>
         <source>VEHICLE</source>
@@ -899,6 +1109,22 @@ This may take up to a minute.</source>
         <source>never</source>
         <translation>从未更新</translation>
     </message>
+    <message>
+        <source>Offline Maps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a location to download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VIEW</source>
+        <translation>查看</translation>
+    </message>
 </context>
 <context>
     <name>SshControl</name>
@@ -963,6 +1189,161 @@ This may take up to a minute.</source>
     <message>
         <source>Agree</source>
         <translation>同意</translation>
+    </message>
+</context>
+<context>
+    <name>TimpilotPanel</name>
+    <message>
+        <source>Select Car</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select your car</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quiet Drive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOP will display alerts but only play the most important warning sounds. This feature can be toggled while the car is on.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Driving Screen Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn off the device screen to protect the OLED panel after driving starts. It automatically brightens or turns on when a touch or event occurs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lateral Controls Always On</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lateral control will always be on and will not be interrupted by braking.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NNFF Torque Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Twilsonco&apos;s Neural Network Feedforward torque system for more precise lateral control.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop And Go</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabled the Stop And Go feature and get auto hold.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dynamic Distance Adjustment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The distance to the lead car will no longer be a fixed reaction time, but will be dynamically adjusted based on the speed of the vehicle. (Fine-tuned by Marc - cgw1968-5779)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blinker Lane Change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change lanes without the need to nudge the steering wheel first.
+Disabled: Need to nudge the steering wheel to change lanes.
+Enabled: Nudgeless.
+Speed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above 35mph.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vision Based Turn Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use vision path predictions to estimate the appropriate speed to drive through turns ahead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Map Turn Speed Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enables M-TSC. When enabled, the car will slow down when it predicts a lateral acceleration greater than 2.0 m/s^2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Door Auto Lock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabled this to lock doors when drive above 25 km/h. Only work on some Toyota vehicles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Door Auto Unlock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabled this to unlock doors when shift to gear P. Only work on some Toyota vehicles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatic Brake Hold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Activates the car&apos;s brakes after 0.3 seconds stopped. (Only support on Toyota TSS2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fix Toyota BSM Signal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enhance BSM function for some Toyota vehicles that openpilot currently does not support.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ACC +/-: Long Press Reverse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change the ACC +/- buttons behavior with cruise speed change in openpilot.
+Disabled (Stock): Short = 1, Long = 5.
+Enabled: Short and Long = 5.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Speed Limit Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav and mapd information. If you press the pedal when the speed limit is activated, the max speed will increase to the manual set speed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Jetson Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable this option if you intend to run dp on Nvidia Jetson. Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Local Nav and File Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This will allow you to use the Navigation feature with your own access key and access openpilot data and files.
+Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:8082*.
+You will need to apply your own mapbox token at https://www.mapbox.com/.
+Internet access from mobile phone (tethering) is required.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1076,16 +1457,8 @@ This may take up to a minute.</source>
         <translation>驾驶风格</translation>
     </message>
     <message>
-        <source>Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars.</source>
-        <translation>推荐使用标准模式。在积极模式中，openpilot 会更靠近前车并在加速和刹车方面更积极。在舒适模式中，openpilot 会与前车保持较远的距离。</translation>
-    </message>
-    <message>
         <source>An alpha version of openpilot longitudinal control can be tested, along with Experimental mode, on non-release branches.</source>
         <translation>在正式（release）版本以外的分支上，可以测试 openpilot 纵向控制的 Alpha 版本以及实验模式。</translation>
-    </message>
-    <message>
-        <source>Navigate on openpilot</source>
-        <translation>Navigate on openpilot</translation>
     </message>
     <message>
         <source>Enable the openpilot longitudinal control (alpha) toggle to allow Experimental mode.</source>
@@ -1096,12 +1469,20 @@ This may take up to a minute.</source>
         <translation>端到端纵向控制</translation>
     </message>
     <message>
-        <source>When navigation has a destination, openpilot will input the map information into the model. This provides useful context for the model and allows openpilot to keep left or right appropriately at forks/exits. Lane change behavior is unchanged and still activated by the driver. This is an alpha quality feature; mistakes should be expected, particularly around exits and forks. These mistakes can include unintended laneline crossings, late exit taking, driving towards dividing barriers in the gore areas, etc.</source>
-        <translation>当导航有目的地时，openpilot 将输入地图信息到模型中。这为模型提供了有用的背景信息，使 openpilot 能够在叉路/出口时适当地保持左侧或右侧行驶。车道变换行为保持不变，仍由驾驶员激活。这是一个 Alpha 版的功能；可能会出现错误，特别是在出口和分叉处。这些错误可能包括意外的车道越界、晚出口、朝着分隔栏驶向安全地带等。</translation>
+        <source>Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars. On supported cars, you can cycle through these personalities with your steering wheel distance button.</source>
+        <translation>推荐使用标准模式。在积极模式下，openpilot 会更靠近前方车辆，并在油门和刹车方面更加激进。在放松模式下，openpilot 会与前方车辆保持更远距离。在支持的车型上，你可以使用方向盘上的距离按钮来循环切换这些驾驶风格。</translation>
     </message>
     <message>
-        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner. When a navigation destination is set and the driving model is using it as input, the driving path on the map will turn green.</source>
-        <translation>行驶画面将在低速时切换到道路朝向的广角摄像头，以更好地显示一些转弯。实验模式标志也将显示在右上角。当设置了导航目的地并且驾驶模型正在使用它作为输入时，地图上的驾驶路径将变为绿色。</translation>
+        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner.</source>
+        <translation>在低速时，驾驶可视化将转换为道路朝向的广角摄像头，以更好地展示某些转弯。测试模式标志也将显示在右上角。</translation>
+    </message>
+    <message>
+        <source>Always-On Driver Monitoring</source>
+        <translation>驾驶员监控常开</translation>
+    </message>
+    <message>
+        <source>Enable driver monitoring even when openpilot is not engaged.</source>
+        <translation>即使在openpilot未激活时也启用驾驶员监控。</translation>
     </message>
 </context>
 <context>

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from enum import StrEnum
 import json
 import math
 import os
@@ -15,11 +16,21 @@ from openpilot.selfdrive.navd.helpers import (Coordinate, coordinate_from_param,
                                     distance_along_geometry, maxspeed_to_ms,
                                     minimum_distance,
                                     parse_banner_instructions)
-from openpilot.system.swaglog import cloudlog
+from openpilot.common.swaglog import cloudlog
+
+# PFEIFER - SLC {{
+from openpilot.selfdrive.controls.speed_limit_controller import slc
+# }} PFEIFER - SLC
 
 REROUTE_DISTANCE = 25
 MANEUVER_TRANSITION_THRESHOLD = 10
 REROUTE_COUNTER_MIN = 3
+
+
+class RECOMPUTE_REASON(StrEnum):
+  WRONG_DIRECTION = "wrong direction"
+  DISTANCE_TO_ROUTE = "distance to route"
+  NEW_DESTINATION = "new destination"
 
 
 class RouteEngine:
@@ -46,17 +57,25 @@ class RouteEngine:
 
     self.ui_pid = None
 
-    self.reroute_counter = 0
+    self.distance_reroute_counter = 0
+    self.wrong_direction_reroute_counter = 0
 
+    self.smallest_total_distance_remaining = math.inf
+    self.distance_delta = 0
+
+
+    self.api = None
+    self.mapbox_token = None
     if "MAPBOX_TOKEN" in os.environ:
       self.mapbox_token = os.environ["MAPBOX_TOKEN"]
       self.mapbox_host = "https://api.mapbox.com"
+      self.params.put("MapboxPublicKey", self.mapbox_token)
+    # NAV
+    elif self.params.get_int("PrimeType") == 0:
+      self.mapbox_token = self.params.get("MapboxPublicKey", encoding='utf8')
+      self.mapbox_host = "https://api.mapbox.com"
     else:
-      try:
-        self.mapbox_token = Api(self.params.get("DongleId", encoding='utf8')).get_token(expiry_hours=4 * 7 * 24)
-      except FileNotFoundError:
-        cloudlog.exception("Failed to generate mapbox token due to missing private key. Ensure device is registered.")
-        self.mapbox_token = ""
+      self.api = Api(self.params.get("DongleId", encoding='utf8'))
       self.mapbox_host = "https://maps.comma.ai"
 
   def update(self):
@@ -71,8 +90,11 @@ class RouteEngine:
         self.ui_pid = ui_pid[0]
 
     self.update_location()
-    self.recompute_route()
-    self.send_instruction()
+    try:
+      self.recompute_route()
+      self.send_instruction()
+    except Exception:
+      cloudlog.exception("navd.failed_to_compute")
 
   def update_location(self):
     location = self.sm['liveLocationKalman']
@@ -94,33 +116,32 @@ class RouteEngine:
       self.reset_recompute_limits()
       return
 
-    should_recompute = self.should_recompute()
-    if new_destination != self.nav_destination:
-      cloudlog.warning(f"Got new destination from NavDestination param {new_destination}")
-      should_recompute = True
-
-    # Don't recompute when GPS drifts in tunnels
-    if not self.gps_ok and self.step_idx is not None:
-      return
+    should_recompute, recompute_reason = self.should_recompute(new_destination)
 
     if self.recompute_countdown == 0 and should_recompute:
       self.recompute_countdown = 2**self.recompute_backoff
       self.recompute_backoff = min(6, self.recompute_backoff + 1)
-      self.calculate_route(new_destination)
-      self.reroute_counter = 0
+      self.calculate_route(new_destination, recompute_reason)
+      self.distance_reroute_counter = 0
+      self.wrong_direction_reroute_counter = 0
     else:
       self.recompute_countdown = max(0, self.recompute_countdown - 1)
 
-  def calculate_route(self, destination):
-    cloudlog.warning(f"Calculating route {self.last_position} -> {destination}")
+  def calculate_route(self, destination: Coordinate, reason: RECOMPUTE_REASON):
+    cloudlog.warning(f"Calculating route due to {RECOMPUTE_REASON} {self.last_position} -> {destination}")
+    self.smallest_total_distance_remaining = math.inf
     self.nav_destination = destination
 
     lang = self.params.get('LanguageSetting', encoding='utf8')
     if lang is not None:
       lang = lang.replace('main_', '')
 
+    token = self.mapbox_token
+    if token is None:
+      token = self.api.get_token()
+
     params = {
-      'access_token': self.mapbox_token,
+      'access_token': token,
       'annotations': 'maxspeed',
       'geometries': 'geojson',
       'overview': 'full',
@@ -154,6 +175,37 @@ class RouteEngine:
       resp.raise_for_status()
 
       r = resp.json()
+      r1 = resp.json()
+      # Function to remove specified keys recursively unnecessary for display
+      def remove_keys(obj, keys_to_remove):
+        if isinstance(obj, list):
+          return [remove_keys(item, keys_to_remove) for item in obj]
+        elif isinstance(obj, dict):
+          return {key: remove_keys(value, keys_to_remove) for key, value in obj.items() if key not in keys_to_remove}
+        else:
+          return obj
+      keys_to_remove = ['geometry', 'annotation', 'incidents', 'intersections', 'components', 'sub', 'waypoints']
+      self.r2 = remove_keys(r1, keys_to_remove)
+      self.r3 = {}
+      # Add items for display under "routes"
+      if 'routes' in self.r2 and len(self.r2['routes']) > 0:
+        first_route = self.r2['routes'][0]
+        nav_destination_json = self.params.get('NavDestination')
+        try:
+          nav_destination_data = json.loads(nav_destination_json)
+          place_name = nav_destination_data.get('place_name', 'Default Place Name')
+          first_route['Destination'] = place_name
+          first_route['Metric'] = self.params.get_bool("IsMetric")
+          self.r3['CurrentStep'] = 0
+          self.r3['uuid'] = self.r2['uuid']
+        except json.JSONDecodeError as e:
+          print(f"Error decoding JSON: {e}")
+      # Save slim json as file
+      with open('navdirections.json', 'w') as json_file:
+        json.dump(self.r2, json_file, indent=4)
+      with open('CurrentStep.json', 'w') as json_file:
+        json.dump(self.r3, json_file, indent=4)
+
       if len(r['routes']):
         self.route = r['routes'][0]['legs'][0]['steps']
         self.route_geometry = []
@@ -196,10 +248,15 @@ class RouteEngine:
     self.send_route()
 
   def send_instruction(self):
-    msg = messaging.new_message('navInstruction')
+    msg = messaging.new_message('navInstruction', valid=True)
 
     if self.step_idx is None:
       msg.valid = False
+      # PFEIFER - SLC {{
+      slc.load_state()
+      slc.nav_speed_limit = 0
+      slc.write_nav_state()
+      # }} PFEIFER - SLC
       self.pm.send('navInstruction', msg)
       return
 
@@ -244,23 +301,30 @@ class RouteEngine:
 
     # Compute total remaining time and distance
     remaining = 1.0 - along_geometry / max(step['distance'], 1)
-    total_distance = step['distance'] * remaining
-    total_time = step['duration'] * remaining
+    total_distance_remaining = step['distance'] * remaining
+    total_time_remaining = step['duration'] * remaining
 
     if step['duration_typical'] is None:
-      total_time_typical = total_time
+      total_typical_time_remaining = total_time_remaining
     else:
-      total_time_typical = step['duration_typical'] * remaining
+      total_typical_time_remaining = step['duration_typical'] * remaining
 
     # Add up totals for future steps
     for i in range(self.step_idx + 1, len(self.route)):
-      total_distance += self.route[i]['distance']
-      total_time += self.route[i]['duration']
-      total_time_typical += self.route[i]['duration_typical']
+      total_distance_remaining += self.route[i]['distance']
+      total_time_remaining += self.route[i]['duration']
+      if self.route[i]['duration_typical'] is None:
+        total_typical_time_remaining += self.route[i]['duration']
+      else:
+        total_typical_time_remaining += self.route[i]['duration_typical']
 
-    msg.navInstruction.distanceRemaining = total_distance
-    msg.navInstruction.timeRemaining = total_time
-    msg.navInstruction.timeRemainingTypical = total_time_typical
+    msg.navInstruction.distanceRemaining = total_distance_remaining
+    msg.navInstruction.timeRemaining = total_time_remaining
+    msg.navInstruction.timeRemainingTypical = total_typical_time_remaining
+
+    # Compute if we are going the wrong way
+    self.smallest_total_distance_remaining = min(self.smallest_total_distance_remaining, total_distance_remaining)
+    self.distance_delta = total_distance_remaining - self.smallest_total_distance_remaining
 
     # Speed limit
     closest_idx, closest = min(enumerate(geometry), key=lambda p: p[1].distance_to(self.last_position))
@@ -271,6 +335,15 @@ class RouteEngine:
 
     if ('maxspeed' in closest.annotations) and self.localizer_valid:
       msg.navInstruction.speedLimit = closest.annotations['maxspeed']
+    # PFEIFER - SLC {{
+      slc.load_state()
+      slc.nav_speed_limit = closest.annotations['maxspeed']
+      slc.write_nav_state()
+    if not self.localizer_valid or ('maxspeed' not in closest.annotations):
+      slc.load_state()
+      slc.nav_speed_limit = 0
+      slc.write_nav_state()
+    # }} PFEIFER - SLC
 
     # Speed limit sign type
     if 'speedLimitSign' in step:
@@ -286,6 +359,12 @@ class RouteEngine:
       if self.step_idx + 1 < len(self.route):
         self.step_idx += 1
         self.reset_recompute_limits()
+        # Update the 'CurrentStep' value in the JSON
+        if 'routes' in self.r2 and len(self.r2['routes']) > 0:
+          self.r3['CurrentStep'] = self.step_idx
+        # Write the modified JSON data back to the file
+        with open('CurrentStep.json', 'w') as json_file:
+          json.dump(self.r3, json_file, indent=4)
       else:
         cloudlog.warning("Destination reached")
 
@@ -302,7 +381,7 @@ class RouteEngine:
       for path in self.route_geometry:
         coords += [c.as_dict() for c in path]
 
-    msg = messaging.new_message('navRoute')
+    msg = messaging.new_message('navRoute', valid=True)
     msg.navRoute.coordinates = coords
     self.pm.send('navRoute', msg)
 
@@ -316,7 +395,33 @@ class RouteEngine:
     self.recompute_backoff = 0
     self.recompute_countdown = 0
 
-  def should_recompute(self):
+  def should_recompute(self, new_destination: Coordinate | None) -> tuple[bool, RECOMPUTE_REASON | None]:
+    # Don't recompute when GPS drifts in tunnels
+    if not self.gps_ok and self.step_idx is not None:
+      return False, None
+
+    if new_destination != self.nav_destination:
+      cloudlog.warning(f"Got new destination from NavDestination param {new_destination}")
+      return True, RECOMPUTE_REASON.NEW_DESTINATION
+
+    if self.too_far_from_route():
+      return True, RECOMPUTE_REASON.DISTANCE_TO_ROUTE
+
+    if self.going_wrong_direction():
+      return True, RECOMPUTE_REASON.WRONG_DIRECTION
+
+    return False, None
+
+  def going_wrong_direction(self) -> bool:
+    # Check if our distance remaining has increased
+    if self.distance_delta > REROUTE_DISTANCE:
+      self.wrong_direction_reroute_counter += 1
+    else:
+      self.wrong_direction_reroute_counter = 0
+
+    return bool(self.wrong_direction_reroute_counter > REROUTE_COUNTER_MIN)
+
+  def too_far_from_route(self) -> bool:
     if self.step_idx is None or self.route is None:
       return True
 
@@ -336,12 +441,13 @@ class RouteEngine:
 
       min_d = min(min_d, minimum_distance(a, b, self.last_position))
 
+    # Check if we've driven off the route
     if min_d > REROUTE_DISTANCE:
-      self.reroute_counter += 1
+      self.distance_reroute_counter += 1
     else:
-      self.reroute_counter = 0
-    return self.reroute_counter > REROUTE_COUNTER_MIN
-    # TODO: Check for going wrong way in segment
+      self.distance_reroute_counter = 0
+
+    return bool(self.distance_reroute_counter > REROUTE_COUNTER_MIN)
 
 
 def main():

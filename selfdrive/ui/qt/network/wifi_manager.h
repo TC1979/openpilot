@@ -52,18 +52,19 @@ public:
   std::optional<QDBusPendingCall> activateWifiConnection(const QString &ssid);
   NetworkType currentNetworkType();
   void updateGsmSettings(bool roaming, QString apn, bool metered);
-  void connect(const Network &ssid, const QString &password = {}, const QString &username = {});
+  void connect(const Network &ssid, const bool is_hidden = false, const QString &password = {}, const QString &username = {});
 
   // Tethering functions
   void setTetheringEnabled(bool enabled);
   bool isTetheringEnabled();
   void changeTetheringPassword(const QString &newPassword);
+  QString getIp4Address();
   QString getTetheringPassword();
 
 private:
   QString adapter;  // Path to network manager wifi-device
   QTimer timer;
-  unsigned int raw_adapter_state;  // Connection status https://developer.gnome.org/NetworkManager/1.26/nm-dbus-types.html#NMDeviceState
+  unsigned int raw_adapter_state = NM_DEVICE_STATE_UNKNOWN;  // Connection status https://developer.gnome.org/NetworkManager/1.26/nm-dbus-types.html#NMDeviceState
   QString connecting_to_network;
   QString tethering_ssid;
   const QString defaultTetheringPassword = "swagswagcomma";
@@ -72,7 +73,6 @@ private:
 
   QString getAdapter(const uint = NM_DEVICE_TYPE_WIFI);
   uint getAdapterType(const QDBusObjectPath &path);
-  QString getIp4Address();
   void deactivateConnectionBySsid(const QString &ssid);
   void deactivateConnection(const QDBusObjectPath &path);
   QVector<QDBusObjectPath> getActiveConnections();

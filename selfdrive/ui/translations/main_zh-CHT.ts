@@ -66,6 +66,26 @@
         <source>Prevent large data uploads when on a metered connection</source>
         <translation>防止使用行動網路上傳大量的數據</translation>
     </message>
+    <message>
+        <source>Hidden Network</source>
+        <translation>隱藏的網路</translation>
+    </message>
+    <message>
+        <source>CONNECT</source>
+        <translation>連線</translation>
+    </message>
+    <message>
+        <source>Enter SSID</source>
+        <translation>輸入 SSID</translation>
+    </message>
+    <message>
+        <source>Enter password</source>
+        <translation>輸入密碼</translation>
+    </message>
+    <message>
+        <source>for &quot;%1&quot;</source>
+        <translation>給 &quot;%1&quot;</translation>
+    </message>
 </context>
 <context>
     <name>AnnotatedCameraWidget</name>
@@ -227,11 +247,11 @@
     </message>
     <message>
         <source>openpilot requires the device to be mounted within 4° left or right and within 5° up or 9° down. openpilot is continuously calibrating, resetting is rarely required.</source>
-        <translation>openpilot 需要將設備固定在左右偏差 4° 以內，朝上偏差 5° 以內或朝下偏差 9° 以內。鏡頭在後台會持續自動校準，很少有需要重設的情況。</translation>
+        <translation>openpilot 需要將裝置固定在左右偏差 4° 以內，朝上偏差 5° 以內或朝下偏差 9° 以內。鏡頭在後台會持續自動校準，很少有需要重置的情況。</translation>
     </message>
     <message>
         <source> Your device is pointed %1° %2 and %3° %4.</source>
-        <translation> 你的設備目前朝%2 %1° 以及朝%4 %3° 。</translation>
+        <translation> 你的裝置目前朝%2 %1° 以及朝%4 %3° 。</translation>
     </message>
     <message>
         <source>down</source>
@@ -273,9 +293,37 @@
         <source>Review</source>
         <translation>回顧</translation>
     </message>
+    <message>
+        <source>Pair your device with comma connect (connect.comma.ai) and claim your comma prime offer.</source>
+        <translation>將您的裝置與 comma connect (connect.comma.ai) 配對並領取您的 comma 高級會員優惠。</translation>
+    </message>
+    <message>
+        <source>Pair Device</source>
+        <translation>配對裝置</translation>
+    </message>
+    <message>
+        <source>PAIR</source>
+        <translation>配對</translation>
+    </message>
+    <message>
+        <source>Navigate on Openpilot</source>
+        <translation>NOO導航操控</translation>
+    </message>
+    <message>
+        <source>Open the destination input web page for navigation on openpilot</source>
+        <translation>開啟NOO導航操控的目的地輸入網頁</translation>
+    </message>
+    <message>
+        <source>DashCam footage</source>
+        <translation>行車記錄影像</translation>
+    </message>
+    <message>
+        <source>Watch and/or download recordings from comma device cameras</source>
+        <translation>觀看或下載comma設備的行車記錄影像</translation>
+    </message>
 </context>
 <context>
-    <name>DriverViewScene</name>
+    <name>DriverViewWindow</name>
     <message>
         <source>camera starting</source>
         <translation>開啟相機中</translation>
@@ -290,6 +338,17 @@
     <message>
         <source>CHILL MODE ON</source>
         <translation>輕鬆模式 ON</translation>
+    </message>
+</context>
+<context>
+    <name>ForceCarRecognition</name>
+    <message>
+        <source>Back</source>
+        <translation>回上頁</translation>
+    </message>
+    <message>
+        <source>[-Not selected-]</source>
+        <translation>[- 未選擇 -]</translation>
     </message>
 </context>
 <context>
@@ -337,6 +396,10 @@
         <source>Manage at connect.comma.ai</source>
         <translation>請在 connect.comma.ai 上管理</translation>
     </message>
+    <message>
+        <source>Manage at %1</source>
+        <translation>以瀏覽器連結 %1</translation>
+    </message>
 </context>
 <context>
     <name>MapWindow</name>
@@ -362,6 +425,51 @@
     <message>
         <source>Cancel</source>
         <translation>取消</translation>
+    </message>
+</context>
+<context>
+    <name>MyFootagePopup</name>
+    <message>
+        <source>Watch and/or download recordings from comma device cameras</source>
+        <translation>觀看或下載comma設備的行車記錄影像</translation>
+    </message>
+    <message>
+        <source>Connect your smartphone and comma device to the same Wi-Fi network and disconnect from the car&apos;s CAN signal</source>
+        <translation>請先將您的手機和comma裝置連接到同一個 Wi-Fi 網路上，並且與車子的CAN訊號斷開</translation>
+    </message>
+    <message>
+        <source>Scan the QR code on the right</source>
+        <translation>掃描右側行動條碼</translation>
+    </message>
+</context>
+<context>
+    <name>MyNooPopup</name>
+    <message>
+        <source>Open the navigate on openpilot web page</source>
+        <translation>開啟NOO導航操控網頁</translation>
+    </message>
+    <message>
+        <source>Connect your smartphone and comma device to the same Wi-Fi network</source>
+        <translation>請先將您的手機和comma裝置連接到同一個 Wi-Fi 網路上</translation>
+    </message>
+    <message>
+        <source>Scan the QR code on the right</source>
+        <translation>掃描右側行動條碼</translation>
+    </message>
+</context>
+<context>
+    <name>NavigationPanel</name>
+    <message>
+        <source>Manage Primeless Navigation Settings</source>
+        <translation>管理免付費導航設置</translation>
+    </message>
+    <message>
+        <source>MANAGE</source>
+        <translation>管理</translation>
+    </message>
+    <message>
+        <source>Manage primeless navigate on openpilot settings.</source>
+        <translation>在 openpilot 設定上管理免付費導航。</translation>
     </message>
 </context>
 <context>
@@ -400,20 +508,16 @@
 %1</translation>
     </message>
     <message>
-        <source>Invalid date and time settings, system won&apos;t start. Connect to internet to set time.</source>
-        <translation>日期和時間設定無效，系統無法啟動。請連接至網際網路以設定時間。</translation>
-    </message>
-    <message>
         <source>Taking camera snapshots. System won&apos;t start until finished.</source>
         <translation>正在使用相機拍攝中。在完成之前，系統將無法啟動。</translation>
     </message>
     <message>
         <source>An update to your device&apos;s operating system is downloading in the background. You will be prompted to update when it&apos;s ready to install.</source>
-        <translation>一個給您設備的操作系統的更新正在後台下載中。當更新準備好安裝時，您將收到提示進行更新。</translation>
+        <translation>一個有關操作系統的更新正在後台下載中。當更新準備好安裝時，您將收到提示進行更新。</translation>
     </message>
     <message>
         <source>Device failed to register. It will not connect to or upload to comma.ai servers, and receives no support from comma.ai. If this is an official device, visit https://comma.ai/support.</source>
-        <translation>設備註冊失敗。它將無法連接或上傳至 comma.ai 伺服器，並且無法獲得 comma.ai 的支援。如果這是一個官方設備，請訪問 https://comma.ai/support 。</translation>
+        <translation>裝置註冊失敗。它將無法連接或上傳至 comma.ai 伺服器，並且無法獲得 comma.ai 的支援。如果這是一個官方裝置，請訪問 https://comma.ai/support 。</translation>
     </message>
     <message>
         <source>NVMe drive not mounted.</source>
@@ -421,7 +525,7 @@
     </message>
     <message>
         <source>Unsupported NVMe drive detected. Device may draw significantly more power and overheat due to the unsupported NVMe.</source>
-        <translation>檢測到不支援的 NVMe 固態硬碟。您的設備因為使用了不支援的 NVMe 固態硬碟可能會消耗更多電力並更易過熱。</translation>
+        <translation>檢測到不支援的 NVMe 固態硬碟。您的裝置因為使用了不支援的 NVMe 固態硬碟可能會消耗更多電力並更易過熱。</translation>
     </message>
     <message>
         <source>openpilot was unable to identify your car. Your car is either unsupported or its ECUs are not recognized. Please submit a pull request to add the firmware versions to the proper vehicle. Need help? Join discord.comma.ai.</source>
@@ -433,11 +537,11 @@
     </message>
     <message>
         <source>openpilot detected a change in the device&apos;s mounting position. Ensure the device is fully seated in the mount and the mount is firmly secured to the windshield.</source>
-        <translation>openpilot 偵測到設備的安裝位置發生變化。請確保設備完全安裝在支架上，並確保支架牢固地固定在擋風玻璃上。</translation>
+        <translation>openpilot 偵測到裝置的安裝位置發生變化。請確保裝置完全安裝在支架上，並確保支架牢固地固定在擋風玻璃上。</translation>
     </message>
     <message>
         <source>Device temperature too high. System cooling down before starting. Current internal component temperature: %1</source>
-        <translation>設備溫度過高。系統正在冷卻中，等冷卻完畢後才會啟動。目前內部組件溫度：%1</translation>
+        <translation>裝置溫度過高。系統正在冷卻中，等冷卻完畢後才會啟動。目前內部組件溫度：%1</translation>
     </message>
 </context>
 <context>
@@ -456,10 +560,33 @@
     </message>
 </context>
 <context>
+    <name>OnroadAlerts</name>
+    <message>
+        <source>openpilot Unavailable</source>
+        <translation>無法使用 openpilot</translation>
+    </message>
+    <message>
+        <source>Waiting for controls to start</source>
+        <translation>等待操控服務開始</translation>
+    </message>
+    <message>
+        <source>TAKE CONTROL IMMEDIATELY</source>
+        <translation>立即接管</translation>
+    </message>
+    <message>
+        <source>Controls Unresponsive</source>
+        <translation>操控服務沒有反應</translation>
+    </message>
+    <message>
+        <source>Reboot Device</source>
+        <translation>請重新啟裝置</translation>
+    </message>
+</context>
+<context>
     <name>PairingPopup</name>
     <message>
         <source>Pair your device to your comma account</source>
-        <translation>將設備與您的 comma 帳號配對</translation>
+        <translation>將裝置與您的 comma 帳號配對</translation>
     </message>
     <message>
         <source>Go to https://connect.comma.ai on your phone</source>
@@ -528,6 +655,81 @@
     </message>
 </context>
 <context>
+    <name>Primeless</name>
+    <message>
+        <source>Back</source>
+        <translation>回上頁</translation>
+    </message>
+    <message>
+        <source>Manage Your Settings At</source>
+        <translation>管理您的設置</translation>
+    </message>
+    <message>
+        <source>MapBox</source>
+        <translation>MapBox</translation>
+    </message>
+    <message>
+        <source>Amap</source>
+        <translation>Amap</translation>
+    </message>
+    <message>
+        <source>Google</source>
+        <translation>Google</translation>
+    </message>
+    <message>
+        <source>Destination Search Provider</source>
+        <translation>目的地搜尋提供者</translation>
+    </message>
+    <message>
+        <source>Select a search provider for destination queries in Navigate on Openpilot. Options include MapBox (recommended), Amap, and Google Maps.</source>
+        <translation>選擇導航目的地查詢的搜尋提供者。選項包括 MapBox（建議）、Amap 和 Google 地圖。</translation>
+    </message>
+    <message>
+        <source>Public Mapbox Key</source>
+        <translation>Mapbox 公鑰</translation>
+    </message>
+    <message>
+        <source>Secret Mapbox Key</source>
+        <translation>Mapbox 私鑰</translation>
+    </message>
+    <message>
+        <source>Google Map Key</source>
+        <translation>Google 地圖金鑰</translation>
+    </message>
+    <message>
+        <source>Mapbox Setup Instructions</source>
+        <translation>Mapbox 設定說明</translation>
+    </message>
+    <message>
+        <source>VIEW</source>
+        <translation>觀看</translation>
+    </message>
+    <message>
+        <source>View the instructions to set up MapBox for Primeless Navigation.</source>
+        <translation>查看 MapBox 導覽設定說明。</translation>
+    </message>
+    <message>
+        <source>Device Offline</source>
+        <translation>裝置離線</translation>
+    </message>
+    <message>
+        <source>REMOVE</source>
+        <translation>移除</translation>
+    </message>
+    <message>
+        <source>ADD</source>
+        <translation>新增</translation>
+    </message>
+    <message>
+        <source>Manage your %1.</source>
+        <translation>管理您的 %1.</translation>
+    </message>
+    <message>
+        <source>Enter your %1</source>
+        <translation>輸入您的 %1.</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>Reboot</source>
@@ -538,12 +740,8 @@
         <translation>離開</translation>
     </message>
     <message>
-        <source>dashcam</source>
-        <translation>行車記錄器</translation>
-    </message>
-    <message>
-        <source>openpilot</source>
-        <translation>openpilot</translation>
+        <source>T.O.P</source>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>%n minute(s) ago</source>
@@ -579,6 +777,10 @@
         <source>ft</source>
         <translation>ft</translation>
     </message>
+    <message>
+        <source>now</source>
+        <translation>現在</translation>
+    </message>
 </context>
 <context>
     <name>Reset</name>
@@ -588,7 +790,7 @@
     </message>
     <message>
         <source>Are you sure you want to reset your device?</source>
-        <translation>您確定要重設你的設備嗎？</translation>
+        <translation>您確定要重設你的裝置嗎？</translation>
     </message>
     <message>
         <source>System Reset</source>
@@ -608,17 +810,17 @@
     </message>
     <message>
         <source>Unable to mount data partition. Partition may be corrupted. Press confirm to erase and reset your device.</source>
-        <translation>無法掛載資料分割區。分割區可能已經毀損。請確認是否要刪除並重新設定。</translation>
-    </message>
-    <message>
-        <source>Press confirm to erase all content and settings. Press cancel to resume boot.</source>
-        <translation>按下確認以刪除所有內容及設定。按下取消來繼續開機。</translation>
+        <translation>無法掛載資料分割區。分割區可能已經毀損。請確認是否要刪除並重置。</translation>
     </message>
     <message>
         <source>Resetting device...
 This may take up to a minute.</source>
-        <translation>設備重設中…
+        <translation>重置中…
 這可能需要一分鐘的時間。</translation>
+    </message>
+    <message>
+        <source>System reset triggered. Press confirm to erase all content and settings. Press cancel to resume boot.</source>
+        <translation>系統重設已啟動。按下「確認」以清除所有內容和設定，或按下「取消」以繼續開機。</translation>
     </message>
 </context>
 <context>
@@ -629,7 +831,7 @@ This may take up to a minute.</source>
     </message>
     <message>
         <source>Device</source>
-        <translation>設備</translation>
+        <translation>裝置</translation>
     </message>
     <message>
         <source>Network</source>
@@ -642,6 +844,14 @@ This may take up to a minute.</source>
     <message>
         <source>Software</source>
         <translation>軟體</translation>
+    </message>
+    <message>
+        <source>T.O.P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Navigation</source>
+        <translation>導航</translation>
     </message>
 </context>
 <context>
@@ -704,7 +914,7 @@ This may take up to a minute.</source>
     </message>
     <message>
         <source>Ensure the entered URL is valid, and the device’s internet connection is good.</source>
-        <translation>請確定您輸入的是有效的安裝網址，並且確定設備的網路連線狀態良好。</translation>
+        <translation>請確定您輸入的是有效的安裝網址，並且確定裝置的網路連線狀態良好。</translation>
     </message>
     <message>
         <source>Reboot device</source>
@@ -720,11 +930,23 @@ This may take up to a minute.</source>
     </message>
     <message>
         <source>Something went wrong. Reboot the device.</source>
-        <translation>發生了一些錯誤。請重新啟動您的設備。</translation>
+        <translation>發生了一些錯誤。請重新啟動您的裝置。</translation>
     </message>
     <message>
         <source>Select a language</source>
         <translation>選擇語言</translation>
+    </message>
+    <message>
+        <source>Choose Software to Install</source>
+        <translation>選擇要安裝的軟體</translation>
+    </message>
+    <message>
+        <source>openpilot</source>
+        <translation>openpilot</translation>
+    </message>
+    <message>
+        <source>Custom Software</source>
+        <translation>自訂軟體</translation>
     </message>
 </context>
 <context>
@@ -735,11 +957,11 @@ This may take up to a minute.</source>
     </message>
     <message>
         <source>Pair your device with comma connect (connect.comma.ai) and claim your comma prime offer.</source>
-        <translation>將您的設備與 comma connect (connect.comma.ai) 配對並領取您的 comma 高級會員優惠。</translation>
+        <translation>將您的裝置與 comma connect (connect.comma.ai) 配對並領取您的 comma 高級會員優惠。</translation>
     </message>
     <message>
         <source>Pair device</source>
-        <translation>配對設備</translation>
+        <translation>配對裝置</translation>
     </message>
 </context>
 <context>
@@ -763,18 +985,6 @@ This may take up to a minute.</source>
     <message>
         <source>TEMP</source>
         <translation>溫度</translation>
-    </message>
-    <message>
-        <source>HIGH</source>
-        <translation>偏高</translation>
-    </message>
-    <message>
-        <source>GOOD</source>
-        <translation>正常</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>一般</translation>
     </message>
     <message>
         <source>VEHICLE</source>
@@ -899,6 +1109,22 @@ This may take up to a minute.</source>
         <source>never</source>
         <translation>從未更新</translation>
     </message>
+    <message>
+        <source>Offline Maps</source>
+        <translation>離線地圖</translation>
+    </message>
+    <message>
+        <source>Select a location to download</source>
+        <translation>選擇下載地區</translation>
+    </message>
+    <message>
+        <source>Error Log</source>
+        <translation>錯誤日誌</translation>
+    </message>
+    <message>
+        <source>VIEW</source>
+        <translation>觀看</translation>
+    </message>
 </context>
 <context>
     <name>SshControl</name>
@@ -963,6 +1189,169 @@ This may take up to a minute.</source>
     <message>
         <source>Agree</source>
         <translation>接受</translation>
+    </message>
+</context>
+<context>
+    <name>TimpilotPanel</name>
+    <message>
+        <source>Select Car</source>
+        <translation>選擇車款</translation>
+    </message>
+    <message>
+        <source>Select your car</source>
+        <translation>選擇您的車款</translation>
+    </message>
+    <message>
+        <source>Quiet Drive</source>
+        <translation>安靜模式</translation>
+    </message>
+    <message>
+        <source>TOP will display alerts but only play the most important warning sounds. This feature can be toggled while the car is on.</source>
+        <translation>Openpilot 將只會針對最重要的警示發出警告聲音。可以在汽車啟動時切換此功能。</translation>
+    </message>
+    <message>
+        <source>Driving Screen Off</source>
+        <translation>上路關閉螢幕</translation>
+    </message>
+    <message>
+        <source>Turn off the device screen to protect the OLED panel after driving starts. It automatically brightens or turns on when a touch or event occurs.</source>
+        <translation>設備連線後將會關閉螢幕，用以延長 OLED 螢幕的壽命，當觸碰螢幕或有警告提示時，會重新開啟螢幕以進行操作設定及警示駕駛。可以在汽車啟動時切換此功能。</translation>
+    </message>
+    <message>
+        <source>Lateral Controls Always On</source>
+        <translation>全時車道維持</translation>
+    </message>
+    <message>
+        <source>Lateral control will always be on and will not be interrupted by braking.</source>
+        <translation>開啟此功能將會讓車道維持一直開啟，並不會被煞車給中斷。</translation>
+    </message>
+    <message>
+        <source>NNFF Torque Control</source>
+        <translation>開啟 NNFF 控制器</translation>
+    </message>
+    <message>
+        <source>Use Twilsonco&apos;s Neural Network Feedforward torque system for more precise lateral control.</source>
+        <translation>使用 Twilsonco 的神經網絡前饋扭矩系統可實現更精確的橫向控制。</translation>
+    </message>
+    <message>
+        <source>Stop And Go</source>
+        <translation>Stop And Go</translation>
+    </message>
+    <message>
+        <source>Enabled the Stop And Go feature and get auto hold.</source>
+        <translation>啟用Stop And Go 功能，讓車輛跟車到停並進入auto hold。</translation>
+    </message>
+    <message>
+        <source>Dynamic Distance Adjustment</source>
+        <translation>動態距離調整</translation>
+    </message>
+    <message>
+        <source>The distance to the lead car will no longer be a fixed reaction time, but will be dynamically adjusted based on the speed of the vehicle. (Fine-tuned by Marc - cgw1968-5779)</source>
+        <translation>開啟此功能後，與前車的距離調整將不再是固定的反應時間，而是會依據車速作動態的距離調整。(由 Marc - cgw1968-5779 所微調)</translation>
+    </message>
+    <message>
+        <source>Blinker Lane Change</source>
+        <translation>開啟方向燈自動變換車道</translation>
+    </message>
+    <message>
+        <source>Change lanes without the need to nudge the steering wheel first.
+Disabled: Need to nudge the steering wheel to change lanes.
+Enabled: Nudgeless.
+Speed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above 35mph.</source>
+        <translation>打方向燈即自動變換車道，變換車道不再需要先輕推方向盤。
+關閉選項:  需輕推方向盤啟動換道。
+開啟選項:  不需輕推方向盤即可換道。
+換道速度限制: 一般模式：時速32公里以上, 開啟全時置中功能：時速65公里以上。</translation>
+    </message>
+    <message>
+        <source>Vision Based Turn Control</source>
+        <translation>視覺彎道減速</translation>
+    </message>
+    <message>
+        <source>Use vision path predictions to estimate the appropriate speed to drive through turns ahead.</source>
+        <translation>使用視覺路徑預測來估算適當的速度，可自動降速以順利通過前方的轉彎。</translation>
+    </message>
+    <message>
+        <source>Map Turn Speed Control</source>
+        <translation>地圖彎道減速</translation>
+    </message>
+    <message>
+        <source>Enables M-TSC. When enabled, the car will slow down when it predicts a lateral acceleration greater than 2.0 m/s^2.</source>
+        <translation>使用地圖資訊預測橫向加速度，當預測大於 2.0 m/s^2 時，汽車將會減速以順利通過前方的轉彎。</translation>
+    </message>
+    <message>
+        <source>Enable Door Auto Lock</source>
+        <translation>開啟車門自動上鎖</translation>
+    </message>
+    <message>
+        <source>Enabled this to lock doors when drive above 25 km/h. Only work on some Toyota vehicles.</source>
+        <translation>啟用此功能後，當在車速超過 25 公里時將自動鎖上車門。僅適用於某些Toyota車款。</translation>
+    </message>
+    <message>
+        <source>Enable Door Auto Unlock</source>
+        <translation>開啟車門自動解鎖</translation>
+    </message>
+    <message>
+        <source>Enabled this to unlock doors when shift to gear P. Only work on some Toyota vehicles.</source>
+        <translation>啟用此功能後，當檔位進到P檔時將自動解鎖車門。僅適用於某些Toyota車款。</translation>
+    </message>
+    <message>
+        <source>Automatic Brake Hold</source>
+        <translation>自動煞停維持</translation>
+    </message>
+    <message>
+        <source>Activates the car&apos;s brakes after 0.3 seconds stopped. (Only support on Toyota TSS2)</source>
+        <translation>踩煞車踏板0.3秒後，啟動自動煞停維持功能。(僅適用於 Toyota TSS2 車款)</translation>
+    </message>
+    <message>
+        <source>Fix Toyota BSM Signal</source>
+        <translation>修正Toyota盲點偵測訊號</translation>
+    </message>
+    <message>
+        <source>Enhance BSM function for some Toyota vehicles that openpilot currently does not support.</source>
+        <translation>修正部分Toyota車款的盲點偵測訊號以開啟openpilot支援。</translation>
+    </message>
+    <message>
+        <source>ACC +/-: Long Press Reverse</source>
+        <translation>ACC +/-: 反轉長按數值</translation>
+    </message>
+    <message>
+        <source>Change the ACC +/- buttons behavior with cruise speed change in openpilot.
+Disabled (Stock): Short = 1, Long = 5.
+Enabled: Short and Long = 5.</source>
+        <translation>在openpilot中更改ACC +/- 按鈕的行為與巡航速度變化。
+關閉選項 (原廠設定): 短按 = 1, 長按 = 5。
+開啟選項: 短按及長按 = 5。</translation>
+    </message>
+    <message>
+        <source>Speed Limit Control</source>
+        <translation>導航地圖速限控制</translation>
+    </message>
+    <message>
+        <source>Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav and mapd information. If you press the pedal when the speed limit is activated, the max speed will increase to the manual set speed.</source>
+        <translation>啟用導航地圖速限控制。啟用後，openpilot 的速度上限將調整至導航地圖資訊所提供的速度上限+5公里行駛。如果在速度限制啟動時踩下油門踏板，最高車速將回復到手動設定的速度。</translation>
+    </message>
+    <message>
+        <source>Enable Jetson Support</source>
+        <translation>啟用 Jetson 支援</translation>
+    </message>
+    <message>
+        <source>Enable this option if you intend to run dp on Nvidia Jetson. Reboot required.</source>
+        <translation>如果您打算在 Nvidia Jetson NX 上跑 TOP ，請開啟這個選項，但此選項可能造成駕駛監控被關閉，且需重新啟動後生效。</translation>
+    </message>
+    <message>
+        <source>Enable Local Nav and File Server</source>
+        <translation>開啟免付費導航操控與檔案服務器</translation>
+    </message>
+    <message>
+        <source>This will allow you to use the Navigation feature with your own access key and access openpilot data and files.
+Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:8082*.
+You will need to apply your own mapbox token at https://www.mapbox.com/.
+Internet access from mobile phone (tethering) is required.</source>
+        <translation>這將使您不需透過官方的Prime服務，而是以自己的密鑰使用導航功能，並且可透過本地檔案服務器存取 openpilot 的資料及檔案。
+使用瀏覽器的Web界面連結下面網址以操作導航服務： *http://&lt;device_ip&gt;:8082*.
+您需要在 https://www.mapbox.com/ 上申請自己的 Mapbox 身分驗證。
+開啟此服務需要讓機器連接到網際網路才可運作。</translation>
     </message>
 </context>
 <context>
@@ -1076,16 +1465,8 @@ This may take up to a minute.</source>
         <translation>駕駛風格</translation>
     </message>
     <message>
-        <source>Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars.</source>
-        <translation>推薦使用標準模式。在積極模式中，openpilot 會更靠近前車並在加速和剎車方面更積極。在舒適模式中，openpilot 會與前車保持較遠的距離。</translation>
-    </message>
-    <message>
         <source>An alpha version of openpilot longitudinal control can be tested, along with Experimental mode, on non-release branches.</source>
         <translation>在正式 (release) 版以外的分支上可以測試 openpilot 縱向控制的 Alpha 版本以及實驗模式。</translation>
-    </message>
-    <message>
-        <source>Navigate on openpilot</source>
-        <translation>Navigate on openpilot</translation>
     </message>
     <message>
         <source>Enable the openpilot longitudinal control (alpha) toggle to allow Experimental mode.</source>
@@ -1096,12 +1477,20 @@ This may take up to a minute.</source>
         <translation>端到端縱向控制</translation>
     </message>
     <message>
-        <source>When navigation has a destination, openpilot will input the map information into the model. This provides useful context for the model and allows openpilot to keep left or right appropriately at forks/exits. Lane change behavior is unchanged and still activated by the driver. This is an alpha quality feature; mistakes should be expected, particularly around exits and forks. These mistakes can include unintended laneline crossings, late exit taking, driving towards dividing barriers in the gore areas, etc.</source>
-        <translation>當導航有目的地時，openpilot 將把地圖資訊輸入模型中。這為模型提供了有用的背景資訊，使 openpilot 能夠在叉路/出口時適當地保持左側或右側行駛。車道變換行為保持不變，仍由駕駛員啟用。這是一個 Alpha 版的功能；可能會出現錯誤，特別是在出口和分叉處。這些錯誤可能包括意外的車道越界、晚出口、朝著分隔欄駛向分隔帶區域等。</translation>
+        <source>Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars. On supported cars, you can cycle through these personalities with your steering wheel distance button.</source>
+        <translation>建議使用標準模式。在積極模式下，openpilot 會更接近前車並更積極地使用油門和剎車。在輕鬆模式下，openpilot 會與前車保持較遠距離。對於支援的汽車，您可以使用方向盤上的距離按鈕來切換這些駕駛風格。</translation>
     </message>
     <message>
-        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner. When a navigation destination is set and the driving model is using it as input, the driving path on the map will turn green.</source>
-        <translation>行駛畫面將在低速時切換至道路朝向的廣角鏡頭，以更好地顯示一些轉彎。實驗模式圖示也將顯示在右上角。當設定了導航目的地並且行駛模型正在將其作為輸入時，地圖上的行駛路徑將變為綠色。</translation>
+        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner.</source>
+        <translation>在低速時，駕駛可視化將切換至道路朝向的廣角攝影機，以更好地顯示某些彎道。在右上角還會顯示「實驗模式」的標誌。</translation>
+    </message>
+    <message>
+        <source>Always-On Driver Monitoring</source>
+        <translation>駕駛監控常開</translation>
+    </message>
+    <message>
+        <source>Enable driver monitoring even when openpilot is not engaged.</source>
+        <translation>即使在openpilot未激活時也啟用駕駛監控。</translation>
     </message>
 </context>
 <context>
@@ -1112,7 +1501,7 @@ This may take up to a minute.</source>
     </message>
     <message>
         <source>An operating system update is required. Connect your device to Wi-Fi for the fastest update experience. The download size is approximately 1GB.</source>
-        <translation>設備的操作系統需要更新。請將您的設備連接到 Wi-Fi 以獲得最快的更新體驗。下載大小約為 1GB。</translation>
+        <translation>需要進行作業系統更新。建議將您的裝置連接上 Wi-Fi 獲得更快的更新下載。下載大小約為 1GB。</translation>
     </message>
     <message>
         <source>Connect to Wi-Fi</source>

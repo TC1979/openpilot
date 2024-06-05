@@ -23,56 +23,6 @@ bool can_set_speed(uint8_t can_number) {
   return ret;
 }
 
-// TODO: Cleanup with new abstraction
-void can_set_gmlan(uint8_t bus) {
-  if(current_board->has_hw_gmlan){
-    // first, disable GMLAN on prev bus
-    uint8_t prev_bus = bus_config[3].can_num_lookup;
-    if (bus != prev_bus) {
-      switch (prev_bus) {
-        case 1:
-        case 2:
-          print("Disable GMLAN on CAN");
-          puth(prev_bus + 1U);
-          print("\n");
-          current_board->set_can_mode(CAN_MODE_NORMAL);
-          bus_config[prev_bus].bus_lookup = prev_bus;
-          bus_config[prev_bus].can_num_lookup = prev_bus;
-          bus_config[3].can_num_lookup = -1;
-          bool ret = can_init(prev_bus);
-          UNUSED(ret);
-          break;
-        default:
-          // GMLAN was not set on either BUS 1 or 2
-          break;
-      }
-    }
-
-    // now enable GMLAN on the new bus
-    switch (bus) {
-      case 1:
-      case 2:
-        print("Enable GMLAN on CAN");
-        puth(bus + 1U);
-        print("\n");
-        current_board->set_can_mode((bus == 1U) ? CAN_MODE_GMLAN_CAN2 : CAN_MODE_GMLAN_CAN3);
-        bus_config[bus].bus_lookup = 3;
-        bus_config[bus].can_num_lookup = -1;
-        bus_config[3].can_num_lookup = bus;
-        bool ret = can_init(bus);
-        UNUSED(ret);
-        break;
-      case 0xFF:  //-1 unsigned
-        break;
-      default:
-        print("GMLAN can only be set on CAN2 or CAN3\n");
-        break;
-    }
-  } else {
-    print("GMLAN not available on black panda\n");
-  }
-}
-
 void update_can_health_pkt(uint8_t can_number, uint32_t ir_reg) {
   CAN_TypeDef *CANx = CANIF_FROM_CAN_NUM(can_number);
   uint32_t esr_reg = CANx->ESR;
@@ -98,7 +48,7 @@ void update_can_health_pkt(uint8_t can_number, uint32_t ir_reg) {
     can_health[can_number].total_error_cnt += 1U;
 
     // RX message lost due to FIFO overrun
-    if ((CANx->RF0R & (CAN_RF0R_FOVR0)) != 0) {
+    if ((CANx->RF0R & (CAN_RF0R_FOVR0)) != 0U) {
       can_health[can_number].total_rx_lost_cnt += 1U;
       CANx->RF0R &= ~(CAN_RF0R_FOVR0);
     }
@@ -124,7 +74,7 @@ void process_can(uint8_t can_number) {
 
     // check for empty mailbox
     CANPacket_t to_send;
-    if ((CANx->TSR & (CAN_TSR_TERR0 | CAN_TSR_ALST0)) != 0) { // last TX failed due to error arbitration lost
+    if ((CANx->TSR & (CAN_TSR_TERR0 | CAN_TSR_ALST0)) != 0U) { // last TX failed due to error arbitration lost
       can_health[can_number].total_tx_lost_cnt += 1U;
       CANx->TSR |= (CAN_TSR_TERR0 | CAN_TSR_ALST0);
     }
@@ -179,7 +129,7 @@ void can_rx(uint8_t can_number) {
   CAN_TypeDef *CANx = CANIF_FROM_CAN_NUM(can_number);
   uint8_t bus_number = BUS_NUM_FROM_CAN_NUM(can_number);
 
-  while ((CANx->RF0R & CAN_RF0R_FMP0) != 0) {
+  while ((CANx->RF0R & CAN_RF0R_FMP0) != 0U) {
     can_health[can_number].total_rx_cnt += 1U;
 
     // can is live

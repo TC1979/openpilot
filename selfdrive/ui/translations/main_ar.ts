@@ -66,6 +66,26 @@
         <source>Prevent large data uploads when on a metered connection</source>
         <translation>منع تحميل البيانات الكبيرة عندما يكون الاتصال محدوداً</translation>
     </message>
+    <message>
+        <source>Hidden Network</source>
+        <translation>شبكة مخفية</translation>
+    </message>
+    <message>
+        <source>CONNECT</source>
+        <translation>الاتصال</translation>
+    </message>
+    <message>
+        <source>Enter SSID</source>
+        <translation>أدخل SSID</translation>
+    </message>
+    <message>
+        <source>Enter password</source>
+        <translation>أدخل كلمة المرور</translation>
+    </message>
+    <message>
+        <source>for &quot;%1&quot;</source>
+        <translation>من أجل &quot;%1&quot;</translation>
+    </message>
 </context>
 <context>
     <name>AnnotatedCameraWidget</name>
@@ -273,9 +293,37 @@
         <source>Review</source>
         <translation>مراجعة</translation>
     </message>
+    <message>
+        <source>Pair your device with comma connect (connect.comma.ai) and claim your comma prime offer.</source>
+        <translation>اقرن جهازك بجهاز (connect.comma.ai) واحصل على عرضك من comma prime.</translation>
+    </message>
+    <message>
+        <source>Pair Device</source>
+        <translation>إقران الجهاز</translation>
+    </message>
+    <message>
+        <source>PAIR</source>
+        <translation>إقران</translation>
+    </message>
+    <message>
+        <source>Navigate on Openpilot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open the destination input web page for navigation on openpilot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DashCam footage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Watch and/or download recordings from comma device cameras</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
-    <name>DriverViewScene</name>
+    <name>DriverViewWindow</name>
     <message>
         <source>camera starting</source>
         <translation>بدء تشغيل الكاميرا</translation>
@@ -290,6 +338,17 @@
     <message>
         <source>CHILL MODE ON</source>
         <translation>تشغيل وضع الراحة</translation>
+    </message>
+</context>
+<context>
+    <name>ForceCarRecognition</name>
+    <message>
+        <source>Back</source>
+        <translation>خلف</translation>
+    </message>
+    <message>
+        <source>[-Not selected-]</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -342,6 +401,10 @@
         <source>Manage at connect.comma.ai</source>
         <translation>الإدارة في connect.comma.ai</translation>
     </message>
+    <message>
+        <source>Manage at %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapWindow</name>
@@ -367,6 +430,51 @@
     <message>
         <source>Cancel</source>
         <translation>إلغاء</translation>
+    </message>
+</context>
+<context>
+    <name>MyFootagePopup</name>
+    <message>
+        <source>Watch and/or download recordings from comma device cameras</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect your smartphone and comma device to the same Wi-Fi network and disconnect from the car&apos;s CAN signal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scan the QR code on the right</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MyNooPopup</name>
+    <message>
+        <source>Open the navigate on openpilot web page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect your smartphone and comma device to the same Wi-Fi network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scan the QR code on the right</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NavigationPanel</name>
+    <message>
+        <source>Manage Primeless Navigation Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MANAGE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage primeless navigate on openpilot settings.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -407,10 +515,6 @@
 %1</source>
         <translation>غير قادر على تحميل التحديثات
 %1</translation>
-    </message>
-    <message>
-        <source>Invalid date and time settings, system won&apos;t start. Connect to internet to set time.</source>
-        <translation>إعدادات التاريخ والتوقيت غير صحيحة، لن يبدأ النظام. اتصل بالإنترنت من أجل ضبط الوقت.</translation>
     </message>
     <message>
         <source>Taking camera snapshots. System won&apos;t start until finished.</source>
@@ -458,6 +562,29 @@
     <message>
         <source> ALERT</source>
         <translation> تنبيه</translation>
+    </message>
+</context>
+<context>
+    <name>OnroadAlerts</name>
+    <message>
+        <source>openpilot Unavailable</source>
+        <translation>openpilot غير متوفر</translation>
+    </message>
+    <message>
+        <source>Waiting for controls to start</source>
+        <translation>في انتظار بدء عناصر التحكم</translation>
+    </message>
+    <message>
+        <source>TAKE CONTROL IMMEDIATELY</source>
+        <translation>تحكم على الفور</translation>
+    </message>
+    <message>
+        <source>Controls Unresponsive</source>
+        <translation>الضوابط غير مستجيبة</translation>
+    </message>
+    <message>
+        <source>Reboot Device</source>
+        <translation>إعادة التشغيل</translation>
     </message>
 </context>
 <context>
@@ -533,6 +660,81 @@
     </message>
 </context>
 <context>
+    <name>Primeless</name>
+    <message>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage Your Settings At</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MapBox</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Google</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Destination Search Provider</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a search provider for destination queries in Navigate on Openpilot. Options include MapBox (recommended), Amap, and Google Maps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public Mapbox Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Secret Mapbox Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Google Map Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mapbox Setup Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VIEW</source>
+        <translation type="unfinished">عرض</translation>
+    </message>
+    <message>
+        <source>View the instructions to set up MapBox for Primeless Navigation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Device Offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>REMOVE</source>
+        <translation type="unfinished">إزالة</translation>
+    </message>
+    <message>
+        <source>ADD</source>
+        <translation type="unfinished">إضافة</translation>
+    </message>
+    <message>
+        <source>Manage your %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter your %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>Reboot</source>
@@ -543,12 +745,8 @@
         <translation>إغلاق</translation>
     </message>
     <message>
-        <source>dashcam</source>
-        <translation>dashcam</translation>
-    </message>
-    <message>
-        <source>openpilot</source>
-        <translation>openpilot</translation>
+        <source>T.O.P</source>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>%n minute(s) ago</source>
@@ -599,6 +797,10 @@
         <source>ft</source>
         <translation>قدم</translation>
     </message>
+    <message>
+        <source>now</source>
+        <translation>الآن</translation>
+    </message>
 </context>
 <context>
     <name>Reset</name>
@@ -633,12 +835,12 @@ This may take up to a minute.</source>
 قد يستغرق الأمر حوالي الدقيقة.</translation>
     </message>
     <message>
-        <source>Press confirm to erase all content and settings. Press cancel to resume boot.</source>
-        <translation>اضغط على تأكيد لمسح جميع المحتويات والإعدادات. اضغط على إلغاء لمتابعة التشغيل.</translation>
-    </message>
-    <message>
         <source>Unable to mount data partition. Partition may be corrupted. Press confirm to erase and reset your device.</source>
         <translation>غير قادر على تحميل جزء البيانات. قد يكون الجزء تالفاً. اضغط على تأكيد لمسح جهازك وإعادة ضبطه.</translation>
+    </message>
+    <message>
+        <source>System reset triggered. Press confirm to erase all content and settings. Press cancel to resume boot.</source>
+        <translation>تم تفعيل إعادة ضبط النظام. اضغط على تأكيد لمسح جميع المحتويات والإعدادات. اضغط على إلغاء لاستئناف التمهيد.</translation>
     </message>
 </context>
 <context>
@@ -662,6 +864,14 @@ This may take up to a minute.</source>
     <message>
         <source>Software</source>
         <translation>البرنامج</translation>
+    </message>
+    <message>
+        <source>T.O.P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Navigation</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -746,6 +956,18 @@ This may take up to a minute.</source>
         <source>Select a language</source>
         <translation>اختر لغة</translation>
     </message>
+    <message>
+        <source>Choose Software to Install</source>
+        <translation>اختر البرنامج للتثبيت</translation>
+    </message>
+    <message>
+        <source>openpilot</source>
+        <translation>openpilot</translation>
+    </message>
+    <message>
+        <source>Custom Software</source>
+        <translation>البرمجيات المخصصة</translation>
+    </message>
 </context>
 <context>
     <name>SetupWidget</name>
@@ -783,18 +1005,6 @@ This may take up to a minute.</source>
     <message>
         <source>TEMP</source>
         <translation>درجة الحرارة</translation>
-    </message>
-    <message>
-        <source>HIGH</source>
-        <translation>مرتفع</translation>
-    </message>
-    <message>
-        <source>GOOD</source>
-        <translation>جيد</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>موافق</translation>
     </message>
     <message>
         <source>VEHICLE</source>
@@ -919,6 +1129,22 @@ This may take up to a minute.</source>
         <source>up to date, last checked %1</source>
         <translation>أحدث نسخة، آخر تحقق %1</translation>
     </message>
+    <message>
+        <source>Offline Maps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a location to download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VIEW</source>
+        <translation>عرض</translation>
+    </message>
 </context>
 <context>
     <name>SshControl</name>
@@ -986,10 +1212,165 @@ This may take up to a minute.</source>
     </message>
 </context>
 <context>
+    <name>TimpilotPanel</name>
+    <message>
+        <source>Select Car</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select your car</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quiet Drive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOP will display alerts but only play the most important warning sounds. This feature can be toggled while the car is on.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Driving Screen Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn off the device screen to protect the OLED panel after driving starts. It automatically brightens or turns on when a touch or event occurs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lateral Controls Always On</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lateral control will always be on and will not be interrupted by braking.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NNFF Torque Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Twilsonco&apos;s Neural Network Feedforward torque system for more precise lateral control.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop And Go</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabled the Stop And Go feature and get auto hold.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dynamic Distance Adjustment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The distance to the lead car will no longer be a fixed reaction time, but will be dynamically adjusted based on the speed of the vehicle. (Fine-tuned by Marc - cgw1968-5779)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blinker Lane Change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change lanes without the need to nudge the steering wheel first.
+Disabled: Need to nudge the steering wheel to change lanes.
+Enabled: Nudgeless.
+Speed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above 35mph.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vision Based Turn Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use vision path predictions to estimate the appropriate speed to drive through turns ahead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Map Turn Speed Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enables M-TSC. When enabled, the car will slow down when it predicts a lateral acceleration greater than 2.0 m/s^2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Door Auto Lock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabled this to lock doors when drive above 25 km/h. Only work on some Toyota vehicles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Door Auto Unlock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabled this to unlock doors when shift to gear P. Only work on some Toyota vehicles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatic Brake Hold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Activates the car&apos;s brakes after 0.3 seconds stopped. (Only support on Toyota TSS2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fix Toyota BSM Signal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enhance BSM function for some Toyota vehicles that openpilot currently does not support.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ACC +/-: Long Press Reverse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change the ACC +/- buttons behavior with cruise speed change in openpilot.
+Disabled (Stock): Short = 1, Long = 5.
+Enabled: Short and Long = 5.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Speed Limit Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav and mapd information. If you press the pedal when the speed limit is activated, the max speed will increase to the manual set speed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Jetson Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable this option if you intend to run dp on Nvidia Jetson. Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Local Nav and File Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This will allow you to use the Navigation feature with your own access key and access openpilot data and files.
+Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:8082*.
+You will need to apply your own mapbox token at https://www.mapbox.com/.
+Internet access from mobile phone (tethering) is required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>TogglesPanel</name>
     <message>
         <source>Enable openpilot</source>
-        <translation>تمكين</translation>
+        <translation>تمكين openpilot</translation>
     </message>
     <message>
         <source>Use the openpilot system for adaptive cruise control and lane keep driver assistance. Your attention is required at all times to use this feature. Changing this setting takes effect when the car is powered off.</source>
@@ -1076,10 +1457,6 @@ This may take up to a minute.</source>
         <translation>شخصية القيادة</translation>
     </message>
     <message>
-        <source>Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars.</source>
-        <translation>يوصى بالوضع القياسي. في الوضع الهجومي، سيتبع openpilot السيارات الرائدة بشكل أقرب، ويصبح أكثر هجومية في دواسات الوقود والمكابح. في وضعية الراحة يبقى openplot بعيداً لمسافة جيدة عن السيارة الرائدة.</translation>
-    </message>
-    <message>
         <source>openpilot defaults to driving in &lt;b&gt;chill mode&lt;/b&gt;. Experimental mode enables &lt;b&gt;alpha-level features&lt;/b&gt; that aren&apos;t ready for chill mode. Experimental features are listed below:</source>
         <translation>يتم وضع openpilot بشكل قياسي في &lt;b&gt;وضعية الراحة&lt;/b&gt;. يمكن الوضع التجريبي &lt;b&gt;ميزات المستوى ألفا&lt;/b&gt; التي لا تكون جاهزة في وضع الراحة:</translation>
     </message>
@@ -1092,20 +1469,8 @@ This may take up to a minute.</source>
         <translation>دع نظام القيادة يتحكم بالوقود والمكابح. سيقوم openpilot بالقيادة كما لو أنه كائن بشري، بما في ذلك التوقف عند الإشارة الحمراء، وإشارات التوقف. وبما أن نمط القيادة يحدد سرعة القيادة، فإن السرعة المضبوطة تشكل الحد الأقصى فقط. هذه خاصية الجودة ألفا، فيجب توقع حدوث الأخطاء.</translation>
     </message>
     <message>
-        <source>Navigate on openpilot</source>
-        <translation>التنقل على openpilot</translation>
-    </message>
-    <message>
-        <source>When navigation has a destination, openpilot will input the map information into the model. This provides useful context for the model and allows openpilot to keep left or right appropriately at forks/exits. Lane change behavior is unchanged and still activated by the driver. This is an alpha quality feature; mistakes should be expected, particularly around exits and forks. These mistakes can include unintended laneline crossings, late exit taking, driving towards dividing barriers in the gore areas, etc.</source>
-        <translation>عندما يكون هناك وجهة للتنقل، فإن openpilot سيقوم بإدخال معلومات الخريطة في هذا النموذج. وهذا يقدم سياقاً مفيداً ويسمح لـopenpilot بالبقاء يساراً أو يميناً بالشكل المناسب عند المنعطفات/المخارج. يبقى سلوك تغيير المسار مفعلاً عند السائق،. هذه هي خاصية الجودة ألفا، ولذلك يجب توقع الأخطاء لا سيما عند المخارج والمنعطفات هذه الأخطاء قد تشمل العبور غير المقصود لخطوط المسارات، والتأخر في الخروج، والقيادة نحو الحواجز الفاصلة في المناطق المثلثة بين الطريق الرئيسي والمخارج، وغير ذلك من الأخطاء المشابهة.</translation>
-    </message>
-    <message>
         <source>New Driving Visualization</source>
         <translation>تصور القيادة الديد</translation>
-    </message>
-    <message>
-        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner. When a navigation destination is set and the driving model is using it as input, the driving path on the map will turn green.</source>
-        <translation>تصور القيادة سينتقل إلى الكاميرا واسعة الزاوية المواجهة للطريق في السرعات المنخفضة من أجل إظهار بعض المنعطفات بشكل أفضل. سيتم أيضاً إظهار شعار الوضع التجريبي في الزاوية العلوية اليمنى. عند تحديد وجهة التنقل، واستخدام نظام القيادة لها كوضع مدخل، سيتحول مسار القيادة على الخريطة إلى اللون الأخضر.</translation>
     </message>
     <message>
         <source>Experimental mode is currently unavailable on this car since the car&apos;s stock ACC is used for longitudinal control.</source>
@@ -1122,6 +1487,22 @@ This may take up to a minute.</source>
     <message>
         <source>Enable the openpilot longitudinal control (alpha) toggle to allow Experimental mode.</source>
         <translation>تمكين التحكم الطولي من openpilot (ألفا) للسماح بالوضع التجريبي.</translation>
+    </message>
+    <message>
+        <source>Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars. On supported cars, you can cycle through these personalities with your steering wheel distance button.</source>
+        <translation>يوصى بالمعيار. في الوضع العدواني، سيتبع الطيار المفتوح السيارات الرائدة بشكل أقرب ويكون أكثر عدوانية مع البنزين والفرامل. في الوضع المريح، سيبقى openpilot بعيدًا عن السيارات الرائدة. في السيارات المدعومة، يمكنك التنقل بين هذه الشخصيات باستخدام زر مسافة عجلة القيادة.</translation>
+    </message>
+    <message>
+        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always-On Driver Monitoring</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable driver monitoring even when openpilot is not engaged.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

@@ -66,6 +66,26 @@
         <source>Prevent large data uploads when on a metered connection</source>
         <translation>데이터 요금제 연결 시 대용량 데이터 업로드를 방지합니다</translation>
     </message>
+    <message>
+        <source>Hidden Network</source>
+        <translation>숨겨진 네트워크</translation>
+    </message>
+    <message>
+        <source>CONNECT</source>
+        <translation>연결됨</translation>
+    </message>
+    <message>
+        <source>Enter SSID</source>
+        <translation>SSID 입력</translation>
+    </message>
+    <message>
+        <source>Enter password</source>
+        <translation>비밀번호를 입력하세요</translation>
+    </message>
+    <message>
+        <source>for &quot;%1&quot;</source>
+        <translation>&quot;%1&quot;에 접속하려면 비밀번호가 필요합니다</translation>
+    </message>
 </context>
 <context>
     <name>AnnotatedCameraWidget</name>
@@ -273,9 +293,37 @@
         <source>Review</source>
         <translation>다시보기</translation>
     </message>
+    <message>
+        <source>Pair your device with comma connect (connect.comma.ai) and claim your comma prime offer.</source>
+        <translation>장치를 comma connect (connect.comma.ai)에서 페어링하고 comma prime 무료 이용권을 사용하세요.</translation>
+    </message>
+    <message>
+        <source>Pair Device</source>
+        <translation>장치 동기화</translation>
+    </message>
+    <message>
+        <source>PAIR</source>
+        <translation>동기화</translation>
+    </message>
+    <message>
+        <source>Navigate on Openpilot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open the destination input web page for navigation on openpilot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DashCam footage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Watch and/or download recordings from comma device cameras</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
-    <name>DriverViewScene</name>
+    <name>DriverViewWindow</name>
     <message>
         <source>camera starting</source>
         <translation>카메라 시작 중</translation>
@@ -290,6 +338,17 @@
     <message>
         <source>CHILL MODE ON</source>
         <translation>안정 모드 사용</translation>
+    </message>
+</context>
+<context>
+    <name>ForceCarRecognition</name>
+    <message>
+        <source>Back</source>
+        <translation type="unfinished">뒤로</translation>
+    </message>
+    <message>
+        <source>[-Not selected-]</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -337,6 +396,10 @@
         <source>Manage at connect.comma.ai</source>
         <translation>connect.comma.ai에서 관리하세요</translation>
     </message>
+    <message>
+        <source>Manage at %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapWindow</name>
@@ -362,6 +425,51 @@
     <message>
         <source>Cancel</source>
         <translation>취소</translation>
+    </message>
+</context>
+<context>
+    <name>MyFootagePopup</name>
+    <message>
+        <source>Watch and/or download recordings from comma device cameras</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect your smartphone and comma device to the same Wi-Fi network and disconnect from the car&apos;s CAN signal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scan the QR code on the right</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MyNooPopup</name>
+    <message>
+        <source>Open the navigate on openpilot web page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect your smartphone and comma device to the same Wi-Fi network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Scan the QR code on the right</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NavigationPanel</name>
+    <message>
+        <source>Manage Primeless Navigation Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MANAGE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage primeless navigate on openpilot settings.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -398,10 +506,6 @@
 %1</source>
         <translation>업데이트를 다운로드할 수 없습니다
 %1</translation>
-    </message>
-    <message>
-        <source>Invalid date and time settings, system won&apos;t start. Connect to internet to set time.</source>
-        <translation>날짜 및 시간 설정이 잘못되어 시스템이 시작되지 않습니다. 날짜와 시간을 동기화하려면 인터넷에 연결하세요.</translation>
     </message>
     <message>
         <source>Taking camera snapshots. System won&apos;t start until finished.</source>
@@ -456,10 +560,33 @@
     </message>
 </context>
 <context>
+    <name>OnroadAlerts</name>
+    <message>
+        <source>openpilot Unavailable</source>
+        <translation>오픈파일럿을 사용할수없습니다</translation>
+    </message>
+    <message>
+        <source>Waiting for controls to start</source>
+        <translation>프로세스가 준비중입니다</translation>
+    </message>
+    <message>
+        <source>TAKE CONTROL IMMEDIATELY</source>
+        <translation>핸들을 잡아주세요</translation>
+    </message>
+    <message>
+        <source>Controls Unresponsive</source>
+        <translation>프로세스가 응답하지않습니다</translation>
+    </message>
+    <message>
+        <source>Reboot Device</source>
+        <translation>장치를 재부팅하세요</translation>
+    </message>
+</context>
+<context>
     <name>PairingPopup</name>
     <message>
         <source>Pair your device to your comma account</source>
-        <translation>장치를 comma 계정에 페어링합니다</translation>
+        <translation>장치를 comma 계정에 동기화합니다</translation>
     </message>
     <message>
         <source>Go to https://connect.comma.ai on your phone</source>
@@ -528,6 +655,81 @@
     </message>
 </context>
 <context>
+    <name>Primeless</name>
+    <message>
+        <source>Back</source>
+        <translation type="unfinished">뒤로</translation>
+    </message>
+    <message>
+        <source>Manage Your Settings At</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MapBox</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Google</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Destination Search Provider</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a search provider for destination queries in Navigate on Openpilot. Options include MapBox (recommended), Amap, and Google Maps.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public Mapbox Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Secret Mapbox Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Google Map Key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mapbox Setup Instructions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VIEW</source>
+        <translation type="unfinished">보기</translation>
+    </message>
+    <message>
+        <source>View the instructions to set up MapBox for Primeless Navigation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Device Offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>REMOVE</source>
+        <translation type="unfinished">삭제</translation>
+    </message>
+    <message>
+        <source>ADD</source>
+        <translation type="unfinished">추가</translation>
+    </message>
+    <message>
+        <source>Manage your %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter your %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>Reboot</source>
@@ -538,12 +740,8 @@
         <translation>종료</translation>
     </message>
     <message>
-        <source>dashcam</source>
-        <translation>블랙박스</translation>
-    </message>
-    <message>
-        <source>openpilot</source>
-        <translation>openpilot</translation>
+        <source>T.O.P</source>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>%n minute(s) ago</source>
@@ -579,6 +777,10 @@
         <source>ft</source>
         <translation>ft</translation>
     </message>
+    <message>
+        <source>now</source>
+        <translation>now</translation>
+    </message>
 </context>
 <context>
     <name>Reset</name>
@@ -611,14 +813,14 @@
         <translation>데이터 파티션을 마운트할 수 없습니다. 파티션이 손상되었을 수 있습니다. 모든 설정을 삭제하고 장치를 초기화하려면 확인을 누르세요.</translation>
     </message>
     <message>
-        <source>Press confirm to erase all content and settings. Press cancel to resume boot.</source>
-        <translation>모든 콘텐츠와 설정을 삭제하려면 확인을 누르세요. 계속 부팅하려면 취소를 누르세요.</translation>
-    </message>
-    <message>
         <source>Resetting device...
 This may take up to a minute.</source>
         <translation>장치를 초기화하는 중...
 최대 1분이 소요될 수 있습니다.</translation>
+    </message>
+    <message>
+        <source>System reset triggered. Press confirm to erase all content and settings. Press cancel to resume boot.</source>
+        <translation>시스템 재설정이 시작되었습니다. 모든 콘텐츠와 설정을 지우려면 확인을 누르시고 부팅을 재개하려면 취소를 누르세요.</translation>
     </message>
 </context>
 <context>
@@ -642,6 +844,14 @@ This may take up to a minute.</source>
     <message>
         <source>Software</source>
         <translation>소프트웨어</translation>
+    </message>
+    <message>
+        <source>T.O.P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Navigation</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -726,6 +936,18 @@ This may take up to a minute.</source>
         <source>Select a language</source>
         <translation>언어를 선택하세요</translation>
     </message>
+    <message>
+        <source>Choose Software to Install</source>
+        <translation>설치할 소프트웨어 선택</translation>
+    </message>
+    <message>
+        <source>openpilot</source>
+        <translation>openpilot</translation>
+    </message>
+    <message>
+        <source>Custom Software</source>
+        <translation>커스텀 소프트웨어</translation>
+    </message>
 </context>
 <context>
     <name>SetupWidget</name>
@@ -746,7 +968,7 @@ This may take up to a minute.</source>
     <name>Sidebar</name>
     <message>
         <source>CONNECT</source>
-        <translation>연결됨</translation>
+        <translation>커넥트</translation>
     </message>
     <message>
         <source>OFFLINE</source>
@@ -763,18 +985,6 @@ This may take up to a minute.</source>
     <message>
         <source>TEMP</source>
         <translation>온도</translation>
-    </message>
-    <message>
-        <source>HIGH</source>
-        <translation>높음</translation>
-    </message>
-    <message>
-        <source>GOOD</source>
-        <translation>좋음</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>OK</translation>
     </message>
     <message>
         <source>VEHICLE</source>
@@ -899,6 +1109,22 @@ This may take up to a minute.</source>
         <source>never</source>
         <translation>업데이트 안함</translation>
     </message>
+    <message>
+        <source>Offline Maps</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select a location to download</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VIEW</source>
+        <translation>보기</translation>
+    </message>
 </context>
 <context>
     <name>SshControl</name>
@@ -963,6 +1189,161 @@ This may take up to a minute.</source>
     <message>
         <source>Agree</source>
         <translation>동의</translation>
+    </message>
+</context>
+<context>
+    <name>TimpilotPanel</name>
+    <message>
+        <source>Select Car</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select your car</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Quiet Drive</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOP will display alerts but only play the most important warning sounds. This feature can be toggled while the car is on.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Driving Screen Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Turn off the device screen to protect the OLED panel after driving starts. It automatically brightens or turns on when a touch or event occurs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lateral Controls Always On</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lateral control will always be on and will not be interrupted by braking.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NNFF Torque Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use Twilsonco&apos;s Neural Network Feedforward torque system for more precise lateral control.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop And Go</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabled the Stop And Go feature and get auto hold.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dynamic Distance Adjustment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The distance to the lead car will no longer be a fixed reaction time, but will be dynamically adjusted based on the speed of the vehicle. (Fine-tuned by Marc - cgw1968-5779)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blinker Lane Change</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change lanes without the need to nudge the steering wheel first.
+Disabled: Need to nudge the steering wheel to change lanes.
+Enabled: Nudgeless.
+Speed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above 35mph.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vision Based Turn Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use vision path predictions to estimate the appropriate speed to drive through turns ahead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Map Turn Speed Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enables M-TSC. When enabled, the car will slow down when it predicts a lateral acceleration greater than 2.0 m/s^2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Door Auto Lock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabled this to lock doors when drive above 25 km/h. Only work on some Toyota vehicles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Door Auto Unlock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabled this to unlock doors when shift to gear P. Only work on some Toyota vehicles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Automatic Brake Hold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Activates the car&apos;s brakes after 0.3 seconds stopped. (Only support on Toyota TSS2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fix Toyota BSM Signal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enhance BSM function for some Toyota vehicles that openpilot currently does not support.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ACC +/-: Long Press Reverse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Change the ACC +/- buttons behavior with cruise speed change in openpilot.
+Disabled (Stock): Short = 1, Long = 5.
+Enabled: Short and Long = 5.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Speed Limit Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav and mapd information. If you press the pedal when the speed limit is activated, the max speed will increase to the manual set speed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Jetson Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable this option if you intend to run dp on Nvidia Jetson. Reboot required.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Local Nav and File Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This will allow you to use the Navigation feature with your own access key and access openpilot data and files.
+Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:8082*.
+You will need to apply your own mapbox token at https://www.mapbox.com/.
+Internet access from mobile phone (tethering) is required.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1076,16 +1457,8 @@ This may take up to a minute.</source>
         <translation>주행 모드</translation>
     </message>
     <message>
-        <source>Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars.</source>
-        <translation>표준 모드를 권장합니다. 공격적 모드에서 openpilot은 앞 차량을 더 가까이 따라가며 적극적으로 가감속합니다. 편안한 모드에서 openpilot은 앞 차량을 더 멀리서 따라갑니다.</translation>
-    </message>
-    <message>
         <source>An alpha version of openpilot longitudinal control can be tested, along with Experimental mode, on non-release branches.</source>
         <translation>openpilot 가감속 제어 알파 버전은 비 릴리즈 브랜치에서 실험 모드와 함께 테스트할 수 있습니다.</translation>
-    </message>
-    <message>
-        <source>Navigate on openpilot</source>
-        <translation>openpilot 내비게이트</translation>
     </message>
     <message>
         <source>Enable the openpilot longitudinal control (alpha) toggle to allow Experimental mode.</source>
@@ -1096,12 +1469,20 @@ This may take up to a minute.</source>
         <translation>E2E 가감속 제어</translation>
     </message>
     <message>
-        <source>When navigation has a destination, openpilot will input the map information into the model. This provides useful context for the model and allows openpilot to keep left or right appropriately at forks/exits. Lane change behavior is unchanged and still activated by the driver. This is an alpha quality feature; mistakes should be expected, particularly around exits and forks. These mistakes can include unintended laneline crossings, late exit taking, driving towards dividing barriers in the gore areas, etc.</source>
-        <translation>내비게이션에 목적지가 설정되어 있으면 openpilot이 지도 정보를 주행 모델에 입력합니다. 이는 모델에 유용한 정보를 제공하고 openpilot이 진출입로 및 램프에서 적절하게 왼쪽 또는 오른쪽을 유지할 수 있도록 해 줍니다. 차선 변경 기능은 여전히 운전자의 조작에 의해 활성화됩니다. 이 기능은 알파 버전입니다. 특히 진출입로 및 분기점 주변에서 실수가 발생할 수 있으며 이러한 실수에는 의도하지 않은 차선 이탈, 늦은 진출, 도로 가장자리의 분리대 또는 경계석을 향해 운전하는 행동 등이 포함됩니다.</translation>
+        <source>Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. In relaxed mode openpilot will stay further away from lead cars. On supported cars, you can cycle through these personalities with your steering wheel distance button.</source>
+        <translation>표준 모드를 권장합니다. 공격적 모드의 openpilot은 선두 차량을 더 가까이 따라가고 가감속제어를 사용하여 더욱 공격적으로 움직입니다. 편안한 모드의 openpilot은 선두 차량으로부터 더 멀리 떨어져 있습니다. 지원되는 차량에서는 스티어링 휠 거리 버튼을 사용하여 이러한 특성을 순환할 수 있습니다.</translation>
     </message>
     <message>
-        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner. When a navigation destination is set and the driving model is using it as input, the driving path on the map will turn green.</source>
-        <translation>주행 시각화는 저속으로 주행 시 도로를 향한 광각 카메라로 자동 전환되어 일부 곡선 경로를 더 잘 보여줍니다. 실험 모드 로고는 우측 상단에 표시됩니다. 내비게이션 목적지가 설정되고 주행 모델에 입력되면 지도의 주행 경로가 녹색으로 바뀝니다.</translation>
+        <source>The driving visualization will transition to the road-facing wide-angle camera at low speeds to better show some turns. The Experimental mode logo will also be shown in the top right corner.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Always-On Driver Monitoring</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable driver monitoring even when openpilot is not engaged.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

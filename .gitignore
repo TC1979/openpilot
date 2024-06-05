@@ -10,7 +10,6 @@ venv/
 .overlay_init
 .overlay_consistent
 .sconsign.dblite
-.vscode*
 model2.png
 a.out
 .hypothesis
@@ -41,12 +40,10 @@ compile_commands.json
 compare_runtime*.html
 
 persist
-board/obj/
-selfdrive/boardd/boardd
+selfdrive/pandad/pandad
 selfdrive/logcatd/logcatd
 selfdrive/mapd/default_speeds_by_region.json
 system/proclogd/proclogd
-selfdrive/ui/_ui
 selfdrive/ui/translations/alerts_generated.h
 selfdrive/ui/translations/tmp
 selfdrive/test/longitudinal_maneuvers/out
@@ -54,16 +51,11 @@ selfdrive/car/tests/cars_dump
 system/camerad/camerad
 system/camerad/test/ae_gray_test
 selfdrive/modeld/_modeld
-selfdrive/modeld/_navmodeld
 selfdrive/modeld/_dmonitoringmodeld
 /src/
 
-one
 notebooks
-xx
-yy
 hyperthneed
-panda_jungle
 provisioning
 
 .coverage*

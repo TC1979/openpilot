@@ -9,10 +9,15 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QWidget>
+#include <QStackedLayout>
 
-
+#include "selfdrive/ui/ui.h"
 #include "selfdrive/ui/qt/util.h"
 #include "selfdrive/ui/qt/widgets/controls.h"
+#include "selfdrive/ui/qt/offroad/timpilot.h"
+#include "selfdrive/ui/qt/widgets/myqrcodes.h" // QrCode
+
+QFrame *horizontal_line(QWidget *parent = nullptr);
 
 // ********** settings window + top-level panels **********
 class SettingsWindow : public QFrame {
@@ -42,6 +47,8 @@ class DevicePanel : public ListWidget {
   Q_OBJECT
 public:
   explicit DevicePanel(SettingsWindow *parent);
+  void showEvent(QShowEvent *event) override;
+
 signals:
   void reviewTrainingGuide();
   void showDriverView();
@@ -53,6 +60,7 @@ private slots:
 
 private:
   Params params;
+  ButtonControl *pair_device;
 };
 
 class TogglesPanel : public ListWidget {
@@ -63,6 +71,9 @@ public:
 
 public slots:
   void expandToggleDescription(const QString &param);
+
+private slots:
+  void updateState(const UIState &s);
 
 private:
   Params params;
@@ -86,10 +97,26 @@ private:
 
   QLabel *onroadLbl;
   LabelControl *versionLbl;
+  ButtonControl *errorLogBtn;
   ButtonControl *installBtn;
   ButtonControl *downloadBtn;
+  ButtonControl *mapsBtn;
   ButtonControl *targetBranchBtn;
 
   Params params;
   ParamWatcher *fs_watch;
+};
+
+class TimpilotPanel : public QWidget {
+  Q_OBJECT
+
+private:
+  QStackedLayout* main_layout = nullptr;
+  QWidget* home = nullptr;
+  ForceCarRecognition* setCar = nullptr;
+
+  QWidget* home_widget;
+
+public:
+  explicit TimpilotPanel(QWidget *parent = nullptr);
 };
