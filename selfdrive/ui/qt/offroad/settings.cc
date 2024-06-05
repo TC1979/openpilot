@@ -285,13 +285,13 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   QObject::connect(uiState(), &UIState::primeTypeChanged, [this] (PrimeType type) {
     pair_device->setVisible(type == PrimeType::UNPAIRED);
   });
-  QObject::connect(uiState(), &UIState::offroadTransition, [=](bool offroad) {
-    for (auto btn : findChildren<ButtonControl *>()) {
-      if (btn != pair_device) {
-        btn->setEnabled(offroad);
-      }
-    }
-  });
+//  QObject::connect(uiState(), &UIState::offroadTransition, [=](bool offroad) {
+//    for (auto btn : findChildren<ButtonControl *>()) {
+//      if (btn != pair_device) {
+//        btn->setEnabled(offroad);
+//      }
+//    }
+//  });
 
   // power buttons
   QHBoxLayout *power_layout = new QHBoxLayout();
@@ -307,9 +307,9 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   power_layout->addWidget(poweroff_btn);
   QObject::connect(poweroff_btn, &QPushButton::clicked, this, &DevicePanel::poweroff);
 
-  if (!Hardware::PC() and false) { // I want shutdown to be complete when finishing my trip
-    connect(uiState(), &UIState::offroadTransition, poweroff_btn, &QPushButton::setVisible);
-  }
+//  if (!Hardware::PC()) {
+//    connect(uiState(), &UIState::offroadTransition, poweroff_btn, &QPushButton::setVisible);
+//  }
 
   setStyleSheet(R"(
     #reboot_btn { height: 120px; border-radius: 15px; background-color: #393939; }
