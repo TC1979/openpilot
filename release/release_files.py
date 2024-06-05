@@ -15,6 +15,7 @@ blacklist = [
   "tools/cabana/",
   "panda/examples/",
   "opendbc/generator/",
+  "selfdrive/car/torque_data/lat_models/*",
 
   "^tools/",
   "^tinygrad_repo/",
