@@ -1,4 +1,6 @@
-#!/usr/bin/bash -e
+#!/usr/bin/bash
+set -e
+set -x
 
 # git diff --name-status origin/release3-staging | grep "^A" | less
 
@@ -29,8 +31,7 @@ git checkout --orphan $RELEASE_BRANCH
 # do the files copy
 echo "[-] copying files T=$SECONDS"
 cd $SOURCE_DIR
-cp -pR --parents $(cat release/files_common) $BUILD_DIR/
-cp -pR --parents $(cat $FILES_SRC) $BUILD_DIR/
+cp -pR --parents $(./release/release_files.py; cat release/files_*) $BUILD_DIR/
 
 # in the directory
 cd $BUILD_DIR
@@ -53,7 +54,7 @@ chmod +x /data/openpilot/third_party/acados/x86_64/t_renderer
 
 # Build
 export PYTHONPATH="$BUILD_DIR"
-scons -j$(nproc)
+scons -j$(nproc) --minimal
 
 # release panda fw
 CERT=panda/certs/release DEBUG=1 scons -j$(nproc) panda/
@@ -77,6 +78,10 @@ find . -name '__pycache__' -delete
 find selfdrive/ui/ -name '*.h' -delete
 rm -rf .sconsign.dblite Jenkinsfile release/
 rm selfdrive/modeld/models/supercombo.onnx
+
+find third_party/ -name '*x86*' -exec rm -r {} +
+find third_party/ -name '*Darwin*' -exec rm -r {} +
+
 
 # Restore third_party
 git checkout third_party/
@@ -106,7 +111,7 @@ top-dev(priv) master commit: $GIT_HASH
 #cp -pR -n --parents $TEST_FILES $BUILD_DIR/
 #cd $BUILD_DIR
 #RELEASE=1 selfdrive/test/test_onroad.py
-#selfdrive/manager/test/test_manager.py
+#system/manager/test/test_manager.py
 #selfdrive/car/tests/test_car_interfaces.py
 #rm -rf $TEST_FILES
 
