@@ -186,7 +186,7 @@ def manager_thread() -> None:
       if os.path.isfile(os.path.join(sentry.CRASHES_DIR, 'error.txt')):
         os.remove(os.path.join(sentry.CRASHES_DIR, 'error.txt'))
 
-    # update onroad params, which drives boardd's safety setter thread
+    # update onroad params, which drives pandad's safety setter thread
     if started != started_prev:
       write_onroad_params(started, params)
 

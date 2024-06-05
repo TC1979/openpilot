@@ -8,6 +8,7 @@ from json import load
 from enum import StrEnum
 from typing import Any, NamedTuple
 from collections.abc import Callable
+from functools import cache
 
 from cereal import car
 from openpilot.common.basedir import BASEDIR
@@ -49,6 +50,7 @@ TorqueFromLateralAccelCallbackType = Callable[[LatControlInputs, car.CarParams.L
 def similarity(s1:str, s2:str) -> float:
   return SequenceMatcher(None, s1, s2).ratio()
 
+@cache
 def get_torque_params(candidate):
   with open(TORQUE_SUBSTITUTE_PATH, 'rb') as f:
     sub = tomllib.load(f)
