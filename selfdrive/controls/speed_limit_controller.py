@@ -2,7 +2,6 @@ from openpilot.common.params import Params
 from openpilot.common.conversions import Conversions as CV
 import json
 import math
-from cereal import car
 
 mem_params = Params("/dev/shm/params")
 params = Params()
