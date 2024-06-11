@@ -116,6 +116,10 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     paramsdTemporaryError @50;
     paramsdPermanentError @119;
     actuatorsApiUnavailable @120;
+    atlEngageSound @121;
+    atlDisengageSound @122;
+    torqueNNLoad @123;
+    automaticBrakehold @124;
 
     radarCanErrorDEPRECATED @15;
     communityFeatureDisallowedDEPRECATED @62;
@@ -179,6 +183,7 @@ struct CarState {
   regenBraking @45 :Bool; # this is user pedal only
   parkingBrake @39 :Bool;
   brakeHoldActive @38 :Bool;
+  brakeLights @19 :Bool;
 
   # steering wheel
   steeringAngleDeg @7 :Float32;
@@ -223,6 +228,15 @@ struct CarState {
 
   # process meta
   cumLagMs @50 :Float32;
+
+  # TOP
+  distanceLines @51 :UInt8; # KRKeegan toyota distance lines
+  steeringWheelCar @52 :Bool;
+  rightBlindspotD1 @53 :Float32;
+  rightBlindspotD2 @54 :Float32;
+  leftBlindspotD1 @55 :Float32;
+  leftBlindspotD2 @56 :Float32;
+  blindspotside @57 :Float32;
 
   struct WheelSpeeds {
     # optional wheel speeds
@@ -278,7 +292,6 @@ struct CarState {
 
   # deprecated
   errorsDEPRECATED @0 :List(CarEvent.EventName);
-  brakeLightsDEPRECATED @19 :Bool;
   steeringRateLimitedDEPRECATED @29 :Bool;
   canMonoTimesDEPRECATED @12: List(UInt64);
   canRcvTimeoutDEPRECATED @49 :Bool;
@@ -412,6 +425,9 @@ struct CarControl {
       prompt @6;
       promptRepeat @7;
       promptDistracted @8;
+
+      # AleSato's automatic brakehold
+      engageBrakehold @9;
     }
   }
 
@@ -505,6 +521,9 @@ struct CarParams {
 
   wheelSpeedFactor @63 :Float32; # Multiplier on wheels speeds to computer actual speeds
 
+  experimentalModeViaWheel @74 :Bool;
+  twilsoncoNNFF @75 :Bool;
+
   struct SafetyConfig {
     safetyModel @0 :SafetyModel;
     safetyParam @3 :UInt16;
@@ -534,6 +553,8 @@ struct CarParams {
     steeringAngleDeadzoneDeg @5 :Float32;
     latAccelFactor @6 :Float32;
     latAccelOffset @7 :Float32;
+    nnModelName @8 :Text;
+    nnModelFuzzyMatch @9 :Bool;
   }
 
   struct LongitudinalPIDTuning {
