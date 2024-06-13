@@ -110,7 +110,6 @@ numpy = "*"
 # body / webrtcd
 aiohttp = "*"
 aiortc = "*"
-flask = "*"
 pyaudio = "*"
 
 # panda
