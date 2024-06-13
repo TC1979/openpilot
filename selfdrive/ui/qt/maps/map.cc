@@ -195,7 +195,7 @@ void MapWindow::updateState(const UIState &s) {
   // Credit to jakethesnake420
   if (loaded_once && (sm.rcv_frame("modelV2") != model_rcv_frame)) {
     auto locationd_location = sm["liveLocationKalman"].getLiveLocationKalman();
-    auto model_path = model_to_collection(locationd_location.getCalibratedOrientationECEF(), locationd_location.getPositionECEF(), sm["modelV2"].getModelV2().getPosition().getX());
+    auto model_path = model_to_collection(locationd_location.getCalibratedOrientationECEF(), locationd_location.getPositionECEF(), sm["modelV2"].getModelV2().getPosition());
     QMapLibre::Feature model_path_feature(QMapLibre::Feature::LineStringType, model_path, {}, {});
     QVariantMap modelV2Path;
     modelV2Path["type"] =  "geojson";
