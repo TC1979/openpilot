@@ -118,7 +118,7 @@ class CarController(CarControllerBase):
     # Enable blindspot debug mode once (@arne182)
     # let's keep all the commented out code for easy debug purpose for future.
     if self.toyota_bsm:
-      #if self.frame > 200:
+      if self.frame > 200:
         #left bsm
         if not self.blindspot_debug_enabled_left:
           if (self.blindspot_always_on or (CS.out.leftBlinker and CS.out.vEgo > 6)): # eagle eye camera will stop working if right bsm is switched on under 6m/s
