@@ -55,7 +55,18 @@ MapWindow::~MapWindow() {
 
 void MapWindow::initLayers() {
   // This doesn't work from initializeGL
-    if (!m_map->layerExists("navLayer")) {
+  if (!m_map->layerExists("modelPathLayer")) {
+    qDebug() << "Initializing modelPathLayer";
+    QVariantMap modelPath;
+    //modelPath["id"] = "modelPathLayer";
+    modelPath["type"] = "line";
+    modelPath["source"] = "modelPathSource";
+    m_map->addLayer("modelPathLayer", modelPath);
+    m_map->setPaintProperty("modelPathLayer", "line-color", QColor("red"));
+    m_map->setPaintProperty("modelPathLayer", "line-width", 5.0);
+    m_map->setLayoutProperty("modelPathLayer", "line-cap", "round");
+  }
+  if (!m_map->layerExists("navLayer")) {
     qDebug() << "Initializing navLayer";
     QVariantMap nav;
     nav["type"] = "line";
@@ -68,17 +79,6 @@ void MapWindow::initLayers() {
     m_map->setPaintProperty("navLayer", "line-color-transition", transition);
     m_map->setPaintProperty("navLayer", "line-width", 7.5);
     m_map->setLayoutProperty("navLayer", "line-cap", "round");
-  }
-if (!m_map->layerExists("modelPathLayer")) {
-    qDebug() << "Initializing modelPathLayer";
-    QVariantMap modelPath;
-    //modelPath["id"] = "modelPathLayer";
-    modelPath["type"] = "line";
-    modelPath["source"] = "modelPathSource";
-    m_map->addLayer("modelPathLayer", modelPath);
-    m_map->setPaintProperty("modelPathLayer", "line-color", QColor("red"));
-    m_map->setPaintProperty("modelPathLayer", "line-width", 5.0);
-    m_map->setLayoutProperty("modelPathLayer", "line-cap", "round");
   }
   if (!m_map->layerExists("pinLayer")) {
     qDebug() << "Initializing pinLayer";
