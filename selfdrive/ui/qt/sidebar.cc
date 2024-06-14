@@ -130,20 +130,16 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   // network
   int x = 58;
   const QColor gray(0x54, 0x54, 0x54);
-  for (int i = 0; i < 5; ++i) {
-    p.setBrush(i < net_strength ? Qt::white : gray);
-    p.drawEllipse(x, 196, 27, 27);
-    x += 37;
-  }
-
   p.setFont(InterFont(35));
   p.setPen(QColor(0xff, 0xff, 0xff));
-  const QRect r = QRect(0, 247, event->rect().width(), 50);
-  //p.drawText(r, Qt::AlignCenter, net_type);
-  if (net_type == network_type[cereal::DeviceState::NetworkType::WIFI])
-    p.drawText(r, Qt::AlignCenter, wifi_addr);
-  else
-    p.drawText(r, Qt::AlignCenter, net_type);
+  p.save();
+  p.setFont(InterFont(30));
+  QRect ipBox = QRect(50, 196, 225, 27);
+  p.drawText(ipBox, Qt::AlignLeft | Qt::AlignVCenter, uiState()->wifi->getIp4Address());
+  p.restore();
+  p.setPen(QColor(0xff, 0xff, 0xff));
+  const QRect r = QRect(50, 247, 100, 50);
+  p.drawText(r, Qt::AlignCenter, net_type);
 
   // metrics
   drawMetric(p, temp_status.first, temp_status.second, 338);
