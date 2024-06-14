@@ -14,6 +14,7 @@
 #include "common/mat.h"
 #include "common/params.h"
 #include "common/timing.h"
+#include "selfdrive/ui/qt/network/wifi_manager.h"
 #include "system/hardware/hw.h"
 
 const int UI_BORDER_SIZE = 30;
@@ -147,6 +148,8 @@ public:
   QString language;
 
   QTransform car_space_transform;
+
+  WifiManager *wifi = nullptr;
 
 signals:
   void uiUpdate(const UIState &s);
