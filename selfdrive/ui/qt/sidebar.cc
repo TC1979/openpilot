@@ -128,7 +128,6 @@ void Sidebar::paintEvent(QPaintEvent *event) {
   p.setOpacity(1.0);
 
   // network
-  int x = 58;
   const QColor gray(0x54, 0x54, 0x54);
   p.setFont(InterFont(35));
   p.setPen(QColor(0xff, 0xff, 0xff));
