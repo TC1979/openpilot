@@ -1246,7 +1246,7 @@ Cela peut prendre jusqu&apos;à une minute.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cydia's Longitudinal Tuning</source>
+        <source>Cydia&apos;s Longitudinal Tuning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

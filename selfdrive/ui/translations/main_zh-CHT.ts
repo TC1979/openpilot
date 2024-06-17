@@ -1242,7 +1242,7 @@ This may take up to a minute.</source>
         <translation>啟用Stop And Go 功能，讓車輛跟車到停並進入auto hold。</translation>
     </message>
     <message>
-        <source>Cydia's Longitudinal Tuning</source>
+        <source>Cydia&apos;s Longitudinal Tuning</source>
         <translation>Cydia縱向控制調校</translation>
     </message>
     <message>
