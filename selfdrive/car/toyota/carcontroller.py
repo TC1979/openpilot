@@ -72,6 +72,8 @@ class CarController(CarControllerBase):
     self.gas = 0
     self.accel = 0
 
+    self.cydia_tune = Params().get_bool("CydiaTune")
+
     self.toyotaautolock = Params().get_bool("toyotaautolock")
     self.toyotaautounlock = Params().get_bool("toyotaautounlock")
     self.last_gear = GearShifter.park
@@ -212,7 +214,7 @@ class CarController(CarControllerBase):
     if CS.pcm_neutral_force > comp_thresh * self.CP.mass:
       self.prohibit_neg_calculation = False
     # NO_STOP_TIMER_CAR will creep if compensation is applied when stopping or stopped, don't compensate when stopped or stopping
-    should_compensate = True
+    should_compensate = True if self.cydia_tune else False
     if self.CP.carFingerprint in NO_STOP_TIMER_CAR and ((CS.out.vEgo < 1e-3 and actuators.accel < 1e-3) or stopping):
       should_compensate = False
     # limit minimum to only positive until first positive is reached after engagement, don't calculate when long isn't active
@@ -254,7 +256,7 @@ class CarController(CarControllerBase):
     if (self.frame % 3 == 0 and self.CP.openpilotLongitudinalControl) or pcm_cancel_cmd:
       lead = hud_control.leadVisible or CS.out.vEgo < 12.  # at low speed we always assume the lead is present so ACC can be engaged
       # when stopping, send -2.5 raw acceleration immediately to prevent vehicle from creeping, else send actuators.accel
-      accel_raw = -2.5 if stopping else actuators.accel
+      accel_raw = -2.5 if stopping and self.cydia_tune else actuators.accel
 
       reverse_acc = 2 if self._reverse_acc_change else 1
 

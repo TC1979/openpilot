@@ -1262,6 +1262,14 @@ This may take up to a minute.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Cydia's Longitudinal Tuning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Using the longitudinal Tuning can increase the sensitivity of longitudinal control in Toyota models.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Dynamic Distance Adjustment</source>
         <translation type="unfinished"></translation>
     </message>
