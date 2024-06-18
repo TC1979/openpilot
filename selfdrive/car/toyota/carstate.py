@@ -378,11 +378,7 @@ class CarState(CarStateBase):
         ("PRE_COLLISION", 33),
         ("ACC_CONTROL", 33),
         ("PCS_HUD", 1),
-      ]
-
-    # AleSato
-    if CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
-      messages += [
+        # AleSato
         ("PRE_COLLISION_2", 33),
       ]
 
