@@ -568,8 +568,10 @@ class Controls:
                    (not standstill or self.joystick_mode)
     CC.longActive = self.enabled and not self.events.contains(ET.OVERRIDE_LONGITUDINAL) and self.CP.openpilotLongitudinalControl
 
-    if not standstill and CS.cruiseState.available and self.dp_atl:
+    if not self.CP.passive and self.initialized and self.dp_atl and not standstill and CS.cruiseState.available:
       if self.sm['liveCalibration'].calStatus != log.LiveCalibrationData.Status.calibrated:
+        pass
+      elif abs(CS.steeringAngleDeg) >= 450:
         pass
       elif CS.steerFaultTemporary or CS.steerFaultPermanent:
         pass

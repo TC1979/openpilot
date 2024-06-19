@@ -116,13 +116,11 @@ void OnroadWindow::mousePressEvent(QMouseEvent* e) {
     propagateEvent = true;
   }
 
-  const bool clickedOnWidget = isDrivingPersonalitiesClicked;
-
 #ifdef ENABLE_MAPS
   if (map != nullptr) {
     bool sidebarVisible = geometry().x() > 0;
     bool show_map = !sidebarVisible;
-    map->setVisible(show_map && !map->isVisible() && !clickedOnWidget);
+    map->setVisible(show_map && !map->isVisible() && !isDrivingPersonalitiesClicked);
   }
 #endif
   // propagation event to parent(HomeWindow)
