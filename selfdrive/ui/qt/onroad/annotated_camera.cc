@@ -115,7 +115,7 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
       }
     } catch (const std::invalid_argument& ia) {
       // Handle invalid argument exception
-      std::cerr << "Invalid argument: " << ia.what() << '\n';
+      fprintf(stderr, "Invalid argument: %s\n", ia.what());
     }
   }
   // }} PFEIFER - SLC
