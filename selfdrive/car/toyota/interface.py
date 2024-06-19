@@ -157,24 +157,15 @@ class CarInterface(CarInterfaceBase):
     ret.minEnableSpeed = -1. if stop_and_go else MIN_ACC_SPEED
 
     tune = ret.longitudinalTuning
-    if Params().get_bool("CydiaTune"):
-      # on stock Toyota this is -2.5
-      ret.stopAccel = -2.5
-      ret.stoppingDecelRate = 0.25  # This is okay for TSS-P
-      if candidate in TSS2_CAR:
-        ret.vEgoStopping = 0.25
-        ret.vEgoStarting = 0.25
-        ret.stoppingDecelRate = 0.05  # reach stopping target smoothly
-      tune.kpV = [0.88]
-      tune.kiBP = [0., 32.]
-      tune.kiV = [.4, .2]
-    else:
+    if candidate in TSS2_CAR:
       tune.kpV = [0.0]
       tune.kiV = [0.5]
-      if candidate in TSS2_CAR:
-        ret.vEgoStopping = 0.25
-        ret.vEgoStarting = 0.25
-        ret.stoppingDecelRate = 0.3  # reach stopping target smoothly
+      ret.vEgoStopping = 0.25
+      ret.vEgoStarting = 0.25
+      ret.stoppingDecelRate = 0.3  # reach stopping target smoothly
+    else:
+      tune.kiBP = [0., 5., 35.]
+      tune.kiV = [3.6, 2.4, 1.5]
 
     return ret
 
