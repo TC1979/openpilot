@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-
+#include <string>
 #include <QElapsedTimer>
 #include "common/swaglog.h"
 #include "selfdrive/ui/qt/maps/map_helpers.h"
