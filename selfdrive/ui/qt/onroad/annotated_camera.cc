@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-
+#include <string>
 #include <QElapsedTimer>
 #include "common/swaglog.h"
 #include "selfdrive/ui/qt/maps/map_helpers.h"
@@ -98,17 +98,24 @@ void AnnotatedCameraWidget::updateState(const UIState &s) {
   status = s.status;
   // PFEIFER - SLC {{
   if (speedLimit == 0) {
-    float carSpeedLimit = stof(Params("/dev/shm/params").get("CarSpeedLimit"));
-    float mapSpeedLimit = stof(Params("/dev/shm/params").get("MapSpeedLimit"));
-    if (carSpeedLimit != 0 || mapSpeedLimit != 0) {
-      speedLimit = mapSpeedLimit != 0 ? mapSpeedLimit : carSpeedLimit;
-      if (is_metric) {
-        has_eu_speed_limit = true;
-        speedLimit *= MS_TO_KPH;
-      } else {
-        has_us_speed_limit = true;
-        speedLimit *= MS_TO_MPH;
+    std::string carSpeedLimitStr = Params("/dev/shm/params").get("CarSpeedLimit");
+    std::string mapSpeedLimitStr = Params("/dev/shm/params").get("MapSpeedLimit");
+    try {
+      float carSpeedLimit = std::stof(carSpeedLimitStr);
+      float mapSpeedLimit = std::stof(mapSpeedLimitStr);
+      if (carSpeedLimit != 0 || mapSpeedLimit != 0) {
+        speedLimit = mapSpeedLimit != 0 ? mapSpeedLimit : carSpeedLimit;
+        if (is_metric) {
+          has_eu_speed_limit = true;
+          speedLimit *= MS_TO_KPH;
+        } else {
+          has_us_speed_limit = true;
+          speedLimit *= MS_TO_MPH;
+        }
       }
+    } catch (const std::invalid_argument& ia) {
+      // Handle invalid argument exception
+      fprintf(stderr, "Invalid argument: %s\n", ia.what());
     }
   }
   // }} PFEIFER - SLC
