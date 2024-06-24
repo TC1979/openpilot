@@ -84,14 +84,14 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
 def get_dynamic_follow(v_ego, personality=log.LongitudinalPersonality.standard):
   # The Dynamic follow function is adjusted by Marc(cgw1968-5779)
   if personality==log.LongitudinalPersonality.relaxed:
-    x_vel =  [0.0,  5.0,   13.90,  20,    25,    40]
-    y_dist = [1.2,  1.2,   1.5,   1.8,   2.2,  2.2]
+    x_vel =  [0,    11,   14.5, 15,   20,   20.01,  25,    25.01,  36,  36.01]
+    y_dist = [1.5,  1.5,  1.5,  1.6,  1.76, 1.76,   1.78,  1.78,   1.8, 1.8]
   elif personality==log.LongitudinalPersonality.standard:
-    x_vel =  [0.0,  5.0,   13.90,  20,    25,    40]
-    y_dist = [1.1,  1.1,   1.3,    1.45,  1.6,  1.6]
+    x_vel =  [0,    11,   14.5, 15,   20,   20.01,  25,    25.01,  36,  36.01]
+    y_dist = [1.40, 1.40, 1.40, 1.50, 1.60, 1.76,   1.76,  1.78,   1.8, 1.8]
   elif personality==log.LongitudinalPersonality.aggressive:
-    x_vel =  [0.0,  5.0,   12.00,  15.,   20,    25,    40]
-    y_dist = [1.05, 1.10,  1.20,   1.20,  1.25,  1.25,   1.3]
+    x_vel =  [0,    11,   14.5, 15,   20,   20.01,  25,    25.01,  36,  36.01]
+    y_dist = [1.3,  1.3,  1.3,  1.35, 1.35, 1.385,  1.385, 1.4,   1.4,  1.45]
   else:
     raise NotImplementedError("Dynamic Follow personality not supported")
   return np.interp(v_ego, x_vel, y_dist)
@@ -396,7 +396,7 @@ class LongitudinalMpc:
     t_follow = get_T_FOLLOW(personality) if not dynamic_follow else get_dynamic_follow(v_ego, personality)
     stop_distance = get_STOP_DISTANCE(personality)
     if not (self.CP.flags & ToyotaFlags.SMART_DSU) or dynamic_follow:
-      stop_distance += 0.5
+      stop_distance += 1.5
 
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 

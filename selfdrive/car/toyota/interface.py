@@ -156,16 +156,18 @@ class CarInterface(CarInterfaceBase):
     # to a negative value, so it won't matter.
     ret.minEnableSpeed = -1. if stop_and_go else MIN_ACC_SPEED
 
+    ret.stopAccel = -2.5
+    ret.stoppingDecelRate = 0.25
+
     tune = ret.longitudinalTuning
+
+    tune.kiBP = [0., 1., 2., 3., 5., 8., 12., 14., 20., 27., 36., 50]
+    tune.kiV = [0.35, 0.327, 0.305, 0.285, 0.220, 0.21, 0.205, 0.192, 0.171, 0.10, 0.07, 0.01]
+
     if candidate in TSS2_CAR:
-      tune.kpV = [0.0]
-      tune.kiV = [0.5]
-      ret.vEgoStopping = 0.25
-      ret.vEgoStarting = 0.25
-      ret.stoppingDecelRate = 0.3  # reach stopping target smoothly
-    else:
-      tune.kiBP = [0., 0.1, 1., 2., 3., 5., 8., 12., 20., 26., 36., 50]
-      tune.kiV = [0.346, 0.35, 0.33, 0.309, 0.287, 0.228, 0.222, 0.2085, 0.17, 0.10, 0.06, 0.01]
+      ret.vEgoStopping = 0.02
+      ret.vEgoStarting = 0.02
+      ret.stoppingDecelRate = 0.7  # reach stopping target smoothly
 
     return ret
 
