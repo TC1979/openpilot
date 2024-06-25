@@ -71,7 +71,6 @@ class CarController(CarControllerBase):
     self.accel = 0
 
     self.cydia_tune = Params().get_bool("CydiaTune")
-
     self.toyotaautolock = Params().get_bool("toyotaautolock")
     self.toyotaautounlock = Params().get_bool("toyotaautounlock")
     self.last_gear = GearShifter.park
@@ -95,7 +94,6 @@ class CarController(CarControllerBase):
     hud_control = CC.hudControl
     pcm_cancel_cmd = CC.cruiseControl.cancel
     lat_active = CC.latActive and abs(CS.out.steeringTorque) < MAX_USER_TORQUE
-    stopping = actuators.longControlState == LongCtrlState.stopping
 
     # *** control msgs ***
     can_sends = []
@@ -213,12 +211,8 @@ class CarController(CarControllerBase):
     # don't reset until a reasonable compensatory value is reached
     if CS.pcm_neutral_force > comp_thresh * self.CP.mass:
       self.prohibit_neg_calculation = False
-    # NO_STOP_TIMER_CAR will creep if compensation is applied when stopping or stopped, don't compensate when stopped or stopping
-    should_compensate = True if self.cydia_tune else False
-    if self.CP.carFingerprint in NO_STOP_TIMER_CAR and ((CS.out.vEgo < 1e-3 and actuators.accel < 1e-3) or stopping):
-      should_compensate = False
     # limit minimum to only positive until first positive is reached after engagement, don't calculate when long isn't active
-    if CC.longActive and should_compensate and not self.prohibit_neg_calculation:
+    if CC.longActive and not self.prohibit_neg_calculation and self.cydia_tune:
       accel_offset = CS.pcm_neutral_force / self.CP.mass
     else:
       accel_offset = 0.
@@ -255,8 +249,6 @@ class CarController(CarControllerBase):
     # we can spam can to cancel the system even if we are using lat only control
     if (self.frame % 3 == 0 and self.CP.openpilotLongitudinalControl) or pcm_cancel_cmd:
       lead = hud_control.leadVisible or CS.out.vEgo < 12.  # at low speed we always assume the lead is present so ACC can be engaged
-      # when stopping, send -2.5 raw acceleration immediately to prevent vehicle from creeping, else send actuators.accel
-      accel_raw = -2.5 if stopping and self.cydia_tune else actuators.accel
 
       reverse_acc = 2 if self._reverse_acc_change else 1
 
@@ -272,7 +264,7 @@ class CarController(CarControllerBase):
       if pcm_cancel_cmd and self.CP.carFingerprint in UNSUPPORTED_DSU_CAR:
         can_sends.append(toyotacan.create_acc_cancel_command(self.packer))
       elif self.CP.openpilotLongitudinalControl:
-        can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, accel_raw, CS.out.aEgo, CC.longActive, pcm_cancel_cmd, self.standstill_req,
+        can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, actuators.accel, CS.out.aEgo, CC.longActive, pcm_cancel_cmd, self.standstill_req,
                                                         lead, CS.acc_type, fcw_alert, self.distance_button, reverse_acc))
         self.accel = pcm_accel_cmd
       else:

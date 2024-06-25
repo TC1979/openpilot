@@ -165,17 +165,18 @@ class CarInterface(CarInterfaceBase):
     if Params().get_bool("CydiaTune"):
       tune.deadzoneBP = [0., 5.,  6.,    7.,    20., 30]
       tune.deadzoneV = [0.,  0.,  0.001, 0.003, .1, .15]
-      tune.kpV = [0.88]
-      tune.kiBP = [0., 32.]
-      tune.kiV = [.4, .2]
+      tune.kpV = [0.0]
+      tune.kiV = [1.2] # appears to produce minimal oscillation on TSS-P
 
       if candidate in TSS2_CAR:
+        tune.kpV = [0.0]
+        tune.kiV = [0.5]
         ret.vEgoStopping = 0.25
         ret.vEgoStarting = 0.25
         ret.stoppingDecelRate = 0.05  # reach stopping target smoothly
     else:
-      tune.kiBP = [0., 1., 2., 3., 5., 8., 12., 14., 20., 27., 36., 50]
-      tune.kiV = [0.35, 0.327, 0.305, 0.285, 0.220, 0.21, 0.205, 0.192, 0.171, 0.10, 0.07, 0.01]
+      tune.kiBP = [0., 5., 12., 20., 27., 36., 50]
+      tune.kiV = [0.35, 0.23, 0.20, 0.17, 0.10, 0.07, 0.01]
 
       if candidate in TSS2_CAR:
         ret.vEgoStopping = 0.02
