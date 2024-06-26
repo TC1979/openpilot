@@ -183,7 +183,7 @@ class CarInterface(CarInterfaceBase):
         ret.stoppingDecelRate = 0.7  # reach stopping target smoothly
       else:
         ret.stopAccel = -2.5  # on stock Toyota this is -2.5
-        ret.stoppingDecelRate = 0.25  # This is okay for TSS-P 
+        ret.stoppingDecelRate = 0.25  # This is okay for TSS-P
 
     return ret
 
