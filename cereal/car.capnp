@@ -232,7 +232,7 @@ struct CarState {
   cumLagMs @50 :Float32;
 
   # TOP
-  distanceLines @51 :UInt8; # KRKeegan toyota distance lines
+  distanceLines @58 :UInt8; # KRKeegan toyota distance lines
   steeringWheelCar @52 :Bool;
   rightBlindspotD1 @53 :Float32;
   rightBlindspotD2 @54 :Float32;
