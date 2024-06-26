@@ -77,17 +77,13 @@ class CarController(CarControllerBase):
     self.lock_once = False
     self._reverse_acc_change = Params().get_bool("ReverseAccChange")
     self.topsng = Params().get_bool("topsng")
-    self.toyota_bsm = Params().get_bool("toyota_bsm")
 
+    self.toyota_bsm = Params().get_bool("toyota_bsm")
     self.blindspot_debug_enabled_left = False
     self.blindspot_debug_enabled_right = False
     self.blindspot_frame = 0
-    if self.CP.carFingerprint in TSS2_CAR: # tss2 can do higher hz then tss1 and can be on at all speed/standstill
-      self.blindspot_rate = 2
-      self.blindspot_always_on = True
-    else:
-      self.blindspot_rate = 20
-      self.blindspot_always_on = False
+    self.blindspot_rate = 20
+    self.blindspot_always_on = True
 
   def update(self, CC, CS, now_nanos):
     actuators = CC.actuators
