@@ -116,10 +116,11 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     paramsdTemporaryError @50;
     paramsdPermanentError @119;
     actuatorsApiUnavailable @120;
-    atlEngageSound @121;
-    atlDisengageSound @122;
-    torqueNNLoad @123;
-    automaticBrakehold @124;
+    espActive @121;
+    atlEngageSound @122;
+    atlDisengageSound @123;
+    torqueNNLoad @124;
+    automaticBrakehold @125;
 
     radarCanErrorDEPRECATED @15;
     communityFeatureDisallowedDEPRECATED @62;
@@ -199,6 +200,7 @@ struct CarState {
   espDisabled @32 :Bool;
   accFaulted @42 :Bool;
   carFaultedNonCritical @47 :Bool;  # some ECU is faulted, but car remains controllable
+  espActive @51 :Bool;
 
   # cruise state
   cruiseState @10 :CruiseState;
@@ -230,7 +232,7 @@ struct CarState {
   cumLagMs @50 :Float32;
 
   # TOP
-  distanceLines @51 :UInt8; # KRKeegan toyota distance lines
+  distanceLines @58 :UInt8; # KRKeegan toyota distance lines
   steeringWheelCar @52 :Bool;
   rightBlindspotD1 @53 :Float32;
   rightBlindspotD2 @54 :Float32;
