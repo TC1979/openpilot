@@ -27,6 +27,8 @@ public:
   explicit AnnotatedCameraWidget(VisionStreamType type, QWidget* parent = 0);
   void updateState(const UIState &s);
 
+  MapSettingsButton *map_settings_btn;
+
 private:
   void drawText(QPainter &p, int x, int y, const QString &text, int alpha = 255);
   void drawDrivingPersonalities(QPainter &p);
@@ -41,6 +43,7 @@ private:
   const int subsign_img_size = 35;
   QString speedUnit;
   float setSpeed;
+  float speedLimit;
   bool is_cruise_set = false;
   bool is_metric = false;
   bool dmActive = false;
@@ -48,6 +51,8 @@ private:
   bool hideBottomIcons = false;
   bool rightHandDM = false;
   float dm_fade_state = 1.0;
+  bool has_us_speed_limit = false;
+  bool has_eu_speed_limit = false;
   bool v_ego_cluster_seen = false;
   bool blindSpotLeft;
   bool blindSpotRight;
