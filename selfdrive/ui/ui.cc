@@ -231,6 +231,7 @@ static void update_state(UIState *s) {
 void ui_update_params(UIState *s) {
   auto params = Params();
   s->scene.is_metric = params.getBool("IsMetric");
+  s->scene.map_on_left = params.getBool("NavSettingLeftSide");
   UIScene &scene = s->scene;
   scene.onroadScreenOff = params.getBool("OnroadScreenOff");
   scene.driving_personalities_ui_wheel = params.getBool("DrivingPersonalitiesUIWheel");
@@ -284,7 +285,7 @@ UIState::UIState(QObject *parent) : QObject(parent) {
   sm = std::make_unique<SubMaster, const std::initializer_list<const char *>>({
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState",
     "pandaStates", "carParams", "driverMonitoringState", "carState", "liveLocationKalman", "driverStateV2",
-    "wideRoadCameraState", "managerState", "clocks",
+    "wideRoadCameraState", "managerState", "navInstruction", "navRoute", "clocks",
   });
 
   Params params;
