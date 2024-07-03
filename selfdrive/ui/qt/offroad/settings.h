@@ -102,6 +102,7 @@ private:
   ButtonControl *downloadBtn;
   ButtonControl *mapsBtn;
   ButtonControl *targetBranchBtn;
+  ButtonControl *onOffBtn;
 
   Params params;
   ParamWatcher *fs_watch;

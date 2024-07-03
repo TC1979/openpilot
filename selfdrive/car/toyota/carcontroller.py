@@ -27,9 +27,11 @@ MAX_USER_TORQUE = 500
 MAX_LTA_ANGLE = 94.9461  # deg
 MAX_LTA_DRIVER_TORQUE_ALLOWANCE = 150  # slightly above steering pressed allows some resistance when changing lanes
 
-# PCM compensatory force calculation threshold interpolation values
-COMPENSATORY_CALCULATION_THRESHOLD_V = [-0.2, -0.2, -0.05]  # m/s^2
-COMPENSATORY_CALCULATION_THRESHOLD_BP = [0., 20., 32.]  # m/s
+# PCM compensatory force calculation threshold
+# a variation in accel command is more pronounced at higher speeds, let compensatory forces ramp to zero before
+# applying when speed is high
+COMPENSATORY_CALCULATION_THRESHOLD_V = [-0.3, -0.25, 0.]  # m/s^2
+COMPENSATORY_CALCULATION_THRESHOLD_BP = [0., 11., 23.]  # m/s
 
 GearShifter = car.CarState.GearShifter
 UNLOCK_CMD = b'\x40\x05\x30\x11\x00\x40\x00\x00'
@@ -76,17 +78,13 @@ class CarController(CarControllerBase):
     self.lock_once = False
     self._reverse_acc_change = Params().get_bool("ReverseAccChange")
     self.topsng = Params().get_bool("topsng")
-    self.toyota_bsm = Params().get_bool("toyota_bsm")
 
+    self.toyota_bsm = Params().get_bool("toyota_bsm")
     self.blindspot_debug_enabled_left = False
     self.blindspot_debug_enabled_right = False
     self.blindspot_frame = 0
-    if self.CP.carFingerprint in TSS2_CAR: # tss2 can do higher hz then tss1 and can be on at all speed/standstill
-      self.blindspot_rate = 2
-      self.blindspot_always_on = True
-    else:
-      self.blindspot_rate = 20
-      self.blindspot_always_on = False
+    self.blindspot_rate = 20
+    self.blindspot_always_on = True
 
   def update(self, CC, CS, now_nanos):
     actuators = CC.actuators
@@ -117,39 +115,39 @@ class CarController(CarControllerBase):
     # let's keep all the commented out code for easy debug purpose for future.
     if self.toyota_bsm:
       if self.frame > 200:
-        #left bsm
+        # left bsm
         if not self.blindspot_debug_enabled_left:
-          if (self.blindspot_always_on or (CS.out.leftBlinker and CS.out.vEgo > 6)): # eagle eye camera will stop working if right bsm is switched on under 6m/s
+          if (self.blindspot_always_on or CS.out.vEgo > 6): # eagle eye camera will stop working if right bsm is switched on under 6m/s
             can_sends.append(set_blindspot_debug_mode(LEFT_BLINDSPOT, True))
             self.blindspot_debug_enabled_left = True
             # print("bsm debug left, on")
         else:
-          if not self.blindspot_always_on and not CS.out.leftBlinker and self.frame - self.blindspot_frame > 50:
+          if not self.blindspot_always_on and self.frame - self.blindspot_frame > 50:
             can_sends.append(set_blindspot_debug_mode(LEFT_BLINDSPOT, False))
             self.blindspot_debug_enabled_left = False
             # print("bsm debug left, off")
           if self.frame % self.blindspot_rate == 0:
             can_sends.append(poll_blindspot_status(LEFT_BLINDSPOT))
-            if CS.out.leftBlinker:
-              self.blindspot_frame = self.frame
-              # print(self.blindspot_frame)
+            # if CS.out.leftBlinker:
+            self.blindspot_frame = self.frame
+            # print(self.blindspot_frame)
             # print("bsm poll left")
-        #right bsm
+        # right bsm
         if not self.blindspot_debug_enabled_right:
-          if (self.blindspot_always_on or (CS.out.rightBlinker and CS.out.vEgo > 6)): # eagle eye camera will stop working if right bsm is switched on under 6m/s
+          if (self.blindspot_always_on or CS.out.vEgo > 6): # eagle eye camera will stop working if right bsm is switched on under 6m/s
             can_sends.append(set_blindspot_debug_mode(RIGHT_BLINDSPOT, True))
             self.blindspot_debug_enabled_right = True
             # print("bsm debug right, on")
         else:
-          if not self.blindspot_always_on and not CS.out.rightBlinker and self.frame - self.blindspot_frame > 50:
+          if not self.blindspot_always_on and self.frame - self.blindspot_frame > 50:
             can_sends.append(set_blindspot_debug_mode(RIGHT_BLINDSPOT, False))
             self.blindspot_debug_enabled_right = False
             # print("bsm debug right, off")
           if self.frame % self.blindspot_rate == self.blindspot_rate/2:
             can_sends.append(poll_blindspot_status(RIGHT_BLINDSPOT))
-            if CS.out.rightBlinker:
-              self.blindspot_frame = self.frame
-              # print(self.blindspot_frame)
+            # if CS.out.rightBlinker:
+            self.blindspot_frame = self.frame
+            # print(self.blindspot_frame)
             # print("bsm poll right")
 
     # *** steer torque ***
@@ -201,22 +199,15 @@ class CarController(CarControllerBase):
                                                           lta_active, self.frame // 2, torque_wind_down))
 
     # *** gas and brake ***
-
-    # a variation in accel command is more pronounced at higher speeds, let compensatory forces ramp to zero before
-    # applying when speed is high
-    comp_thresh = interp(CS.out.vEgo, COMPENSATORY_CALCULATION_THRESHOLD_BP, COMPENSATORY_CALCULATION_THRESHOLD_V)
     # prohibit negative compensatory calculations when first activating long after accelerator depression or engagement
     if not CC.longActive:
       self.prohibit_neg_calculation = True
+    comp_thresh = interp(CS.out.vEgo, COMPENSATORY_CALCULATION_THRESHOLD_BP, COMPENSATORY_CALCULATION_THRESHOLD_V)
     # don't reset until a reasonable compensatory value is reached
     if CS.pcm_neutral_force > comp_thresh * self.CP.mass:
       self.prohibit_neg_calculation = False
-    # NO_STOP_TIMER_CAR will creep if compensation is applied when stopping or stopped, don't compensate when stopped or stopping
-    should_compensate = True
-    if self.CP.carFingerprint in NO_STOP_TIMER_CAR and ((CS.out.vEgo < 1e-3 and actuators.accel < 1e-3) or stopping):
-      should_compensate = False
     # limit minimum to only positive until first positive is reached after engagement, don't calculate when long isn't active
-    if CC.longActive and should_compensate and not self.prohibit_neg_calculation:
+    if CC.longActive and not self.prohibit_neg_calculation:
       accel_offset = CS.pcm_neutral_force / self.CP.mass
     else:
       accel_offset = 0.
@@ -270,11 +261,11 @@ class CarController(CarControllerBase):
       if pcm_cancel_cmd and self.CP.carFingerprint in UNSUPPORTED_DSU_CAR:
         can_sends.append(toyotacan.create_acc_cancel_command(self.packer))
       elif self.CP.openpilotLongitudinalControl:
-        can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, accel_raw, CS.out.aEgo, CC.longActive, pcm_cancel_cmd, self.standstill_req,
-                                                        lead, CS.acc_type, fcw_alert, self.distance_button, reverse_acc))
+        can_sends.append(toyotacan.create_accel_command(self.packer, pcm_accel_cmd, accel_raw, pcm_cancel_cmd, self.standstill_req, lead,
+                                                        CS.acc_type, fcw_alert, self.distance_button, reverse_acc))
         self.accel = pcm_accel_cmd
       else:
-        can_sends.append(toyotacan.create_accel_command(self.packer, 0, 0, 0, False, pcm_cancel_cmd, False, lead, CS.acc_type, False, self.distance_button, reverse_acc))
+        can_sends.append(toyotacan.create_accel_command(self.packer, 0, 0, pcm_cancel_cmd, False, lead, CS.acc_type, False, self.distance_button, reverse_acc))
 
     # *** hud ui ***
     if self.CP.carFingerprint != CAR.TOYOTA_PRIUS_V:

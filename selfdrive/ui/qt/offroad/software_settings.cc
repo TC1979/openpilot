@@ -104,6 +104,16 @@ SoftwarePanel::SoftwarePanel(QWidget* parent) : ListWidget(parent) {
   versionLbl = new LabelControl(tr("Current Version"), "");
   addItem(versionLbl);
 
+  // dp on/off btn
+  onOffBtn = new ButtonControl(tr("Onroad/Offroad Mode"), tr("Go Offroad"));
+  connect(onOffBtn, &ButtonControl::clicked, [&]() {
+    if (ConfirmationDialog::confirm(tr("Are you sure you want to switch driving mode?"), tr("CONFIRM"), this)) {
+      bool val = params.getBool("dp_device_offroad");
+      params.putBool("dp_device_offroad", !val);
+    }
+  });
+  addItem(onOffBtn);
+
   // download update btn
   downloadBtn = new ButtonControl(tr("Download"), tr("CHECK"));
   connect(downloadBtn, &ButtonControl::clicked, [=]() {
@@ -233,9 +243,17 @@ void SoftwarePanel::updateLabels() {
   fs_watch->addParam("UpdateFailedCount");
   fs_watch->addParam("UpdaterState");
   fs_watch->addParam("UpdateAvailable");
+  fs_watch->addParam("dp_device_offroad");
 
   if (!isVisible()) {
     return;
+  }
+
+  // dp on/off btn
+  if (params.getBool("dp_device_offroad")) {
+    onOffBtn->setText(tr("Go Onroad"));
+  } else {
+    onOffBtn->setText(tr("Go Offroad"));
   }
 
   // updater only runs offroad

@@ -1123,6 +1123,26 @@ This may take up to a minute.</source>
         <source>VIEW</source>
         <translation>BAK</translation>
     </message>
+    <message>
+        <source>Onroad/Offroad Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Go Offroad</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Are you sure you want to switch driving mode?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CONFIRM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Go Onroad</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SshControl</name>

@@ -212,6 +212,7 @@ std::unordered_map<std::string, uint32_t> keys = {
     {"AleSato_AutomaticBrakeHold", PERSISTENT},
     {"Marc_Dynamic_Follow", PERSISTENT},
     {"CarModel", PERSISTENT},
+    {"dp_device_offroad", CLEAR_ON_MANAGER_START},
     {"dp_atl", PERSISTENT},
     {"dp_jetson", PERSISTENT},
     {"DrivingPersonalitiesUIWheel", PERSISTENT},
