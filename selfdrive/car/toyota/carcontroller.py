@@ -3,7 +3,7 @@ from openpilot.common.numpy_fast import clip, interp
 from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, common_fault_avoidance, make_can_msg
 from openpilot.selfdrive.car.interfaces import CarControllerBase
 from openpilot.selfdrive.car.toyota import toyotacan
-from openpilot.selfdrive.car.toyota.values import CAR, STATIC_DSU_MSGS, NO_STOP_TIMER_CAR, TSS2_CAR, RADAR_ACC_CAR, \
+from openpilot.selfdrive.car.toyota.values import CAR, STATIC_DSU_MSGS, ToyotaFlags, NO_STOP_TIMER_CAR, TSS2_CAR, RADAR_ACC_CAR, \
                                         CarControllerParams, ToyotaFlags, \
                                         UNSUPPORTED_DSU_CAR
 from opendbc.can.packer import CANPacker
@@ -209,7 +209,7 @@ class CarController(CarControllerBase):
       self.prohibit_neg_calculation = False
     # NO_STOP_TIMER_CAR will creep if compensation is applied when stopping or stopped, don't compensate when stopped or stopping
     should_compensate = True
-    if (self.CP.carFingerprint in NO_STOP_TIMER_CAR and actuators.accel < 1e-3 or stopping) or CS.out.vEgo < 1e-3:
+    if (self.CP.carFingerprint in NO_STOP_TIMER_CAR and self.CP.carFingerprint != CAR.TOYOTA_PRIUS_V and actuators.accel < 1e-3 or stopping) or CS.out.vEgo < 1e-3:
       should_compensate = False
     # limit minimum to only positive until first positive is reached after engagement, don't calculate when long isn't active
     if CC.longActive and should_compensate and not self.prohibit_neg_calculation:
@@ -236,7 +236,7 @@ class CarController(CarControllerBase):
     self.last_standstill = CS.out.standstill
 
     # AleSato's Automatic Brake Hold
-    if Params().get_bool("AleSato_AutomaticBrakeHold") and self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR) and self.frame % 2 == 0:
+    if Params().get_bool("AleSato_AutomaticBrakeHold") and self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR) and not (self.CP.flags & ToyotaFlags.HYBRID.value) and self.frame % 2 == 0:
       if CS.brakehold_governor:
         can_sends.append(toyotacan.create_brakehold_command(self.packer, {}, True if self.frame % 730 < 727 else False))
       else:

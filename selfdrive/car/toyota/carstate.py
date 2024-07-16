@@ -75,7 +75,7 @@ class CarState(CarStateBase):
     self.frame = 0
 
     # AleSato's automatic brakehold
-    self.time_to_brakehold = 100 * .3   # .3 seconds stopped to activate
+    self.time_to_brakehold = 100 * 1   # 1 seconds stopped to activate
     self.GearShifter = car.CarState.GearShifter # avoid Rear and Park gears
     self.stock_aeb = {}
     self.brakehold_condition_satisfied = False
@@ -187,11 +187,7 @@ class CarState(CarStateBase):
       self.low_speed_lockout = cp.vl["PCM_CRUISE_2"]["LOW_SPEED_LOCKOUT"] == 2
 
     self.pcm_acc_status = cp.vl["PCM_CRUISE"]["CRUISE_STATE"]
-    if self.topsng and (self.CP.flags & ToyotaFlags.HYBRID.value) and (self.CP.flags & ToyotaFlags.SMART_DSU.value):
-      # ignore standstill in hybrid vehicles, since pcm allows to restart without
-      # receiving any special command. Also if interceptor is detected
-      ret.cruiseState.standstill = False
-    elif not self.topsng and self.CP.carFingerprint not in (NO_STOP_TIMER_CAR - TSS2_CAR):
+    if self.CP.carFingerprint not in (NO_STOP_TIMER_CAR - TSS2_CAR):
       # ignore standstill state in certain vehicles, since pcm allows to restart with just an acceleration request
       ret.cruiseState.standstill = self.pcm_acc_status == 7
     ret.cruiseState.enabled = bool(cp.vl["PCM_CRUISE"]["CRUISE_ACTIVE"])
@@ -228,7 +224,7 @@ class CarState(CarStateBase):
       self.short_press_button_counter += 1
       if not self.distance_button_hold:
         self.gap_button_counter += 1
-        if self.gap_button_counter > 100:  # 50 miliseconds
+        if self.gap_button_counter > 150:
           self.params.put_bool_nonblocking('ExperimentalMode', not self.params.get_bool("ExperimentalMode"))  # change experimental/chill mode on fly with long press
           self.gap_button_counter = 0
 
@@ -244,11 +240,11 @@ class CarState(CarStateBase):
     ret.steeringWheelCar = True if self.CP.carName == "toyota" else False
 
     # Automatic BrakeHold
-    if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
+    if self.params.get_bool('AleSato_AutomaticBrakeHold') self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR) and not (self.CP.flags & ToyotaFlags.HYBRID.value):
       self.stock_aeb = copy.copy(cp_cam.vl["PRE_COLLISION_2"])
-      self.brakehold_condition_satisfied =  (ret.standstill and ret.cruiseState.available and not ret.gasPressed and \
-                                            not ret.cruiseState.enabled and (ret.gearShifter not in (self.GearShifter.reverse,\
-                                            self.GearShifter.park)) and self.params.get_bool('AleSato_AutomaticBrakeHold'))
+      self.brakehold_condition_satisfied =  ret.standstill and ret.cruiseState.available and not ret.gasPressed and not \
+                                            ret.cruiseState.enabled and (ret.gearShifter not in (self.GearShifter.reverse,\
+                                            self.GearShifter.park))
       if self.brakehold_condition_satisfied:
         if self.brakehold_condition_counter > self.time_to_brakehold and not self.reset_brakehold:
           self.brakehold_governor = True
