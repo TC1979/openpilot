@@ -97,7 +97,7 @@ class LongControl:
       self.update_cached_params()  # Update cached parameters
 
       error = a_target - CS.aEgo
-      deadzone = interp(CS.vEgo, self.CP.longitudinalTuning.deadzoneBP, self.CP.longitudinalTuning.deadzoneV)
+      deadzone = interp(CS.vEgo, [0, 9], [0, 0.15])
       error_deadzone = apply_deadzone(error, deadzone)
 
       use_error_deadzone = self.cached_experimental_mode or self.cached_cydia_tune
