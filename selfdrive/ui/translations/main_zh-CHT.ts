@@ -1262,12 +1262,12 @@ This may take up to a minute.</source>
         <translation>啟用Stop And Go 功能，讓車輛跟車到停並進入auto hold。</translation>
     </message>
     <message>
-        <source>Cydia&apos;s Longitudinal Tuning</source>
-        <translation>Cydia縱向控制調校</translation>
+        <source>Toyota Longitudinal Tuning</source>
+        <translation>Toyota縱向控制調校</translation>
     </message>
     <message>
         <source>Using the longitudinal Tuning can increase the sensitivity of longitudinal control in Toyota models.</source>
-        <translation>使用Cydia的蹤向調校可增加Toyota車款在蹤向操控的靈敏度。</translation>
+        <translation>使用Toyata蹤向調校可增加蹤向操控的靈敏度。</translation>
     </message>
     <message>
         <source>Dynamic Distance Adjustment</source>

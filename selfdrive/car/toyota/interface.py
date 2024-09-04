@@ -25,7 +25,7 @@ class CarInterface(CarInterfaceBase):
 
   @staticmethod
   def get_pid_accel_limits(CP, current_speed, cruise_speed):
-    if CP.carFingerprint in TSS2_CAR and Params().get_bool("Marc_Dynamic_Follow"):
+    if Params().get_bool("ToyotaTune"):
       # Allow for higher accel from PID controller at low speeds
       return CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX_PLUS
     else:
@@ -161,31 +161,24 @@ class CarInterface(CarInterfaceBase):
 
     tune = ret.longitudinalTuning
 
-    tune.deadzoneBP = [0., 5.,  6.,    7.,    20., 30]
-    tune.deadzoneV =  [0., 0.,  0.001, 0.003, .1, .15]
-
-    if Params().get_bool("CydiaTune"):
+    if Params().get_bool("ToyotaTune"):
       ret.stopAccel = -2.5  # on stock Toyota this is -2.5
-      ret.stoppingDecelRate = 0.25
-      tune.kpV = [0.88]
-      tune.kiBP = [0., 32.]
-      tune.kiV = [.4, .2] # appears to produce minimal oscillation on TSS-P
-
+      ret.stoppingDecelRate = 0.25  # This is okay for TSS-P
+      tune.kiBP = [5., 35.]
+      tune.kiV = [1.5, 0.5]
       if candidate in TSS2_CAR:
-        ret.vEgoStopping = 0.10
-        ret.vEgoStarting = 0.10
-        ret.stoppingDecelRate = 0.3  # reach stopping target smoothly
-        tune.kpV = [0.0]
-        tune.kiBP = [0.0]
-        tune.kiV = [0.5]
+        ret.vEgoStopping = 0.15
+        ret.vEgoStarting = 0.15
+        ret.stoppingDecelRate = 0.1  # reach stopping target smoothly
+
     else:
-      tune.kiBP = [ 0.,  5.,   12.,  20., 27., 40.]
-      tune.kiV =  [.35, .228,  .205, .195, .10, .01]
+      tune.kiBP = [0.,   3.,    8.,    12.,   20.,  27.,  36.,  50]
+      tune.kiV = [0.322, 0.244, 0.224, 0.202, 0.17, 0.12, 0.08, 0.06]
 
       if candidate in TSS2_CAR:
-        ret.vEgoStopping = 0.01
-        ret.vEgoStarting = 0.01
-        ret.stoppingDecelRate = 0.007  # reach stopping target smoothly
+        ret.vEgoStopping = 0.25
+        ret.vEgoStarting = 0.25
+        ret.stoppingDecelRate = 0.0074  # reach stopping target smoothly
       else:
         ret.stopAccel = -2.5  # on stock Toyota this is -2.5
         ret.stoppingDecelRate = 0.25  # This is okay for TSS-P

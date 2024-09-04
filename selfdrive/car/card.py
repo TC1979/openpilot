@@ -117,7 +117,7 @@ class Car:
     if auto_brakehold:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.ALLOW_AEB
 
-    sport_mode = self.params.get_bool("Marc_Dynamic_Follow") and self.CP.carFingerprint in TSS2_CAR
+    sport_mode = self.params.get_bool("ToyotaTune")
     if sport_mode:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX
 

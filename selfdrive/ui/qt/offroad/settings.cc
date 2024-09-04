@@ -573,8 +573,8 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/offroad/icon_road.png",
                                   this));
 
-  toggles.append(new ParamControl("CydiaTune",
-                                  tr("Cydia's Longitudinal Tuning"),
+  toggles.append(new ParamControl("ToyotaTune",
+                                  tr("Toyota Longitudinal Tuning"),
                                   tr("Using the longitudinal Tuning can increase the sensitivity of longitudinal control in Toyota models."),
                                   "../assets/offroad/icon_road.png",
                                   this));

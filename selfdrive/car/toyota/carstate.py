@@ -50,7 +50,12 @@ class CarState(CarStateBase):
     self.low_speed_lockout = False
     self.acc_type = 1
     self.lkas_hud = {}
+
     self.params = Params()
+    self.topsng = Params().get_bool("topsng")
+    self.pcm_accel_net = 0
+    self.pcm_neutral_force = 0
+    self.vsc_slope_angle = 0
 
     self.experimental_mode_via_wheel = self.CP.experimentalModeViaWheel
     # Change between chill/experimental mode using steering wheel
@@ -59,7 +64,7 @@ class CarState(CarStateBase):
     self.gap_button_counter = 0
     self.short_press_button_counter = 0
 
-    self.topsng = Params().get_bool("topsng")
+
 
     # bsm
     self.toyota_bsm = Params().get_bool("toyota_bsm")
@@ -197,7 +202,6 @@ class CarState(CarStateBase):
       ret.cruiseState.standstill = self.pcm_acc_status == 7
     ret.cruiseState.enabled = bool(cp.vl["PCM_CRUISE"]["CRUISE_ACTIVE"])
     ret.cruiseState.nonAdaptive = self.pcm_acc_status in (1, 2, 3, 4, 5, 6)
-    self.pcm_neutral_force = cp.vl["PCM_CRUISE"]["NEUTRAL_FORCE"]
 
     ret.genericToggle = bool(cp.vl["LIGHT_STALK"]["AUTO_HIGH_BEAM"])
     ret.espDisabled = cp.vl["ESP_CONTROL"]["TC_DISABLED"] != 0
@@ -223,6 +227,11 @@ class CarState(CarStateBase):
         self.distance_button = cp_acc.vl["ACC_CONTROL"]["DISTANCE"]
       else:
         self.distance_button = cp.vl["SDSU"]["FD_BUTTON"]
+
+    self.pcm_accel_net = cp.vl["PCM_CRUISE"]["ACCEL_NET"]
+    self.pcm_neutral_force = cp.vl["PCM_CRUISE"]["NEUTRAL_FORCE"]
+    self.vsc_slope_angle = cp.vl["VSC1"]["SLOPE_ANGLE"]
+
 
     # change experimental/chill mode on fly with long press
     if self.distance_button:
@@ -326,6 +335,7 @@ class CarState(CarStateBase):
       ("STEER_ANGLE_SENSOR", 80),
       ("PCM_CRUISE", 33),
       ("PCM_CRUISE_SM", 1),
+      ("VSC1", 20),
       ("STEER_TORQUE_SENSOR", 50),
     ]
 

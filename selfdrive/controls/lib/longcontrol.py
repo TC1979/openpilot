@@ -1,9 +1,7 @@
-import time
 from cereal import car
-from openpilot.common.numpy_fast import clip, interp
-from openpilot.common.params import Params
+from openpilot.common.numpy_fast import clip
 from openpilot.common.realtime import DT_CTRL
-from openpilot.selfdrive.controls.lib.drive_helpers import CONTROL_N, apply_deadzone
+from openpilot.selfdrive.controls.lib.drive_helpers import CONTROL_N
 from openpilot.selfdrive.controls.lib.pid import PIDController
 from openpilot.selfdrive.modeld.constants import ModelConstants
 
@@ -54,21 +52,9 @@ class LongControl:
                              (CP.longitudinalTuning.kiBP, CP.longitudinalTuning.kiV),
                              k_f=CP.longitudinalTuning.kf, rate=1 / DT_CTRL)
     self.last_output_accel = 0.0
-    self.params = Params()
-    self.cached_experimental_mode = None
-    self.cached_cydia_tune = None
-    self.last_param_check_time = 0
-    self.param_check_interval = 5  # Check every 5 seconds
 
   def reset(self):
     self.pid.reset()
-
-  def update_cached_params(self):
-    current_time = time.time()
-    if current_time - self.last_param_check_time >= self.param_check_interval:
-      self.cached_experimental_mode = self.params.get_bool("ExperimentalMode")
-      self.cached_cydia_tune = self.params.get_bool("CydiaTune")
-      self.last_param_check_time = current_time
 
   def update(self, active, CS, a_target, should_stop, accel_limits):
     """Update longitudinal control. This updates the state machine and runs a PID loop"""
@@ -94,18 +80,9 @@ class LongControl:
       self.reset()
 
     else:  # LongCtrlState.pid
-      self.update_cached_params()  # Update cached parameters
-
       error = a_target - CS.aEgo
-      deadzone = interp(CS.vEgo, self.CP.longitudinalTuning.deadzoneBP, self.CP.longitudinalTuning.deadzoneV)
-      error_deadzone = apply_deadzone(error, deadzone)
-
-      use_error_deadzone = self.cached_experimental_mode or self.cached_cydia_tune
-      output_accel = self.pid.update(
-          error_deadzone if use_error_deadzone else error,
-          speed=CS.vEgo,
-          feedforward=a_target
-      )
+      output_accel = self.pid.update(error, speed=CS.vEgo,
+                                     feedforward=a_target)
 
     self.last_output_accel = clip(output_accel, accel_limits[0], accel_limits[1])
     return self.last_output_accel

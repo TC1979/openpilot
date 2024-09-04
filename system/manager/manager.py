@@ -52,7 +52,7 @@ def manager_init() -> None:
     ("AleSato_AutomaticBrakeHold", "0"),
     ("alt_driving_personality", "0"),
     ("CarModel", ""),
-    ("CydiaTune", "0"),
+    ("ToyotaTune", "0"),
     ("dp_atl", "0"),
     ("dp_jetson", "0"),
     ("SearchInput", "0"),

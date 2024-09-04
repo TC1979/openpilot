@@ -1262,7 +1262,7 @@ This may take up to a minute.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cydia&apos;s Longitudinal Tuning</source>
+        <source>Toyota Longitudinal Tuning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
