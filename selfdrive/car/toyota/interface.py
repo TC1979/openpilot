@@ -164,8 +164,8 @@ class CarInterface(CarInterfaceBase):
     if Params().get_bool("ToyotaTune"):
       ret.stopAccel = -2.5  # on stock Toyota this is -2.5
       ret.stoppingDecelRate = 0.25  # This is okay for TSS-P
-      tune.kiBP = [5., 35.]
-      tune.kiV = [1.5, 0.5]
+      tune.kiBP = [0., 5.,  35.]
+      tune.kiV = [1.0, 1.5, 0.5]
       if candidate in TSS2_CAR:
         ret.vEgoStopping = 0.15
         ret.vEgoStarting = 0.15

@@ -36,14 +36,14 @@ A_CRUISE_MIN_VALS =    [-0.04, -0.03, -0.001, -0.01, -0.15, -0.22, -0.35, -0.55,
 #A_CRUISE_MIN_VALS =   [-0.20, -0.20, -0.30, -0.30, -0.35, -0.80, -0.80]
 A_CRUISE_MIN_BP =      [ 0.,   .01,   .02,    .3,     5.,    8.,    11.,   16.,   22.,   28.,  33.]
 #A_CRUISE_MIN_BP =     [ 0.,    8.32,  8.33,  15.99, 16.,   30.,   40.]
-A_CRUISE_MIN_VALS_DF = [-0.68, -0.68, -0.68, -0.68, -0.68, -0.68, -0.78, -0.78, -0.88, -0.88, -1.0,  -1.0]
-A_CRUISE_MIN_BP_DF =   [ 0.,    3.0,   3.01,  10.,   10.01, 14.,   14.01, 18.,   18.01, 22.,   22.01, 30.]
-A_CRUISE_MAX_VALS_DF =       [3.0, 2.0, 2.0, 1.60, 0.90, .53,  .43,  .32,  .09]  # Sets the limits of the planner accel, PID may exceed
-A_CRUISE_MAX_BP_DF =         [0.,  4.,  6.,  8.,   11.,  20.,  25.,  30.,  40.]
+A_CRUISE_MIN_VALS_DF = [-0.019, -0.019, -0.21, -0.21, -0.36, -1.00, -1.00]
+A_CRUISE_MIN_BP_DF =   [ 0.,     0.05,   3.12,  12.,   12.01, 20.,   30.]
+A_CRUISE_MAX_VALS_DF =       [2.4, 1.7, 1.32, 1.22, 1.02, .87, .73, .58, .38, .24, .082]  # Sets the limits of the planner accel, PID may exceed
+A_CRUISE_MAX_BP_DF =         [0.,  1.,  3.,   6.,   8.,    11., 15., 20., 25., 30., 55.]
 # A_CRUISE_MAX_VALS_TOYOTA = [1.7,       1.35, 1.22, 1.08, .92, .78, .62, .44, .28, .08]  # Sets the limits of the planner accel, PID may exceed
-A_CRUISE_MAX_VALS_TOYOTA =   [3.0, 1.7, 1.32, 1.22, .95, .82, .68, .53, .32, .20, .085]  # Sets the limits of the planner accel, PID may exceed
+A_CRUISE_MAX_VALS_TOYOTA =   [2.4, 1.7, 1.32, 1.22, 1.02, .87, .73, .58, .38, .24, .082]  # Sets the limits of the planner accel, PID may exceed
 # CRUISE_MAX_BP in kmh =     [0.,  3,   10,   20,    30,  40,  53,  72,  90,  107, 150]
-A_CRUISE_MAX_BP_TOYOTA =     [0.,  1,   3.,   6.,    8.,  11., 15., 20., 25., 30., 55.]
+A_CRUISE_MAX_BP_TOYOTA =     [0.,  1.,  3.,   6.,   8.,    11., 15., 20., 25., 30., 55.]
 CONTROL_N_T_IDX = ModelConstants.T_IDXS[:CONTROL_N]
 
 # Lookup table for turns
