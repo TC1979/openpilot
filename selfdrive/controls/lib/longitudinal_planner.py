@@ -139,6 +139,7 @@ class LongitudinalPlanner:
     return x, v, a, j
 
   def update(self, sm):
+    # TODO delete all other MPC modes
     self.mpc.mode = 'acc'
 
     v_ego = sm['carState'].vEgo
@@ -157,7 +158,7 @@ class LongitudinalPlanner:
     # No change cost when user is controlling the speed, or when standstill
     prev_accel_constraint = not (reset_state or sm['carState'].standstill)
 
-    if self.mpc.mode == 'acc':
+    if not sm['controlsState'].experimentalMode:
       if self.CP.carName == "toyota":
         accel_limits = [get_min_accel(v_ego), get_max_accel_toyota(v_ego)]
       elif self.dynamic_follow and self.CP.carFingerprint in TSS2_CAR:
@@ -269,9 +270,7 @@ class LongitudinalPlanner:
     longitudinalPlan.longitudinalPlanSource = self.mpc.source
     longitudinalPlan.fcw = self.fcw
 
-    a_target, should_stop = get_accel_from_plan(self.CP, longitudinalPlan.speeds, longitudinalPlan.accels)
     a_target_mpc, should_stop_mpc = get_accel_from_plan(self.CP, longitudinalPlan.speeds, longitudinalPlan.accels)
-
     if sm['controlsState'].experimentalMode:
       model_speeds = np.interp(CONTROL_N_T_IDX, ModelConstants.T_IDXS, sm['modelV2'].velocity.x)
       model_accels = np.interp(CONTROL_N_T_IDX, ModelConstants.T_IDXS, sm['modelV2'].acceleration.x)
