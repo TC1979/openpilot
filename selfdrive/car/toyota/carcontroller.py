@@ -1,6 +1,6 @@
 from cereal import car
 #import math
-from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, common_fault_avoidance, make_tester_present_msg
+from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, common_fault_avoidance, make_tester_present_msg, rate_limit
 from openpilot.selfdrive.car.can_definitions import CanData
 from openpilot.selfdrive.car.helpers import clip
 from openpilot.selfdrive.car.interfaces import CarControllerBase
@@ -14,7 +14,6 @@ from openpilot.selfdrive.car.conversions import Conversions as CV
 
 SteerControlType = car.CarParams.SteerControlType
 VisualAlert = car.CarControl.HUDControl.VisualAlert
-LongCtrlState = car.CarControl.Actuators.LongControlState
 
 # LKA limits
 # EPS faults if you apply torque while the steering rate is above 100 deg/s for too long
@@ -60,11 +59,11 @@ class CarController(CarControllerBase):
     self.last_standstill = False
     self.standstill_req = False
     self.steer_rate_counter = 0
-    self.pcm_accel_comp = 0
     self.distance_button = 0
 
+    self.pcm_accel_compensation = 0.0
+
     self.packer = CANPacker(dbc_name)
-    self.gas = 0
     self.accel = 0
 
     self.toyota_tune = Params().get_bool("ToyotaTune")
@@ -194,32 +193,22 @@ class CarController(CarControllerBase):
                                                           lta_active, self.frame // 2, torque_wind_down))
 
     # *** gas and brake ***
-    if self.toyota_tune:
-      # we will throw out PCM's compensations, but that may be a good thing. for example:
-      # we lose things like pitch compensation, gas to maintain speed, brake to compensate for creeping, etc.
-      # but also remove undesirable "snap to standstill" behavior when not requesting enough accel at low speeds,
-      # lag to start moving, lag to start braking, etc.
-      # PI should compensate for lack of the desirable behaviors, but might be worse than the PCM doing them
+    # For cars where we allow a higher max acceleration of 2.0 m/s^2, compensate for PCM request overshoot
+    # TODO: validate PCM_CRUISE->ACCEL_NET for braking requests and compensate for imprecise braking as well
+    if self.toyota_tune and CC.longActive:
+      pcm_accel_compensation = 2.0 * (CS.pcm_accel_net - actuators.accel) if actuators.accel > 0 else 0.0
 
-      # FIXME? neutral force will only be positive under ~5 mph, which messes up stopping control considerably
-      # not sure why this isn't captured in the PCM accel net, maybe that just ignores creep force + high speed deceleration
-      # it also doesn't seem to capture slightly more braking on downhills (VSC1S07->ASLP (pitch, deg.) might have some clues)
-      # offset = min(CS.pcm_neutral_force / self.CP.mass, 0.0)
-      # pitch_offset = math.sin(math.radians(CS.vsc_slope_angle)) * 9.81  # downhill is negative
-      # TODO: these limits are too slow to prevent a jerk when engaging, ramp down on engage?
-      self.pcm_accel_comp = clip(actuators.accel - CS.pcm_accel_net, self.pcm_accel_comp - 0.05, self.pcm_accel_comp + 0.05)
-      if CS.out.cruiseState.standstill or actuators.longControlState == LongCtrlState.stopping:
-        self.pcm_accel_comp = 0.0
-      pcm_accel_cmd = actuators.accel + self.pcm_accel_comp  # + offset
-      # pcm_accel_cmd = actuators.accel - pitch_offset
+      # prevent compensation windup
+      if actuators.accel - pcm_accel_compensation > self.params.ACCEL_MAX:
+        pcm_accel_compensation = actuators.accel - self.params.ACCEL_MAX
 
-      if not CC.longActive:
-        self.pcm_accel_comp = 0.0
-        pcm_accel_cmd = 0.0
-
-      pcm_accel_cmd = clip(pcm_accel_cmd, self.params.ACCEL_MIN, self.params.ACCEL_MAX_PLUS)
+      self.pcm_accel_compensation = rate_limit(pcm_accel_compensation, self.pcm_accel_compensation, -0.01, 0.01)
+      pcm_accel_cmd = actuators.accel - self.pcm_accel_compensation
     else:
-      pcm_accel_cmd = clip(actuators.accel, self.params.ACCEL_MIN, self.params.ACCEL_MAX)
+      self.pcm_accel_compensation = 0.0
+      pcm_accel_cmd = actuators.accel
+
+    pcm_accel_cmd = clip(pcm_accel_cmd, self.params.ACCEL_MIN, self.params.ACCEL_MAX)
 
     # on entering standstill, send standstill request
     if CS.out.standstill and not self.last_standstill and (self.CP.carFingerprint not in NO_STOP_TIMER_CAR):
@@ -301,7 +290,6 @@ class CarController(CarControllerBase):
     new_actuators.steerOutputCan = apply_steer
     new_actuators.steeringAngleDeg = self.last_angle
     new_actuators.accel = self.accel
-    new_actuators.gas = self.gas
 
     self.frame += 1
     return new_actuators, can_sends

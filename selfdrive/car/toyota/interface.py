@@ -25,11 +25,7 @@ class CarInterface(CarInterfaceBase):
 
   @staticmethod
   def get_pid_accel_limits(CP, current_speed, cruise_speed):
-    if Params().get_bool("ToyotaTune"):
-      # Allow for higher accel from PID controller at low speeds
-      return CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX_PLUS
-    else:
-      return CarControllerParams.ACCEL_MIN, CarControllerParams.ACCEL_MAX
+    return CarControllerParams(CP).ACCEL_MIN, CarControllerParams(CP).ACCEL_MAX
 
   @staticmethod
   def _get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs):
@@ -71,6 +67,9 @@ class CarInterface(CarInterfaceBase):
     found_ecus = [fw.ecu for fw in car_fw]
     ret.enableDsu = len(found_ecus) > 0 and Ecu.dsu not in found_ecus and candidate not in (NO_DSU_CAR | UNSUPPORTED_DSU_CAR) \
                                         and not (ret.flags & ToyotaFlags.SMART_DSU)
+
+    if Params().get_bool("ToyotaTune"):
+      ret.flags |= ToyotaFlags.RAISED_ACCEL_LIMIT.value
 
     if candidate == CAR.TOYOTA_PRIUS:
       stop_and_go = True
@@ -164,8 +163,8 @@ class CarInterface(CarInterfaceBase):
     if Params().get_bool("ToyotaTune"):
       ret.stopAccel = -2.5  # on stock Toyota this is -2.5
       ret.stoppingDecelRate = 0.25  # This is okay for TSS-P
-      tune.kiBP = [0., 5.,  35.]
-      tune.kiV = [1.0, 1.5, 0.5]
+      tune.kpV = [0.0]
+      tune.kiV = [0.5]
       if candidate in TSS2_CAR:
         ret.vEgoStopping = 0.15
         ret.vEgoStarting = 0.15
