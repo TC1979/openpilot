@@ -10,7 +10,6 @@ from openpilot.common.filter_simple import FirstOrderFilter
 from openpilot.common.realtime import DT_MDL
 from openpilot.selfdrive.modeld.constants import ModelConstants
 from openpilot.selfdrive.car.interfaces import ACCEL_MIN, ACCEL_MAX
-from openpilot.selfdrive.car.toyota.values import TSS2_CAR
 from openpilot.selfdrive.controls.lib.longcontrol import LongCtrlState
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import LongitudinalMpc
 from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDXS as T_IDXS_MPC
@@ -139,8 +138,7 @@ class LongitudinalPlanner:
     return x, v, a, j
 
   def update(self, sm):
-    # TODO delete all other MPC modes
-    self.mpc.mode = 'acc'
+    self.mpc.mode = 'blended' if sm['selfdriveState'].experimentalMode else 'acc'
 
     v_ego = sm['carState'].vEgo
     v_ego_raw = sm['carState'].vEgoRaw
@@ -158,10 +156,10 @@ class LongitudinalPlanner:
     # No change cost when user is controlling the speed, or when standstill
     prev_accel_constraint = not (reset_state or sm['carState'].standstill)
 
-    if not sm['controlsState'].experimentalMode:
+    if self.mpc.mode == 'acc':
       if self.CP.carName == "toyota":
         accel_limits = [get_min_accel(v_ego), get_max_accel_toyota(v_ego)]
-      elif self.dynamic_follow and self.CP.carFingerprint in TSS2_CAR:
+      elif self.dynamic_follow:
         accel_limits = [get_min_accel_df(v_ego), get_max_accel_df(v_ego)]
       else:
         accel_limits = [A_CRUISE_MIN, get_max_accel(v_ego)]
@@ -270,19 +268,9 @@ class LongitudinalPlanner:
     longitudinalPlan.longitudinalPlanSource = self.mpc.source
     longitudinalPlan.fcw = self.fcw
 
-    a_target_mpc, should_stop_mpc = get_accel_from_plan(self.CP, longitudinalPlan.speeds, longitudinalPlan.accels)
-    if sm['controlsState'].experimentalMode:
-      model_speeds = np.interp(CONTROL_N_T_IDX, ModelConstants.T_IDXS, sm['modelV2'].velocity.x)
-      model_accels = np.interp(CONTROL_N_T_IDX, ModelConstants.T_IDXS, sm['modelV2'].acceleration.x)
-      a_target_model, should_stop_model = get_accel_from_plan(self.CP, model_speeds, model_accels)
-      a_target = min(a_target_mpc, a_target_model)
-      should_stop = should_stop_mpc or should_stop_model
-    else:
-      a_target = a_target_mpc
-      should_stop = should_stop_mpc
-
-    longitudinalPlan.aTarget = float(a_target)
-    longitudinalPlan.shouldStop = bool(should_stop)
+    a_target, should_stop = get_accel_from_plan(self.CP, longitudinalPlan.speeds, longitudinalPlan.accels)
+    longitudinalPlan.aTarget = a_target
+    longitudinalPlan.shouldStop = should_stop
 
     longitudinalPlan.allowBrake = True
     longitudinalPlan.allowThrottle = True
