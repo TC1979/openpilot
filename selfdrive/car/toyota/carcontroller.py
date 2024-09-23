@@ -1,5 +1,5 @@
 from cereal import car
-#import math
+import math
 from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, common_fault_avoidance, make_tester_present_msg, rate_limit
 from openpilot.selfdrive.car.can_definitions import CanData
 from openpilot.selfdrive.car.helpers import clip
@@ -12,8 +12,11 @@ from opendbc.can.packer import CANPacker
 from openpilot.common.params import Params
 from openpilot.selfdrive.car.conversions import Conversions as CV
 
+LongCtrlState = car.CarControl.Actuators.LongControlState
 SteerControlType = car.CarParams.SteerControlType
 VisualAlert = car.CarControl.HUDControl.VisualAlert
+
+ACCELERATION_DUE_TO_GRAVITY = 9.81
 
 # LKA limits
 # EPS faults if you apply torque while the steering rate is above 100 deg/s for too long
@@ -193,14 +196,21 @@ class CarController(CarControllerBase):
                                                           lta_active, self.frame // 2, torque_wind_down))
 
     # *** gas and brake ***
-    # For cars where we allow a higher max acceleration of 2.0 m/s^2, compensate for PCM request overshoot
-    # TODO: validate PCM_CRUISE->ACCEL_NET for braking requests and compensate for imprecise braking as well
-    if self.toyota_tune and CC.longActive:
-      pcm_accel_compensation = 2.0 * (CS.pcm_accel_net - actuators.accel) if actuators.accel > 0 else 0.0
+    # For cars where we allow a higher max acceleration of 2.0 m/s^2, compensate for PCM request overshoot and imprecise braking
+    # TODO: sometimes when switching from brake to gas quickly, CLUTCH->ACCEL_NET shows a slow unwind. make it go to 0 immediately
+    if self.toyota_tune and CC.longActive and not CS.out.cruiseState.standstill:
+      # calculate amount of acceleration PCM should apply to reach target, given pitch
+      accel_due_to_pitch = math.sin(CS.slope_angle) * ACCELERATION_DUE_TO_GRAVITY
+      net_acceleration_request = actuators.accel + accel_due_to_pitch
+
+      # let PCM handle stopping for now
+      pcm_accel_compensation = 0.0
+      if actuators.longControlState != LongCtrlState.stopping:
+        pcm_accel_compensation = 2.0 * (CS.pcm_accel_net - net_acceleration_request)
 
       # prevent compensation windup
-      if actuators.accel - pcm_accel_compensation > self.params.ACCEL_MAX:
-        pcm_accel_compensation = actuators.accel - self.params.ACCEL_MAX
+      pcm_accel_compensation = clip(pcm_accel_compensation, actuators.accel - self.params.ACCEL_MAX,
+                                    actuators.accel - self.params.ACCEL_MIN)
 
       self.pcm_accel_compensation = rate_limit(pcm_accel_compensation, self.pcm_accel_compensation, -0.01, 0.01)
       pcm_accel_cmd = actuators.accel - self.pcm_accel_compensation

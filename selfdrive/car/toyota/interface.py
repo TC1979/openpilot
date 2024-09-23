@@ -164,7 +164,7 @@ class CarInterface(CarInterfaceBase):
       ret.stopAccel = -2.5  # on stock Toyota this is -2.5
       ret.stoppingDecelRate = 0.25  # This is okay for TSS-P
       tune.kpV = [0.0]
-      tune.kiV = [0.5]
+      tune.kiV = [0.25]
       if candidate in TSS2_CAR:
         ret.vEgoStopping = 0.15
         ret.vEgoStarting = 0.15
