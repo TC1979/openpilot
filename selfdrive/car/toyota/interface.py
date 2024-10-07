@@ -1,18 +1,16 @@
-from cereal import car
 from openpilot.selfdrive.car.conversions import Conversions as CV
 from openpilot.common.params import Params
 from panda import Panda
 from panda.python import uds
+from openpilot.selfdrive.car import structs, get_safety_config
 from openpilot.selfdrive.car.toyota.values import Ecu, CAR, DBC, ToyotaFlags, CarControllerParams, TSS2_CAR, RADAR_ACC_CAR, NO_DSU_CAR, \
-                                        MIN_ACC_SPEED, EPS_SCALE, UNSUPPORTED_DSU_CAR, NO_STOP_TIMER_CAR, ANGLE_CONTROL_CAR
-from openpilot.selfdrive.car import create_button_events, get_safety_config
+                                                  MIN_ACC_SPEED, EPS_SCALE, UNSUPPORTED_DSU_CAR, NO_STOP_TIMER_CAR, ANGLE_CONTROL_CAR
 from openpilot.selfdrive.car.disable_ecu import disable_ecu
 from openpilot.selfdrive.car.interfaces import CarInterfaceBase
 
-ButtonType = car.CarState.ButtonEvent.Type
-EventName = car.CarEvent.EventName
-SteerControlType = car.CarParams.SteerControlType
-GearShifter = car.CarState.GearShifter
+EventName = structs.CarEvent.EventName
+SteerControlType = structs.CarParams.SteerControlType
+GearShifter = structs..CarState.GearShifter
 
 
 class CarInterface(CarInterfaceBase):
@@ -28,9 +26,9 @@ class CarInterface(CarInterfaceBase):
     return CarControllerParams(CP).ACCEL_MIN, CarControllerParams(CP).ACCEL_MAX
 
   @staticmethod
-  def _get_params(ret, candidate, fingerprint, car_fw, experimental_long, docs):
+  def _get_params(ret: structs.CarParams, candidate, fingerprint, car_fw, experimental_long, docs) -> structs.CarParams:
     ret.carName = "toyota"
-    ret.safetyConfigs = [get_safety_config(car.CarParams.SafetyModel.toyota)]
+    ret.safetyConfigs = [get_safety_config(structs.CarParams.SafetyModel.toyota)]
     ret.safetyConfigs[0].safetyParam = EPS_SCALE[candidate]
 
     # BRAKE_MODULE is on a different address for these cars
@@ -197,11 +195,6 @@ class CarInterface(CarInterfaceBase):
       communication_control = bytes([uds.SERVICE_TYPE.COMMUNICATION_CONTROL, uds.CONTROL_TYPE.ENABLE_RX_DISABLE_TX, uds.MESSAGE_TYPE.NORMAL])
       disable_ecu(can_recv, can_send, bus=0, addr=0x750, sub_addr=0xf, com_cont_req=communication_control)
 
-  # returns a car.CarState
-  def _update(self, c):
-    ret = self.CS.update(self.cp, self.cp_cam)
-    self.dp_atl = Params().get_bool("dp_atl")
-
     # low speed re-write (dp)
     self.cruise_speed_override = True if (self.CP.flags & ToyotaFlags.SMART_DSU) else False # change this to False if you want to disable cruise speed override
     if self.cruise_speed_override:
@@ -212,40 +205,3 @@ class CarInterface(CarInterfaceBase):
           ret.cruiseState.speed = ret.cruiseState.speedCluster = self.low_cruise_speed
       else:
         self.low_cruise_speed = 0.
-
-    if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR) or (self.CP.flags & ToyotaFlags.SMART_DSU and not self.CP.flags & ToyotaFlags.RADAR_CAN_FILTER):
-      ret.buttonEvents = create_button_events(self.CS.distance_button, self.CS.prev_distance_button, {1: ButtonType.gapAdjustCruise})
-
-    # events
-    events = self.create_common_events(ret, extra_gears=[GearShifter.sport])
-
-    if self.CP.openpilotLongitudinalControl:
-      if ret.cruiseState.standstill and not ret.brakePressed:
-        events.add(EventName.resumeRequired)
-      if self.CS.low_speed_lockout:
-        events.add(EventName.lowSpeedLockout)
-      if ret.vEgo < self.CP.minEnableSpeed:
-        events.add(EventName.belowEngageSpeed)
-        if c.actuators.accel > 0.3:
-          # some margin on the actuator to not false trigger cancellation while stopping
-          events.add(EventName.speedTooLow)
-        if ret.vEgo < 0.001:
-          # while in standstill, send a user alert
-          events.add(EventName.manualRestart)
-
-    if self.dp_atl and (self.CP.carFingerprint in TSS2_CAR or (self.CP.flags & ToyotaFlags.SMART_DSU)):
-      if not self.prev_atl and ret.cruiseState.available:
-        events.add(EventName.atlEngageSound)
-        Params().put_bool("LateralAllowed", True)
-      elif self.prev_atl and not (ret.cruiseState.available and self.CP.openpilotLongitudinalControl):
-        events.add(EventName.atlDisengageSound)
-        Params().put_bool("LateralAllowed", False)
-      self.prev_atl = ret.cruiseState.available
-
-    if self.CS.brakehold_governor:
-      events.add(EventName.automaticBrakehold)
-
-
-    ret.events = events.to_msg()
-
-    return ret

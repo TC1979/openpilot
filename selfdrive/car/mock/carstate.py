@@ -1,7 +1,7 @@
-from cereal import car
+from openpilot.selfdrive.car import structs
 from openpilot.selfdrive.car.interfaces import CarStateBase
 
 
 class CarState(CarStateBase):
-  def update(self, *args) -> car.CarState:
-    pass
+  def update(self, *_) -> structs.CarState:
+    return structs.CarState()

@@ -3,14 +3,14 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum, IntFlag
 
-from cereal import car
 from openpilot.selfdrive.car import CarSpecs, PlatformConfig, Platforms, AngleRateLimit, dbc_dict
-from openpilot.selfdrive.car.conversions import Conversions as CV
 from openpilot.common.params import Params
+from openpilot.selfdrive.car.common.conversions import Conversions as CV
+from openpilot.selfdrive.car.structs import CarParams
 from openpilot.selfdrive.car.docs_definitions import CarFootnote, CarDocs, Column, CarParts, CarHarness
 from openpilot.selfdrive.car.fw_query_definitions import FwQueryConfig, Request, StdQueries
 
-Ecu = car.CarParams.Ecu
+Ecu = CarParams.Ecu
 MIN_ACC_SPEED = 19. * CV.MPH_TO_MS
 PEDAL_TRANSITION = 10. * CV.MPH_TO_MS
 
@@ -36,7 +36,7 @@ class CarControllerParams:
       self.ACCEL_MAX = 2.0  # m/s2, lower than allowed 2.0 m/s^2 for tuning reasons
     self.ACCEL_MIN = -3.5  # m/s2
 
-    if CP.lateralTuning.which == 'torque':
+    if CP.lateralTuning.which() == 'torque':
       self.STEER_DELTA_UP = 15       # 1.0s time to peak torque
       self.STEER_DELTA_DOWN = 25     # always lower than 45 otherwise the Rav4 faults (Prius seems ok with 50)
     else:

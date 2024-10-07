@@ -1,19 +1,18 @@
 import copy
 
-from cereal import car
-
 from openpilot.common.params import Params
 from opendbc.can.can_define import CANDefine
 from opendbc.can.parser import CANParser
-from openpilot.selfdrive.car import DT_CTRL
-from openpilot.selfdrive.car.conversions import Conversions as CV
-from openpilot.selfdrive.car.filter_simple import FirstOrderFilter
-from openpilot.selfdrive.car.helpers import mean
+from openpilot.selfdrive.car import DT_CTRL, create_button_events, structs
+from openpilot.selfdrive.car.common.conversions import Conversions as CV
+from openpilot.selfdrive.car.common.filter_simple import FirstOrderFilter
+from openpilot.selfdrive.car.common.numpy_fast import mean
 from openpilot.selfdrive.car.interfaces import CarStateBase
 from openpilot.selfdrive.car.toyota.values import ToyotaFlags, CAR, DBC, STEER_THRESHOLD, NO_STOP_TIMER_CAR, \
                                                   TSS2_CAR, RADAR_ACC_CAR, EPS_SCALE, UNSUPPORTED_DSU_CAR
 
-SteerControlType = car.CarParams.SteerControlType
+ButtonType = structs.CarState.ButtonEvent.Type
+SteerControlType = structs.CarParams.SteerControlType
 
 # These steering fault definitions seem to be common across LKA (torque) and LTA (angle):
 # - high steer rate fault: goes to 21 or 25 for 1 frame, then 9 for 2 seconds
@@ -42,7 +41,6 @@ class CarState(CarStateBase):
     self.accurate_steer_angle_seen = False
     self.angle_offset = FirstOrderFilter(None, 60.0, DT_CTRL, initialized=False)
 
-    self.prev_distance_button = 0
     self.distance_button = 0
 
     self.pcm_follow_distance = 0
@@ -89,8 +87,8 @@ class CarState(CarStateBase):
     self.brakehold_governor = False
 
 
-  def update(self, cp, cp_cam):
-    ret = car.CarState.new_message()
+  def update(self, cp, cp_cam, *_) -> structs.CarState:
+    ret = structs.CarState()
 
     # Describes the acceleration request from the PCM if on flat ground, may be higher or lower if pitched
     # CLUTCH->ACCEL_NET is only accurate for gas, PCM_CRUISE->ACCEL_NET is only accurate for brake
@@ -244,12 +242,14 @@ class CarState(CarStateBase):
 
     if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR) or (self.CP.flags & ToyotaFlags.SMART_DSU and not self.CP.flags & ToyotaFlags.RADAR_CAN_FILTER):
       # distance button is wired to the ACC module (camera or radar)
-      # self.prev_distance_button = self.distance_button
-      self.prev_distance_button = self.distance_button_hold
+      # prev_distance_button = self.distance_button
+      prev_distance_button = self.distance_button_hold
       if self.CP.carFingerprint in (TSS2_CAR - RADAR_ACC_CAR):
         self.distance_button = cp_acc.vl["ACC_CONTROL"]["DISTANCE"]
       else:
         self.distance_button = cp.vl["SDSU"]["FD_BUTTON"]
+
+      ret.buttonEvents = create_button_events(self.distance_button, prev_distance_button, {1: ButtonType.gapAdjustCruise})
 
     # change experimental/chill mode on fly with long press
     if self.distance_button:

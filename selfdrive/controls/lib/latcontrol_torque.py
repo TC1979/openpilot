@@ -129,7 +129,7 @@ class LatControlTorque(LatControl):
     self.torque_params.latAccelOffset = latAccelOffset
     self.torque_params.friction = friction
 
-  def update(self, active, CS, VM, params, steer_limited, desired_curvature, llk, model_data=None):
+  def update(self, active, CS, VM, params, steer_limited, desired_curvature, calibrated_pose, model_data=None):
     pid_log = log.ControlsState.LateralTorqueState.new_message()
     nn_log = None
 
@@ -147,8 +147,9 @@ class LatControlTorque(LatControl):
           actual_curvature_rate = -VM.calc_curvature(math.radians(CS.steeringRateDeg), CS.vEgo, 0.0)
           actual_lateral_jerk = actual_curvature_rate * CS.vEgo ** 2
       else:
-        actual_curvature_llk = llk.angularVelocityCalibrated.value[2] / CS.vEgo
-        actual_curvature = interp(CS.vEgo, [2.0, 5.0], [actual_curvature_vm, actual_curvature_llk])
+        assert calibrated_pose is not None
+        actual_curvature_pose = calibrated_pose.angular_velocity.yaw / CS.vEgo
+        actual_curvature = interp(CS.vEgo, [2.0, 5.0], [actual_curvature_vm, actual_curvature_pose])
         curvature_deadzone = 0.0
       desired_lateral_accel = desired_curvature * CS.vEgo ** 2
 

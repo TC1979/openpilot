@@ -1,8 +1,9 @@
-from cereal import car
 import math
-from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, common_fault_avoidance, make_tester_present_msg, rate_limit
+import copy
+from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, common_fault_avoidance, make_tester_present_msg
+from openpilot.selfdrive.car import apply_meas_steer_torque_limits, apply_std_steer_angle_limits, common_fault_avoidance, make_tester_present_msg, structs, rate_limit
 from openpilot.selfdrive.car.can_definitions import CanData
-from openpilot.selfdrive.car.helpers import clip, interp
+from openpilot.selfdrive.car.common.numpy_fast import clip, interp
 from openpilot.selfdrive.car.interfaces import CarControllerBase
 from openpilot.selfdrive.car.toyota import toyotacan
 from openpilot.selfdrive.car.toyota.values import CAR, STATIC_DSU_MSGS, NO_STOP_TIMER_CAR, TSS2_CAR, \
@@ -12,9 +13,9 @@ from opendbc.can.packer import CANPacker
 from openpilot.common.params import Params
 from openpilot.selfdrive.car.conversions import Conversions as CV
 
-LongCtrlState = car.CarControl.Actuators.LongControlState
-SteerControlType = car.CarParams.SteerControlType
-VisualAlert = car.CarControl.HUDControl.VisualAlert
+LongCtrlState = structs.CarControl.Actuators.LongControlState
+SteerControlType = structs.CarParams.SteerControlType
+VisualAlert = structs.CarControl.HUDControl.VisualAlert
 
 ACCELERATION_DUE_TO_GRAVITY = 9.81  # m/s^2
 
@@ -324,7 +325,7 @@ class CarController(CarControllerBase):
     if self.frame % 20 == 0 and self.CP.flags & ToyotaFlags.DISABLE_RADAR.value:
       can_sends.append(make_tester_present_msg(0x750, 0, 0xF))
 
-    new_actuators = actuators.as_builder()
+    new_actuators = copy.copy(actuators)
     new_actuators.steer = apply_steer / self.params.STEER_MAX
     new_actuators.steerOutputCan = apply_steer
     new_actuators.steeringAngleDeg = self.last_angle
