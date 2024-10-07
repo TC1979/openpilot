@@ -58,6 +58,7 @@ dependencies = [
   # these should be removed
   "psutil",
   "pycryptodome", # used in updated/casync, panda, body, and a test
+  "flask",
   "setproctitle",
 
   # logreader
@@ -148,6 +149,7 @@ testpaths = [
   "selfdrive/controls",
   "selfdrive/locationd",
   "selfdrive/monitoring",
+  "selfdrive/navd/tests",
   "selfdrive/test/longitudinal_maneuvers",
   "selfdrive/test/process_replay/test_fuzzy.py",
   "system/updated",
@@ -233,7 +235,7 @@ lint.ignore = [
   "NPY002",  # new numpy random syntax is worse
   "UP038",   # (x, y) -> x|y for isinstance
 ]
-line-length = 160
+line-length = 320
 target-version ="py311"
 exclude = [
   "body",

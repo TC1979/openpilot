@@ -29,6 +29,18 @@ function agnos_init {
     fi
     $DIR/system/hardware/tici/updater $AGNOS_PY $MANIFEST
   fi
+
+  #top: change splash logo
+  if [ -f "/usr/comma/.top_splash" ]; then
+      echo "TOP splash exists."
+  else
+      echo "TOP splash not deployed yet"
+      sudo mount -o rw,remount /
+      sudo cp /data/openpilot/selfdrive/assets/bg.jpg /usr/comma/bg.jpg
+      sudo touch /usr/comma/.top_splash
+      sudo mount -o ro,remount /
+      sudo reboot
+  fi
 }
 
 function launch {
@@ -80,6 +92,10 @@ function launch {
 
   # write tmux scrollback to a file
   tmux capture-pane -pq -S-1000 > /tmp/launch_log
+
+  python ./selfdrive/car/fingerprints.py > /data/openpilot/selfdrive/car/top_tmp/AllCars
+
+  python ./force_car_recognition.py
 
   # start manager
   cd system/manager

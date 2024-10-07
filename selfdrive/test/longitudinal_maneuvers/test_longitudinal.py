@@ -1,12 +1,24 @@
 import itertools
 from parameterized import parameterized_class
 
-from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import STOP_DISTANCE
+# from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import STOP_DISTANCE
 from openpilot.selfdrive.test.longitudinal_maneuvers.maneuver import Maneuver
+from cereal import log
 
+def get_STOP_DISTANCE(personality=log.LongitudinalPersonality.standard):
+  if personality==log.LongitudinalPersonality.relaxed:
+    return 5.0
+  elif personality==log.LongitudinalPersonality.standard:
+    return 4.5
+  elif personality==log.LongitudinalPersonality.aggressive:
+    return 4.0
+  else:
+    raise NotImplementedError("Longitudinal personality not supported")
 
 # TODO: make new FCW tests
-def create_maneuvers(kwargs):
+def create_maneuvers(kwargs, stop_distance=None):
+  if stop_distance is None:
+    stop_distance = get_STOP_DISTANCE()
   maneuvers = [
     Maneuver(
       'approach stopped car at 25m/s, initial distance: 120m',
@@ -132,7 +144,7 @@ def create_maneuvers(kwargs):
       duration=20.,
       initial_speed=0.,
       lead_relevancy=True,
-      initial_distance_lead=STOP_DISTANCE,
+      initial_distance_lead=stop_distance,
       speed_lead_values=[0., 0., 2.],
       breakpoints=[1., 10., 15.],
       ensure_start=True,

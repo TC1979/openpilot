@@ -2,6 +2,7 @@ import os
 import time
 
 from cereal import car
+from openpilot.common.params import Params
 from openpilot.selfdrive.car import carlog, gen_empty_fingerprint
 from openpilot.selfdrive.car.can_definitions import CanRecvCallable, CanSendCallable
 from openpilot.selfdrive.car.fingerprints import eliminate_incompatible_cars, all_legacy_fingerprint_cars
@@ -156,6 +157,10 @@ def get_car_interface(CP):
 def get_car(can_recv: CanRecvCallable, can_send: CanSendCallable, set_obd_multiplexing: ObdCallback, experimental_long_allowed: bool,
             num_pandas: int = 1, cached_params: type[car.CarParams] | None = None):
   candidate, fingerprints, vin, car_fw, source, exact_match = fingerprint(can_recv, can_send, set_obd_multiplexing, num_pandas, cached_params)
+
+  if Params().get("CarModel") is not None:
+    car_model = Params().get("CarModel")
+    candidate = car_model.decode("utf-8")
 
   if candidate is None:
     carlog.error({"event": "car doesn't match any fingerprints", "fingerprints": repr(fingerprints)})

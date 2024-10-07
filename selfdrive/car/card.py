@@ -18,6 +18,7 @@ from openpilot.selfdrive.car.can_definitions import CanData, CanRecvCallable, Ca
 from openpilot.selfdrive.car.fw_versions import ObdCallback
 from openpilot.selfdrive.car.car_helpers import get_car
 from openpilot.selfdrive.car.interfaces import CarInterfaceBase
+from openpilot.selfdrive.car.toyota.values import TSS2_CAR, ToyotaFlags
 from openpilot.selfdrive.controls.lib.events import Events
 
 REPLAY = "REPLAY" in os.environ
@@ -107,6 +108,18 @@ class Car:
     self.CP.alternativeExperience = 0
     if not self.disengage_on_accelerator:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.DISABLE_DISENGAGE_ON_GAS
+
+    dp_atl = self.params.get_bool("dp_atl")
+    if dp_atl:
+      self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.ALKA
+
+    auto_brakehold = self.params.get_bool("AleSato_AutomaticBrakeHold") and self.CP.carFingerprint in TSS2_CAR and not (self.CP.flags & ToyotaFlags.HYBRID.value)
+    if auto_brakehold:
+      self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.ALLOW_AEB
+
+    sport_mode = self.params.get_bool("Dynamic_Follow")
+    if sport_mode:
+      self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX
 
     openpilot_enabled_toggle = self.params.get_bool("OpenpilotEnabledToggle")
 

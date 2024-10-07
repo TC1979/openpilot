@@ -23,6 +23,10 @@ from openpilot.system.version import get_build_metadata, terms_version, training
 def manager_init() -> None:
   save_bootlog()
 
+  # Clear the error log on boot to prevent old errors from hanging around
+  if os.path.isfile(os.path.join(sentry.CRASHES_DIR, 'error.txt')):
+    os.remove(os.path.join(sentry.CRASHES_DIR, 'error.txt'))
+
   build_metadata = get_build_metadata()
 
   params = Params()
@@ -37,9 +41,37 @@ def manager_init() -> None:
     ("DisengageOnAccelerator", "0"),
     ("GsmMetered", "1"),
     ("HasAcceptedTerms", "0"),
+    ("IsLdwEnabled", "1"),
+    ("IsMetric", "1"),
     ("LanguageSetting", "main_en"),
+    ("NavSettingTime24h", "1"),
     ("OpenpilotEnabledToggle", "1"),
+    ("RecordFront", "0"),
     ("LongitudinalPersonality", str(log.LongitudinalPersonality.standard)),
+
+    ("AleSato_AutomaticBrakeHold", "0"),
+    ("CarModel", ""),
+    ("ToyotaTune", "1"),
+    ("dp_atl", "0"),
+    ("dp_jetson", "0"),
+    ("SearchInput", "0"),
+    ("fleetmanager", "1"),
+    ("DrivingPersonalitiesUIWheel", "1"),
+    ("e2e_link", "1"),
+    ("SpeedLimitControl", "0"),
+    ("MapSpeedLimitControl", "1"),
+    ("NavSpeedLimitControl", "1"),
+    ("Dynamic_Follow", "0"),
+    ("MTSCEnabled", "0"),
+    ("NudgelessLaneChange", "0"),
+    ("NNFF", "0"),
+    ("PrimeAd", "1"),
+    ("ReverseAccChange", "1"),
+    ("TimSignals", "1"),
+    ("toyotaautolock", "1"),
+    ("toyotaautounlock", "1"),
+    ("toyota_bsm", "0"),
+    ("TurnVisionControl", "1"),
   ]
   if not PC:
     default_params.append(("LastUpdateTime", datetime.datetime.now(datetime.UTC).replace(tzinfo=None).isoformat().encode('utf8')))
@@ -127,6 +159,12 @@ def manager_thread() -> None:
     ignore.append("pandad")
   ignore += [x for x in os.getenv("BLOCK", "").split(",") if len(x) > 0]
 
+  if params.get_bool("dp_jetson"):
+    ignore += ["dmonitoringmodeld", "dmonitoringd", "logcatd", "logmessaged", "loggerd", "tombstoned", "uploader"]
+
+  if not params.get_bool("fleetmanager"):
+    ignore += ["fleetmanager"]
+
   sm = messaging.SubMaster(['deviceState', 'carParams'], poll='deviceState')
   pm = messaging.PubMaster(['managerState'])
 
@@ -144,6 +182,10 @@ def manager_thread() -> None:
       params.clear_all(ParamKeyType.CLEAR_ON_ONROAD_TRANSITION)
     elif not started and started_prev:
       params.clear_all(ParamKeyType.CLEAR_ON_OFFROAD_TRANSITION)
+
+      # Clear the error log on boot to prevent old errors from hanging around
+      if os.path.isfile(os.path.join(sentry.CRASHES_DIR, 'error.txt')):
+        os.remove(os.path.join(sentry.CRASHES_DIR, 'error.txt'))
 
     # update onroad params, which drives pandad's safety setter thread
     if started != started_prev:

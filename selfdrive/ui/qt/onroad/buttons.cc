@@ -1,6 +1,9 @@
 #include "selfdrive/ui/qt/onroad/buttons.h"
 
+#include <chrono>
+#include <QElapsedTimer>
 #include <QPainter>
+#include <QTimer>
 
 #include "selfdrive/ui/qt/util.h"
 
@@ -19,7 +22,8 @@ void drawIcon(QPainter &p, const QPoint &center, const QPixmap &img, const QBrus
 ExperimentalButton::ExperimentalButton(QWidget *parent) : experimental_mode(false), engageable(false), QPushButton(parent) {
   setFixedSize(btn_size, btn_size);
 
-  engage_img = loadPixmap("../assets/img_chffr_wheel.png", {img_size, img_size});
+  engage_img = loadPixmap("../assets/images/button_home.png", {img_size, img_size});
+  engage_img = engage_img.scaled(engage_img.width() * 1.2, engage_img.height() * 1.2, Qt::KeepAspectRatio);
   experimental_img = loadPixmap("../assets/img_experimental.svg", {img_size, img_size});
   QObject::connect(this, &QPushButton::clicked, this, &ExperimentalButton::changeMode);
 }
@@ -45,5 +49,20 @@ void ExperimentalButton::updateState(const UIState &s) {
 void ExperimentalButton::paintEvent(QPaintEvent *event) {
   QPainter p(this);
   QPixmap img = experimental_mode ? experimental_img : engage_img;
-  drawIcon(p, QPoint(btn_size / 2, btn_size / 2), img, QColor(0, 0, 0, 166), (isDown() || !engageable) ? 0.6 : 1.0);
+  drawIcon(p, QPoint(btn_size / 2, btn_size / 2), img, QColor(25, 120, 150, 0), (isDown() || !engageable) ? 0.6 : 1.0);
+}
+
+// MapSettingsButton
+MapSettingsButton::MapSettingsButton(QWidget *parent) : QPushButton(parent) {
+  setFixedSize(btn_size, btn_size);
+  settings_img = loadPixmap("../assets/navigation/icon_directions_outlined.svg", {img_size, img_size});
+
+  // hidden by default, made visible if map is created (has prime or mapbox token)
+  setVisible(false);
+  setEnabled(false);
+}
+
+void MapSettingsButton::paintEvent(QPaintEvent *event) {
+  QPainter p(this);
+  drawIcon(p, QPoint(btn_size / 2, btn_size / 2), settings_img, QColor(0, 0, 0, 166), isDown() ? 0.6 : 1.0);
 }

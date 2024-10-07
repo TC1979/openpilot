@@ -14,6 +14,8 @@
 #include "selfdrive/ui/qt/widgets/prime.h"
 #include "selfdrive/ui/qt/widgets/scrollview.h"
 #include "selfdrive/ui/qt/widgets/ssh_keys.h"
+#include "selfdrive/ui/qt/offroad/timpilot.h"
+#include "selfdrive/ui/qt/offroad/nav_settings.h"
 
 TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
   // param, title, desc, icon
@@ -69,6 +71,20 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
       tr("Display speed in km/h instead of mph."),
       "../assets/offroad/icon_metric.png",
     },
+#ifdef ENABLE_MAPS
+    {
+      "NavSettingTime24h",
+      tr("Show ETA in 24h Format"),
+      tr("Use 24h format instead of am/pm"),
+      "../assets/offroad/icon_metric.png",
+    },
+    {
+      "NavSettingLeftSide",
+      tr("Show Map on Left Side of UI"),
+      tr("Show map on left side when in split screen view."),
+      "../assets/offroad/icon_road.png",
+    },
+#endif
   };
 
 
@@ -160,6 +176,7 @@ void TogglesPanel::updateToggles() {
       experimental_mode_toggle->setEnabled(true);
       experimental_mode_toggle->setDescription(e2e_description);
       long_personality_setting->setEnabled(true);
+      long_personality_setting->refresh();
     } else {
       // no long for now
       experimental_mode_toggle->setEnabled(false);
@@ -189,6 +206,23 @@ void TogglesPanel::updateToggles() {
 
 DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   setSpacing(50);
+
+  auto nooPopup = new MyNooPopup(this);
+  auto qrcodeNooBtn = new ButtonControl(tr("Navigate on Openpilot"), "QR-Code",
+                                        tr("Open the destination input web page for navigation on openpilot"));
+  connect(qrcodeNooBtn, &ButtonControl::clicked, [=] {
+      nooPopup->exec();
+    });
+  addItem(qrcodeNooBtn);
+
+  auto footagePopup = new MyFootagePopup(this);
+  auto qrcodeBtn = new ButtonControl(tr("DashCam footage"), "QR-Code",
+                                     tr("Watch and/or download recordings from comma device cameras"));
+  connect(qrcodeBtn, &ButtonControl::clicked, [=] {
+      footagePopup->exec();
+    });
+  addItem(qrcodeBtn);
+
   addItem(new LabelControl(tr("Dongle ID"), getDongleId().value_or(tr("N/A"))));
   addItem(new LabelControl(tr("Serial"), params.get("HardwareSerial").c_str()));
 
@@ -205,6 +239,7 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   auto dcamBtn = new ButtonControl(tr("Driver Camera"), tr("PREVIEW"),
                                    tr("Preview the driver facing camera to ensure that driver monitoring has good visibility. (vehicle must be off)"));
   connect(dcamBtn, &ButtonControl::clicked, [=]() { emit showDriverView(); });
+  connect(uiState(), &UIState::offroadTransition, dcamBtn, &QPushButton::setEnabled);
   addItem(dcamBtn);
 
   auto resetCalibBtn = new ButtonControl(tr("Reset Calibration"), tr("RESET"), "");
@@ -250,13 +285,13 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   QObject::connect(uiState(), &UIState::primeTypeChanged, [this] (PrimeType type) {
     pair_device->setVisible(type == PrimeType::UNPAIRED);
   });
-  QObject::connect(uiState(), &UIState::offroadTransition, [=](bool offroad) {
-    for (auto btn : findChildren<ButtonControl *>()) {
-      if (btn != pair_device) {
-        btn->setEnabled(offroad);
-      }
-    }
-  });
+//  QObject::connect(uiState(), &UIState::offroadTransition, [=](bool offroad) {
+//    for (auto btn : findChildren<ButtonControl *>()) {
+//      if (btn != pair_device) {
+//        btn->setEnabled(offroad);
+//      }
+//    }
+//  });
 
   // power buttons
   QHBoxLayout *power_layout = new QHBoxLayout();
@@ -272,9 +307,9 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   power_layout->addWidget(poweroff_btn);
   QObject::connect(poweroff_btn, &QPushButton::clicked, this, &DevicePanel::poweroff);
 
-  if (!Hardware::PC()) {
-    connect(uiState(), &UIState::offroadTransition, poweroff_btn, &QPushButton::setVisible);
-  }
+//  if (!Hardware::PC()) {
+//    connect(uiState(), &UIState::offroadTransition, poweroff_btn, &QPushButton::setVisible);
+//  }
 
   setStyleSheet(R"(
     #reboot_btn { height: 120px; border-radius: 15px; background-color: #393939; }
@@ -363,7 +398,7 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
   QPushButton *close_btn = new QPushButton(tr("×"));
   close_btn->setStyleSheet(R"(
     QPushButton {
-      font-size: 140px;
+      font-size: 120px;
       padding-bottom: 20px;
       border-radius: 100px;
       background-color: #292929;
@@ -373,9 +408,9 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
       background-color: #3B3B3B;
     }
   )");
-  close_btn->setFixedSize(200, 200);
-  sidebar_layout->addSpacing(45);
-  sidebar_layout->addWidget(close_btn, 0, Qt::AlignCenter);
+  close_btn->setFixedSize(140, 140);
+  sidebar_layout->addSpacing(40);
+  sidebar_layout->addWidget(close_btn, 0, Qt::AlignLeft);
   QObject::connect(close_btn, &QPushButton::clicked, this, &SettingsWindow::closeSettings);
 
   // setup panels
@@ -391,6 +426,8 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
     {tr("Network"), new Networking(this)},
     {tr("Toggles"), toggles},
     {tr("Software"), new SoftwarePanel(this)},
+    {tr("T.O.P"), new TimpilotPanel(this)},
+    {tr("Navigation"), new NavigationPanel(this)},
   };
 
   nav_btns = new QButtonGroup(this);
@@ -450,4 +487,186 @@ SettingsWindow::SettingsWindow(QWidget *parent) : QFrame(parent) {
       border-radius: 30px;
     }
   )");
+}
+
+TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
+  main_layout = new QStackedLayout(this);
+  home = new QWidget(this);
+  QVBoxLayout* fcr_layout = new QVBoxLayout(home);
+  fcr_layout->setContentsMargins(0, 20, 0, 20);
+
+  QString set = QString::fromStdString(Params().get("CarModel"));
+
+  QPushButton* setCarBtn = new QPushButton(set.length() ? set : tr("Select Car"));
+  setCarBtn->setObjectName("setCarBtn");
+  setCarBtn->setStyleSheet("margin-right: 30px;");
+  connect(setCarBtn, &QPushButton::clicked, [=]() { main_layout->setCurrentWidget(setCar); });
+  fcr_layout->addSpacing(10);
+  fcr_layout->addWidget(setCarBtn, 0, Qt::AlignRight);
+  fcr_layout->addSpacing(10);
+
+  home_widget = new QWidget(this);
+  QVBoxLayout* toggle_layout = new QVBoxLayout(home_widget);
+  home_widget->setObjectName("homeWidget");
+
+  ScrollView *scroller = new ScrollView(home_widget, this);
+  scroller->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  fcr_layout->addWidget(scroller, 1);
+
+  main_layout->addWidget(home);
+
+  setCar = new ForceCarRecognition(this);
+  connect(setCar, &ForceCarRecognition::backPress, [=]() { main_layout->setCurrentWidget(home); });
+  connect(setCar, &ForceCarRecognition::selectedCar, [=]() {
+    QString set = QString::fromStdString(Params().get("CarModel"));
+    setCarBtn->setText(set.length() ? set : tr("Select your car"));
+    main_layout->setCurrentWidget(home);
+  });
+  main_layout->addWidget(setCar);
+
+  QPalette pal = palette();
+  pal.setColor(QPalette::Background, QColor(0x29, 0x29, 0x29));
+  setAutoFillBackground(true);
+  setPalette(pal);
+
+  setStyleSheet(R"(
+    #backBtn, #setCarBtn {
+      font-size: 50px;
+      margin: 0px;
+      padding: 20px;
+      border-width: 0;
+      border-radius: 30px;
+      color: #dddddd;
+      background-color: #444444;
+    }
+  )");
+
+  QList<ParamControl*> toggles;
+
+  toggles.append(new ParamControl("QuietDrive",
+                                  tr("Quiet Drive"),
+                                  tr("TOP will display alerts but only play the most important warning sounds. This feature can be toggled while the car is on."),
+                                  "../assets/offroad/icon_mute.png",
+                                  this));
+
+  toggles.append(new ParamControl("OnroadScreenOff",
+                                  tr("Driving Screen Off"),
+                                  tr("Turn off the device screen to protect the OLED panel after driving starts. It automatically brightens or turns on when a touch or event occurs."),
+                                  "../assets/offroad/icon_metric.png",
+                                  this));
+
+  toggles.append(new ParamControl("dp_atl",
+                                  tr("Lateral Controls Always On"),
+                                  tr("Lateral control will always be on and will not be interrupted by braking."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("NNFF",
+                                  tr("NNFF Torque Control"),
+                                  tr("Use Twilsonco's Neural Network Feedforward torque system for more precise lateral control."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("topsng",
+                                  tr("Stop And Go"),
+                                  tr("Enabled the Stop And Go feature and get auto hold."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("ToyotaTune",
+                                  tr("Toyota Longitudinal Tuning"),
+                                  tr("Using the longitudinal Tuning can increase the sensitivity of longitudinal control in Toyota models."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("Dynamic_Follow",
+                                  tr("Dynamic Distance Adjustment"),
+                                  tr("The distance to the lead car will no longer be a fixed reaction time, but will be dynamically adjusted based on the speed of the vehicle."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("NudgelessLaneChange",
+                                  tr("Blinker Lane Change"),
+                                  tr("Change lanes without the need to nudge the steering wheel first.\nDisabled: Need to nudge the steering wheel to change lanes.\nEnabled: Nudgeless.\nSpeed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above 35mph."),
+                                  "../assets/offroad/icon_lane.png",
+                                  this));
+
+  toggles.append(new ParamControl("TurnVisionControl",
+                                  tr("Vision Based Turn Control"),
+                                  tr("Use vision path predictions to estimate the appropriate speed to drive through turns ahead."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("MTSCEnabled",
+                                  tr("Map Turn Speed Control"),
+                                  tr("Enables M-TSC. When enabled, the car will slow down when it predicts a lateral acceleration greater than 2.0 m/s^2."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("fleetmanager",
+                                  tr("Enable Local Nav and File Server"),
+                                  tr("This will allow you to use the Navigation feature with your own access key and access openpilot data and files.\nUse web interface to control it: *http://&lt;device_ip&gt;:8082*.\nYou will need to apply your own mapbox token at https://www.mapbox.com/.\nInternet access from mobile phone (tethering) is required."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("toyotaautolock",
+                                  tr("Enable Door Auto Lock"),
+                                  tr("Enabled this to lock doors when drive above 25 km/h. Only work on some Toyota vehicles."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("toyotaautounlock",
+                                  tr("Enable Door Auto Unlock"),
+                                  tr("Enabled this to unlock doors when shift to gear P. Only work on some Toyota vehicles."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("AleSato_AutomaticBrakeHold",
+                                  tr("Automatic Brake Hold"),
+                                  tr("Activates the car's brakes after 1 seconds stopped. (Only support on Toyota TSS2 Hybrid vehicles)"),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("toyota_bsm",
+                                  tr("Fix Toyota BSM Signal"),
+                                  tr("Enhance BSM function for some Toyota vehicles that openpilot currently does not support."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("ReverseAccChange",
+                                  tr("ACC +/-: Long Press Reverse"),
+                                  tr("Change the ACC +/- buttons behavior with cruise speed change in openpilot.\nDisabled (Stock): Short = 1, Long = 5.\nEnabled: Short and Long = 5."),
+                                  "../assets/offroad/icon_acc_change.png",
+                                  this));
+
+  toggles.append(new ParamControl("SpeedLimitControl",
+                                  tr("Speed Limit Control"),
+                                  tr("Enables Speed Limit Control. When enabled openpilot will adjust to the speed limit supplied by nav and mapd information. If you press the pedal when the speed limit is activated, the max speed will increase to the manual set speed."),
+                                  "../assets/img_experimental_white.svg",
+                                  this));
+
+  toggles.append(new ParamControl("dp_jetson",
+                                  tr("Enable Jetson Support"),
+                                  tr("Enable this option if you intend to run dp on Nvidia Jetson. Reboot required."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  for (ParamControl *toggle : toggles) {
+    if (main_layout->count() != 0) {
+      toggle_layout->addWidget(horizontal_line());
+    }
+    toggle_layout->addWidget(toggle);
+  }
+}
+
+QFrame *horizontal_line(QWidget *parent) {
+  QFrame *line = new QFrame(parent);
+  line->setFrameShape(QFrame::StyledPanel);
+  line->setStyleSheet(R"(
+    border-width: 1px;
+    border-bottom-style: solid;
+    border-color: gray;
+  )");
+  line->setFixedHeight(2);
+  return line;
 }

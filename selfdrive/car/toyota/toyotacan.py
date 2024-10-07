@@ -33,18 +33,19 @@ def create_lta_steer_command(packer, steer_control_type, steer_angle, steer_req,
   return packer.make_can_msg("STEERING_LTA", 0, values)
 
 
-def create_accel_command(packer, accel, pcm_cancel, standstill_req, lead, acc_type, fcw_alert, distance):
+def create_accel_command(packer, accel, accel_raw, permit_braking, aego, enabled, pcm_cancel, standstill_req, lead, acc_type, fcw_alert, distance, reverse_acc):
   # TODO: find the exact canceling bit that does not create a chime
   values = {
-    "ACCEL_CMD": accel,
+    "ACCEL_CMD": accel if enabled and not pcm_cancel else 0.,  # compensated accel command
     "ACC_TYPE": acc_type,
     "DISTANCE": distance,
     "MINI_CAR": lead,
-    "PERMIT_BRAKING": 1,
+    "PERMIT_BRAKING": permit_braking,
     "RELEASE_STANDSTILL": not standstill_req,
     "CANCEL_REQ": pcm_cancel,
-    "ALLOW_LONG_PRESS": 1,
+    "ALLOW_LONG_PRESS": reverse_acc,
     "ACC_CUT_IN": fcw_alert,  # only shown when ACC enabled
+    "ACCEL_CMD_ALT":  accel_raw if enabled else aego,  # raw accel command, pcm uses this to calculate a compensatory force
   }
   return packer.make_can_msg("ACC_CONTROL", 0, values)
 
@@ -116,3 +117,37 @@ def create_ui_command(packer, steer, chime, left_line, right_line, left_lane_dep
     ]})
 
   return packer.make_can_msg("LKAS_HUD", 0, values)
+
+
+def create_brakehold_command(packer, stock_AEB, cut3frames):
+  values = {
+    "DSS1GDRV": 1023,
+    "PBRTRGR": cut3frames,
+  }
+
+  if len(stock_AEB):
+    values.update({s: stock_AEB[s] for s in [
+      # They are not all necessary since brakehold only sends stopped,
+      # however we will leave prepared for the future alternative AEB of the comma.ai
+      "DSS1GDRV",
+      "DS1STAT2",
+      "DS1STBK2",
+      "PCSWAR",
+      "PCSALM",
+      "PCSOPR",
+      "PCSABK",
+      "PBATRGR",
+      "PPTRGR",
+      "IBTRGR",
+      "CLEXTRGR",
+      "IRLT_REQ",
+      "BRKHLD",
+      "AVSTRGR",
+      "VGRSTRGR",
+      "PREFILL",
+      "PBRTRGR",
+      "PCSDIS",
+      "PBPREPMP",
+    ]})
+
+  return packer.make_can_msg("PRE_COLLISION_2", 0, values)

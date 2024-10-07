@@ -195,6 +195,23 @@ static void update_state(UIState *s) {
   }
   if (sm.updated("carParams")) {
     scene.longitudinal_control = sm["carParams"].getCarParams().getOpenpilotLongitudinalControl();
+    if (scene.longitudinal_control) {
+      scene.experimental_mode_via_wheel = sm["carParams"].getCarParams().getExperimentalModeViaWheel();
+    }
+  }
+  if (sm.updated("carState")) {
+    if (scene.experimental_mode_via_wheel) {
+      scene.steering_wheel_car = sm["carState"].getCarState().getSteeringWheelCar();
+    }
+    if (scene.tim_signals) {
+      scene.blind_spot_left = sm["carState"].getCarState().getLeftBlindspot();
+      scene.blind_spot_right = sm["carState"].getCarState().getRightBlindspot();
+      scene.turn_signal_left = sm["carState"].getCarState().getLeftBlinker();
+      scene.turn_signal_right = sm["carState"].getCarState().getRightBlinker();
+    }
+  }
+  if (sm.updated("controlsState")) {
+    scene.experimental_mode = sm["controlsState"].getControlsState().getExperimentalMode();
   }
   if (sm.updated("wideRoadCameraState")) {
     auto cam_state = sm["wideRoadCameraState"].getWideRoadCameraState();
@@ -214,13 +231,33 @@ static void update_state(UIState *s) {
 void ui_update_params(UIState *s) {
   auto params = Params();
   s->scene.is_metric = params.getBool("IsMetric");
+  s->scene.map_on_left = params.getBool("NavSettingLeftSide");
+  UIScene &scene = s->scene;
+  scene.onroadScreenOff = params.getBool("OnroadScreenOff");
+  scene.driving_personalities_ui_wheel = params.getBool("DrivingPersonalitiesUIWheel");
+  scene.tim_signals = params.getBool("TimSignals");
+  scene.mute_dm = params.getBool("dp_jetson");
+  scene.experimental_mode_via_wheel = params.getBool("e2e_link");
+}
+
+void ui_live_update_params(UIState *s) {
+  static auto params = Params();
+  UIScene &scene = s->scene;
+  if (scene.driving_personalities_ui_wheel) {
+    scene.personality_profile = params.getInt("LongitudinalPersonality");
+  }
 }
 
 void UIState::updateStatus() {
   if (scene.started && sm->updated("controlsState")) {
     auto controls_state = (*sm)["controlsState"].getControlsState();
+    auto alert_status = controls_state.getAlertStatus();
     auto state = controls_state.getState();
-    if (state == cereal::ControlsState::OpenpilotState::PRE_ENABLED || state == cereal::ControlsState::OpenpilotState::OVERRIDING) {
+    if (alert_status == cereal::ControlsState::AlertStatus::USER_PROMPT) {
+      status = STATUS_WARNING;
+    } else if (alert_status == cereal::ControlsState::AlertStatus::CRITICAL) {
+      status = STATUS_ALERT;
+    } else if (state == cereal::ControlsState::OpenpilotState::PRE_ENABLED || state == cereal::ControlsState::OpenpilotState::OVERRIDING) {
       status = STATUS_OVERRIDE;
     } else {
       status = controls_state.getEnabled() ? STATUS_ENGAGED : STATUS_DISENGAGED;
@@ -237,13 +274,18 @@ void UIState::updateStatus() {
     scene.world_objects_visible = false;
     emit offroadTransition(!scene.started);
   }
+
+  // Update the live parameters every 5hz
+  if (sm->frame % (UI_FREQ / 5) == 0 || !scene.started) {
+    ui_live_update_params(uiState());
+  }
 }
 
 UIState::UIState(QObject *parent) : QObject(parent) {
   sm = std::make_unique<SubMaster, const std::initializer_list<const char *>>({
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState",
     "pandaStates", "carParams", "driverMonitoringState", "carState", "liveLocationKalman", "driverStateV2",
-    "wideRoadCameraState", "managerState", "clocks",
+    "wideRoadCameraState", "managerState", "navInstruction", "navRoute", "clocks",
   });
 
   Params params;
@@ -263,10 +305,6 @@ void UIState::update() {
   update_sockets(this);
   update_state(this);
   updateStatus();
-
-  if (std::getenv("PRIME_TYPE")) {
-      setPrimeType((PrimeType)atoi(std::getenv("PRIME_TYPE")));
-  }
 
   if (sm->frame % UI_FREQ == 0) {
     watchdog_kick(nanos_since_boot());
@@ -336,6 +374,13 @@ void Device::updateBrightness(const UIState &s) {
   int brightness = brightness_filter.update(clipped_brightness);
   if (!awake) {
     brightness = 0;
+  } else if (s.scene.onroadScreenOff) {
+      if (s.status == STATUS_WARNING || s.status == STATUS_ALERT) {
+        // I personal feel more comfortable to keep 0.4 second screen-on after warning and alert
+        interactive_timeout = 0.4 * UI_FREQ;
+      } else if (s.scene.started && interactive_timeout == 0) {
+        brightness = 0;
+      }
   }
 
   if (brightness != last_brightness) {

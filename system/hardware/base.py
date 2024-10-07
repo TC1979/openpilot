@@ -144,3 +144,7 @@ class HardwareBase(ABC):
 
   def get_modem_data_usage(self):
     return -1, -1
+
+  @abstractmethod
+  def get_ip_address(self):
+    pass

@@ -380,6 +380,8 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   fanSpeedPercentDesired @10 :UInt16;
   screenBrightnessPercent @37 :Int8;
 
+  wifiIpAddress @46 :Text;
+  
   struct ThermalZone {
     name @0 :Text;
     temp @1 :Float32;
@@ -697,6 +699,7 @@ struct ControlsState @0x97ff69c53601abf1 {
   personality @66 :LongitudinalPersonality;
 
   longControlState @30 :Car.CarControl.Actuators.LongControlState;
+  vPid @2 :Float32;
   vTargetLead @3 :Float32;
   vCruise @22 :Float32;  # actual set speed
   vCruiseCluster @63 :Float32;  # set speed to display in the UI
@@ -793,6 +796,7 @@ struct ControlsState @0x97ff69c53601abf1 {
     saturated @7 :Bool;
     actualLateralAccel @9 :Float32;
     desiredLateralAccel @10 :Float32;
+    nnLog @11 :List(Float32);
    }
 
   struct LateralLQRState {
@@ -864,7 +868,6 @@ struct ControlsState @0x97ff69c53601abf1 {
   canMonoTimesDEPRECATED @21 :List(UInt64);
   desiredCurvatureRateDEPRECATED @62 :Float32;
   canErrorCounterDEPRECATED @57 :UInt32;
-  vPidDEPRECATED @2 :Float32;
 }
 
 struct DrivingModelData {

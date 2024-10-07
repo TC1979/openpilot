@@ -396,7 +396,7 @@ void process_peripheral_state(Panda *panda, PubMaster *pm, bool no_fan_control) 
     }
 
     // Disable IR on input timeout
-    if (nanos_since_boot() - last_driver_camera_t > 1e9) {
+    if (Params().getBool("dp_jetson") || nanos_since_boot() - last_driver_camera_t > 1e9) {
       ir_pwr = 0;
     }
 

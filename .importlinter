@@ -62,4 +62,10 @@ ignore_imports =
     openpilot.selfdrive.car.tests.test_car_interfaces -> openpilot.selfdrive.pandad
     openpilot.selfdrive.car.tests.test_models -> openpilot.selfdrive.pandad
     openpilot.selfdrive.car.tests.test_car_interfaces -> openpilot.selfdrive.test.fuzzy_generation
+    openpilot.selfdrive.car.car_helpers -> openpilot.common.params
+    openpilot.selfdrive.car.interfaces -> openpilot.common.params
+    openpilot.selfdrive.car.toyota.carcontroller -> openpilot.common.params
+    openpilot.selfdrive.car.toyota.carstate -> openpilot.common.params
+    openpilot.selfdrive.car.toyota.interface -> openpilot.common.params
+    openpilot.selfdrive.car.toyota.values -> openpilot.common.params
 unmatched_ignore_imports_alerting = warn

@@ -346,3 +346,10 @@ MIGRATION = {
 
   "mock": MOCK.MOCK,
 }
+
+def main():
+  for value in sorted(set(MIGRATION.values())):
+    print(value)
+
+if __name__ == "__main__":
+  main()
