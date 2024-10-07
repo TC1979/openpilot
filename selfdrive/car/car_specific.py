@@ -1,5 +1,6 @@
 from cereal import car
 import cereal.messaging as messaging
+from openpilot.common.params import Params
 from openpilot.selfdrive.car import DT_CTRL, structs
 from openpilot.selfdrive.car.interfaces import MAX_CTRL_SPEED, CarStateBase, CarControllerBase
 from openpilot.selfdrive.car.volkswagen.values import CarControllerParams as VWCarControllerParams
@@ -36,6 +37,8 @@ class CarSpecificEvents:
     self.low_speed_alert = False
     self.no_steer_warning = False
     self.silent_steer_warning = True
+    self.prev_atl = False
+    self.dp_atl = Params().get_bool("dp_atl")
 
   def update(self, CS: CarStateBase, CS_prev: car.CarState, CC: CarControllerBase, CC_prev: car.CarControl):
     if self.CP.carName in ('body', 'mock'):
@@ -109,6 +112,18 @@ class CarSpecificEvents:
           if CS.out.vEgo < 0.001:
             # while in standstill, send a user alert
             events.add(EventName.manualRestart)
+
+      if self.dp_atl and (self.CP.carFingerprint in TSS2_CAR or (self.CP.flags & ToyotaFlags.SMART_DSU)):
+        if not self.prev_atl and ret.cruiseState.available:
+          events.add(EventName.atlEngageSound)
+          Params().put_bool("LateralAllowed", True)
+        elif self.prev_atl and not (ret.cruiseState.available and self.CP.openpilotLongitudinalControl):
+          events.add(EventName.atlDisengageSound)
+          Params().put_bool("LateralAllowed", False)
+        self.prev_atl = ret.cruiseState.available
+
+      if self.CS.brakehold_governor:
+        events.add(EventName.automaticBrakehold)
 
     elif self.CP.carName == 'gm':
       # The ECM allows enabling on falling edge of set, but only rising edge of resume
