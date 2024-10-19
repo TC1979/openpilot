@@ -63,20 +63,41 @@ class RouteEngine:
     self.smallest_total_distance_remaining = math.inf
     self.distance_delta = 0
 
-
     self.api = None
     self.mapbox_token = None
+    self.mapbox_host = None
+
     if "MAPBOX_TOKEN" in os.environ:
       self.mapbox_token = os.environ["MAPBOX_TOKEN"]
       self.mapbox_host = "https://api.mapbox.com"
       self.params.put("MapboxPublicKey", self.mapbox_token)
-    # NAV
     elif self.params.get_int("PrimeType") == 0:
       self.mapbox_token = self.params.get("MapboxPublicKey", encoding='utf8')
       self.mapbox_host = "https://api.mapbox.com"
     else:
-      self.api = Api(self.params.get("DongleId", encoding='utf8'))
-      self.mapbox_host = "https://maps.comma.ai"
+      try:
+        self.api = Api(self.params.get("DongleId", encoding='utf8'))
+        self.mapbox_host = "https://maps.comma.ai"
+      except Exception as e:
+        cloudlog.exception(f"Failed to initialize API: {e}")
+
+    if not self.mapbox_token and not self.api:
+      cloudlog.error("No Mapbox token or API available. Navigation may not work.")
+
+  def get_token(self):
+    if self.mapbox_token:
+      return self.mapbox_token
+    elif self.api:
+      try:
+        token = self.api.get_token()
+        if token:
+          return token
+        else:
+          cloudlog.error("API.get_token() returned None")
+      except Exception as e:
+        cloudlog.exception(f"Failed to get token from API: {e}")
+    cloudlog.error("No valid token available")
+    return None
 
   def update(self):
     self.sm.update(0)
@@ -128,17 +149,25 @@ class RouteEngine:
       self.recompute_countdown = max(0, self.recompute_countdown - 1)
 
   def calculate_route(self, destination: Coordinate, reason: RECOMPUTE_REASON):
-    cloudlog.warning(f"Calculating route due to {RECOMPUTE_REASON} {self.last_position} -> {destination}")
+    cloudlog.warning(f"Calculating route due to {reason} {self.last_position} -> {destination}")
     self.smallest_total_distance_remaining = math.inf
     self.nav_destination = destination
+
+    if self.last_position is None:
+      cloudlog.error("No valid starting position for route calculation")
+      self.send_route()
+      return
 
     lang = self.params.get('LanguageSetting', encoding='utf8')
     if lang is not None:
       lang = lang.replace('main_', '')
 
-    token = self.mapbox_token
+    token = self.get_token()
     if token is None:
-      token = self.api.get_token()
+      cloudlog.error("No valid token available for route calculation")
+      self.clear_route()
+      self.send_route()
+      return
 
     params = {
       'access_token': token,
@@ -171,10 +200,19 @@ class RouteEngine:
     try:
       resp = requests.get(url, params=params, timeout=10)
       if resp.status_code != 200:
-        cloudlog.event("API request failed", status_code=resp.status_code, text=resp.text, error=True)
-      resp.raise_for_status()
+        cloudlog.error(f"API request failed: status_code={resp.status_code}, text={resp.text}")
+        self.clear_route()
+        self.send_route()
+        return
 
       r = resp.json()
+
+      if 'routes' not in r or len(r['routes']) == 0:
+        cloudlog.error("No routes found in API response")
+        self.clear_route()
+        self.send_route()
+        return
+
       r1 = resp.json()
       # Function to remove specified keys recursively unnecessary for display
       def remove_keys(obj, keys_to_remove):
@@ -241,17 +279,18 @@ class RouteEngine:
       # TODO: only clear once we're past a waypoint
       self.params.remove('NavDestinationWaypoints')
 
-    except requests.exceptions.RequestException:
-      cloudlog.exception("failed to get route")
+    except requests.exceptions.RequestException as e:
+      cloudlog.exception(f"Failed to get route: {e}")
       self.clear_route()
-
-    self.send_route()
+    except Exception as e:
+      cloudlog.exception(f"Unexpected error in calculate_route: {e}")
+      self.clear_route()
+    finally:
+      self.send_route()
 
   def send_instruction(self):
-    msg = messaging.new_message('navInstruction', valid=True)
-
-    if self.step_idx is None:
-      msg.valid = False
+    if self.route is None or self.step_idx is None:
+      msg = messaging.new_message('navInstruction', valid=False)
       # PFEIFER - SLC {{
       slc.load_state()
       slc.nav_speed_limit = 0
@@ -271,6 +310,7 @@ class RouteEngine:
       banner_step = self.route[max(self.step_idx - 1, 0)]
 
     # Current instruction
+    msg = messaging.new_message('navInstruction', valid=True)
     msg.navInstruction.maneuverDistance = distance_to_maneuver_along_geometry
     instruction = parse_banner_instructions(banner_step['bannerInstructions'], distance_to_maneuver_along_geometry)
     if instruction is not None:
@@ -375,14 +415,15 @@ class RouteEngine:
           self.clear_route()
 
   def send_route(self):
-    coords = []
-
-    if self.route is not None:
+    if self.route is None or self.route_geometry is None:
+      msg = messaging.new_message('navRoute', valid=False)
+    else:
+      coords = []
       for path in self.route_geometry:
         coords += [c.as_dict() for c in path]
+      msg = messaging.new_message('navRoute', valid=True)
+      msg.navRoute.coordinates = coords
 
-    msg = messaging.new_message('navRoute', valid=True)
-    msg.navRoute.coordinates = coords
     self.pm.send('navRoute', msg)
 
   def clear_route(self):
@@ -448,7 +489,6 @@ class RouteEngine:
       self.distance_reroute_counter = 0
 
     return bool(self.distance_reroute_counter > REROUTE_COUNTER_MIN)
-
 
 def main():
   pm = messaging.PubMaster(['navInstruction', 'navRoute'])
