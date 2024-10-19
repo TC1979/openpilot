@@ -89,7 +89,9 @@ class ParamsLearner:
           "bearing": float(math.degrees(ecef_euler[2]))
         }))
 
-      self.speed = np.linalg.norm(live_pose.velocityDevice.to_array())
+      velocity = np.array([live_pose.velocityDevice.x, live_pose.velocityDevice.y, live_pose.velocityDevice.z])
+      self.speed = np.linalg.norm(velocity)
+
       self.yaw_rate = live_pose.angularVelocityDevice.z
 
       roll = live_pose.orientationNED.x
