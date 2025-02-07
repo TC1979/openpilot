@@ -419,7 +419,7 @@ class LongitudinalMpc:
     t_follow = get_T_FOLLOW(personality) if not dynamic_follow else get_dynamic_follow(v_ego, personality)
     if hasattr(self, 'braking_offset'):
       t_follow /= self.braking_offset
-    stop_distance = get_STOP_DISTANCE(personality) * np.clip(1.0 / (0.5 * self.braking_offset + 0.5), 0.95, 1.05)
+    stop_distance = get_STOP_DISTANCE(personality) * np.clip(1.0 / (0.3 * self.braking_offset + 0.7), 0.9, 1.05)
     if not (self.CP.flags & ToyotaFlags.SMART_DSU):
       stop_distance += 0.5
 
@@ -475,9 +475,6 @@ class LongitudinalMpc:
       # 保持合理的跟車距離
       follow_distance_ratio = lead_distance / max(v_ego * min(t_follow, 2.0), 1.0)
       safety_factor = 0.9 * safety_factor + 0.1 * np.clip(follow_distance_ratio, BRAKING_THRESHOLDS['SAFETY']['MIN_FACTOR'], BRAKING_THRESHOLDS['SAFETY']['MAX_FACTOR'])
-
-      # 舒適制動調整
-      comfort_brake_adjustment = COMFORT_BRAKE * (1 + SMOOTHING_PARAMS['COMFORT_SCALE'] * abs(relative_speed_factor))
 
       # 動態平滑因子
       dynamic_smooth_factor = np.clip(SMOOTHING_PARAMS['BASE_FACTOR'] * (1 - 0.3 * (speed_scale + abs(relative_speed_factor))),
@@ -549,7 +546,7 @@ class LongitudinalMpc:
 
     self.params[:,2] = np.min(x_obstacles, axis=1)
     self.params[:,3] = np.copy(self.prev_a)
-    self.params[:,4] = np.clip(t_follow / self.braking_offset, 0.8 * t_follow, 1.2 * t_follow)
+    self.params[:,4] = np.clip(t_follow / (0.4 * self.braking_offset + 0.6), 1.2, 1.2 * t_follow)
     self.params[:,6] = stop_distance
 
     self.run()
