@@ -66,7 +66,7 @@ def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   elif personality==log.LongitudinalPersonality.standard:
     return 1.0
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 0.45
+    return 0.6
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
@@ -417,6 +417,8 @@ class LongitudinalMpc:
     t_follow = get_T_FOLLOW(personality)
     v_ego = self.x0[1]
     t_follow = get_T_FOLLOW(personality) if not dynamic_follow else get_dynamic_follow(v_ego, personality)
+    if hasattr(self, 'braking_offset'):
+      t_follow /= self.braking_offset
     stop_distance = get_STOP_DISTANCE(personality)
     if not (self.CP.flags & ToyotaFlags.SMART_DSU):
       stop_distance += 0.5
@@ -486,6 +488,8 @@ class LongitudinalMpc:
                                       SMOOTHING_PARAMS['MIN_SMOOTH'], SMOOTHING_PARAMS['MAX_SMOOTH'])
 
       # 更新剎車補償
+      max_braking_offset_change = 0.1
+      new_braking_offset = np.clip(new_braking_offset, self.braking_offset - max_braking_offset_change, self.braking_offset + max_braking_offset_change)
       self.braking_offset = np.clip((1 - dynamic_smooth_factor) * self.braking_offset +
                                     dynamic_smooth_factor * new_braking_offset,
                                     max(BRAKING_THRESHOLDS['BRAKING']['MIN_OFFSET'] * 1.2, 1.5),
@@ -549,7 +553,7 @@ class LongitudinalMpc:
 
     self.params[:,2] = np.min(x_obstacles, axis=1)
     self.params[:,3] = np.copy(self.prev_a)
-    self.params[:,4] = t_follow
+    self.params[:,4] = self.params[:,4] = np.clip(t_follow / self.braking_offset, 0.8 * t_follow, 1.2 * t_follow)
     self.params[:,6] = stop_distance
 
     self.run()
