@@ -66,7 +66,7 @@ def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   elif personality==log.LongitudinalPersonality.standard:
     return 1.0
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 0.3
+    return 0.45
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
@@ -455,7 +455,7 @@ class LongitudinalMpc:
 
     if self.smoother_braking:
       # 速度影響因子
-      speed_scale = np.clip((v_ego - BRAKING_THRESHOLDS['SPEED']['LOW']) / 
+      speed_scale = np.clip((v_ego - BRAKING_THRESHOLDS['SPEED']['LOW']) /
                             (BRAKING_THRESHOLDS['SPEED']['HIGH'] - BRAKING_THRESHOLDS['SPEED']['LOW']), 0, 1)
 
       # 相對速度影響因子
