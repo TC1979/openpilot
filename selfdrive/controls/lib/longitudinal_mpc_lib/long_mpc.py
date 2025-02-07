@@ -448,12 +448,13 @@ class LongitudinalMpc:
     lead_distance = lead_xv_0[0, 0]
     v_lead = lead_xv_0[0, 1]
     rel_speed = v_lead - v_ego
+    lead_prob = getattr(lead, "modelProb", 1.0)
 
     self.smoother_braking = (lead.status and self.mode == 'acc' and
                              BRAKING_THRESHOLDS['LEAD_DISTANCE']['MIN'] < lead_distance <= BRAKING_THRESHOLDS['LEAD_DISTANCE']['MAX'] and
                              v_ego < BRAKING_THRESHOLDS['SPEED']['MAX'] and
                              abs(rel_speed) < BRAKING_THRESHOLDS['BRAKING']['RELATIVE_SPEED'] and
-                             lead.modelProb > BRAKING_THRESHOLDS['SAFETY']['MIN_MODEL_PROB'])
+                             lead_prob > BRAKING_THRESHOLDS['SAFETY']['MIN_MODEL_PROB'])
 
     if self.smoother_braking:
       # 速度影響因子
