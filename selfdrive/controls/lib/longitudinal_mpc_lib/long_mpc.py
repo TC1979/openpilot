@@ -432,98 +432,66 @@ class LongitudinalMpc:
 
     # 常量定義
     BRAKING_THRESHOLDS = {
-      'LEAD_DISTANCE': {
-        'MIN': 5.0,   # 最小安全距離(米)
-        'MAX': 40.0,  # 最大作用距離(米)
-        'CRITICAL': 10.0  # 臨界距離(米)
-      },
-      'SPEED': {
-        'LOW': 5.0,   # 低速閾值(m/s)
-        'HIGH': 12.0, # 高速閾值(m/s)
-        'MAX': 20.0   # 最高啟動速度(m/s)
-      },
-      'BRAKING': {
-        'MIN_OFFSET': 1.2,  # 最小剎車補償值
-        'MAX_OFFSET': 3.0,  # 最大剎車補償值
-        'RELATIVE_SPEED': 1.5  # 相對速度閾值(m/s)
-      },
-      'SAFETY': {
-        'MIN_FACTOR': 0.7,  # 最小安全係數
-        'MAX_FACTOR': 1.8,  # 最大安全係數
-        'MIN_MODEL_PROB': 0.75  # 最小模型可信度
-      }
+      'LEAD_DISTANCE': {'MIN': 5.0, 'MAX': 40.0, 'CRITICAL': 10.0},
+      'SPEED': {'LOW': 5.0, 'HIGH': 12.0, 'MAX': 20.0},
+      'BRAKING': {'MIN_OFFSET': 1.2, 'MAX_OFFSET': 3.0, 'RELATIVE_SPEED': 1.5},
+      'SAFETY': {'MIN_FACTOR': 0.7, 'MAX_FACTOR': 1.8, 'MIN_MODEL_PROB': 0.75}
     }
 
     SMOOTHING_PARAMS = {
-      'BASE_FACTOR': 0.3,     # 基礎平滑因子
-      'SPEED_SCALE': 0.07,    # 速度影響因子
-      'REL_SPEED_SCALE': 0.07,  # 相對速度影響因子
-      'MIN_SMOOTH': 0.05,     # 最小平滑因子
-      'MAX_SMOOTH': 0.4,      # 最大平滑因子
-      'COMFORT_SCALE': 0.2    # 舒適度調整比例
+      'BASE_FACTOR': 0.3, 'SPEED_SCALE': 0.07, 'REL_SPEED_SCALE': 0.07,
+      'MIN_SMOOTH': 0.05, 'MAX_SMOOTH': 0.4, 'COMFORT_SCALE': 0.2
     }
 
-    lead_distance = lead_xv_0[0,0]
-    v_lead = lead_xv_0[0,1]
+    lead_distance = lead_xv_0[0, 0]
+    v_lead = lead_xv_0[0, 1]
     rel_speed = v_lead - v_ego
 
-    self.smoother_braking = (lead.status and
-                             self.mode == 'acc' and
+    self.smoother_braking = (lead.status and self.mode == 'acc' and
                              BRAKING_THRESHOLDS['LEAD_DISTANCE']['MIN'] < lead_distance <= BRAKING_THRESHOLDS['LEAD_DISTANCE']['MAX'] and
                              v_ego < BRAKING_THRESHOLDS['SPEED']['MAX'] and
-                             abs(rel_speed) < BRAKING_THRESHOLDS['BRAKING']['RELATIVE_SPEED'] * 1.5 and
+                             abs(rel_speed) < BRAKING_THRESHOLDS['BRAKING']['RELATIVE_SPEED'] and
                              lead.modelProb > BRAKING_THRESHOLDS['SAFETY']['MIN_MODEL_PROB'])
 
     if self.smoother_braking:
-      # Calculate speed scale factor
-      speed_scale = (v_ego - BRAKING_THRESHOLDS['SPEED']['LOW']) / (
-                     BRAKING_THRESHOLDS['SPEED']['HIGH'] - BRAKING_THRESHOLDS['SPEED']['LOW'])
-      speed_scale = np.clip(speed_scale, 0, 1)
+      # 速度影響因子
+      speed_scale = np.clip((v_ego - BRAKING_THRESHOLDS['SPEED']['LOW']) / 
+                            (BRAKING_THRESHOLDS['SPEED']['HIGH'] - BRAKING_THRESHOLDS['SPEED']['LOW']), 0, 1)
 
-      # Calculate relative speed factor
-      relative_speed_factor = rel_speed / BRAKING_THRESHOLDS['BRAKING']['RELATIVE_SPEED']
-      relative_speed_factor = np.clip(relative_speed_factor, -1, 1)
+      # 相對速度影響因子
+      relative_speed_factor = np.clip(rel_speed / BRAKING_THRESHOLDS['BRAKING']['RELATIVE_SPEED'], -1, 1)
 
-      # Calculate safety factor based on critical distance
+      # 臨界距離修正
       if lead_distance < BRAKING_THRESHOLDS['LEAD_DISTANCE']['CRITICAL']:
         critical_ratio = (BRAKING_THRESHOLDS['LEAD_DISTANCE']['CRITICAL'] - lead_distance) / BRAKING_THRESHOLDS['LEAD_DISTANCE']['CRITICAL']
-        critical_factor = np.clip(critical_ratio, 0, 0.15)
+        critical_factor = np.tanh(critical_ratio * 5) * 0.15
         safety_factor = 1 + critical_factor * (1 - speed_scale * 0.7) * (1 + abs(relative_speed_factor) * 0.06)
       else:
         safety_factor = 1.0
 
-      # Adjust safety factor based on following distance
-      follow_distance_ratio = (lead_distance + 0.3) / max(v_ego * (t_follow + 0.3), 1.0)
-      safety_factor *= np.clip(follow_distance_ratio,
-                               BRAKING_THRESHOLDS['SAFETY']['MIN_FACTOR'],
-                               BRAKING_THRESHOLDS['SAFETY']['MAX_FACTOR'])
+      # 保持合理的跟車距離
+      follow_distance_ratio = lead_distance / max(v_ego * min(t_follow, 2.0), 1.0)
+      safety_factor = 0.9 * safety_factor + 0.1 * np.clip(follow_distance_ratio, BRAKING_THRESHOLDS['SAFETY']['MIN_FACTOR'], BRAKING_THRESHOLDS['SAFETY']['MAX_FACTOR'])
 
-      # Calculate comfort brake adjustment
+      # 舒適制動調整
       comfort_brake_adjustment = COMFORT_BRAKE * (1 + SMOOTHING_PARAMS['COMFORT_SCALE'] * abs(relative_speed_factor))
 
-      # Calculate new braking offset
-      new_braking_offset = np.clip(rel_speed * safety_factor - comfort_brake_adjustment,
+      # 新的制動補償
+      new_braking_offset = np.clip(np.maximum(rel_speed + 0.3, -0.8) * safety_factor - comfort_brake_adjustment,
                                    BRAKING_THRESHOLDS['BRAKING']['MIN_OFFSET'],
                                    BRAKING_THRESHOLDS['BRAKING']['MAX_OFFSET'])
 
-      # Calculate dynamic smoothing factor
-      smooth_reduction = {'speed': speed_scale * SMOOTHING_PARAMS['SPEED_SCALE'],
-                          'relative_speed': abs(relative_speed_factor) * SMOOTHING_PARAMS['REL_SPEED_SCALE']}
+      # 動態平滑因子
+      dynamic_smooth_factor = np.clip(SMOOTHING_PARAMS['BASE_FACTOR'] * (1 - 0.3 * (speed_scale + abs(relative_speed_factor))),
+                                      SMOOTHING_PARAMS['MIN_SMOOTH'], SMOOTHING_PARAMS['MAX_SMOOTH'])
 
-      dynamic_smooth_factor = SMOOTHING_PARAMS['BASE_FACTOR'] * (
-                              1 - (smooth_reduction['speed'] + smooth_reduction['relative_speed']))
-      dynamic_smooth_factor = np.clip(dynamic_smooth_factor,
-                              SMOOTHING_PARAMS['MIN_SMOOTH'],
-                              SMOOTHING_PARAMS['MAX_SMOOTH'])
-
-      # Update braking offset with smoothing
+      # 更新剎車補償
       self.braking_offset = np.clip((1 - dynamic_smooth_factor) * self.braking_offset +
                                     dynamic_smooth_factor * new_braking_offset,
-                                    BRAKING_THRESHOLDS['BRAKING']['MIN_OFFSET'],
+                                    max(BRAKING_THRESHOLDS['BRAKING']['MIN_OFFSET'] * 1.2, 1.5),
                                     BRAKING_THRESHOLDS['BRAKING']['MAX_OFFSET'] * 0.85)
 
-      # Apply braking offset to following distance
-      t_follow /= self.braking_offset
+      t_follow = np.clip(t_follow / self.braking_offset, 0.8 * t_follow, 1.2 * t_follow)
 
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
