@@ -480,9 +480,10 @@ class LongitudinalMpc:
       comfort_brake_adjustment = COMFORT_BRAKE * (1 + SMOOTHING_PARAMS['COMFORT_SCALE'] * abs(relative_speed_factor))
 
       # 新的制動補償
-      new_braking_offset = np.clip(np.maximum(rel_speed + 0.3, -0.8) * safety_factor - comfort_brake_adjustment,
-                                   BRAKING_THRESHOLDS['BRAKING']['MIN_OFFSET'],
-                                   BRAKING_THRESHOLDS['BRAKING']['MAX_OFFSET'])
+      max_braking_offset_change = 0.05
+      new_braking_offset = np.clip(new_braking_offset,
+                                   self.braking_offset - max_braking_offset_change,
+                                   self.braking_offset + max_braking_offset_change)
 
       # 動態平滑因子
       dynamic_smooth_factor = np.clip(SMOOTHING_PARAMS['BASE_FACTOR'] * (1 - 0.3 * (speed_scale + abs(relative_speed_factor))),
@@ -496,7 +497,9 @@ class LongitudinalMpc:
                                     max(BRAKING_THRESHOLDS['BRAKING']['MIN_OFFSET'] * 1.2, 1.5),
                                     BRAKING_THRESHOLDS['BRAKING']['MAX_OFFSET'] * 0.85)
 
-      t_follow = np.clip(t_follow / self.braking_offset, 0.8 * t_follow, 1.2 * t_follow)
+      t_follow_min_limit = 0.95
+      t_follow_max_limit = 1.1
+      t_follow = np.clip(t_follow / self.braking_offset, t_follow_min_limit * t_follow, t_follow_max_limit * t_follow)
 
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
