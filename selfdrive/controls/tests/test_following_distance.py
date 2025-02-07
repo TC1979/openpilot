@@ -11,7 +11,6 @@ from openpilot.selfdrive.test.longitudinal_maneuvers.maneuver import Maneuver
 def run_following_distance_simulation(v_lead, t_end=100.0, e2e=False, personality=0):
   long_mpc = LongitudinalMpc(None)
   braking_offset = getattr(long_mpc, 'braking_offset', 1.0)
-
   t_follow = get_T_FOLLOW(personality) / braking_offset
   man = Maneuver(
     '',
@@ -23,6 +22,7 @@ def run_following_distance_simulation(v_lead, t_end=100.0, e2e=False, personalit
     breakpoints=[0.],
     e2e=e2e,
     personality=personality,
+    t_follow=t_follow,
   )
   valid, output = man.evaluate()
   assert valid
