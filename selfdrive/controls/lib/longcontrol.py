@@ -71,7 +71,7 @@ class LongControl:
     self.pid.neg_limit = accel_limits[0]
     self.pid.pos_limit = accel_limits[1]
 
-    braking_factor = np.clip(CS.brakingOffset if hasattr(CS, 'brakingOffset') else 1.0, 0.9, 1.5)
+    braking_factor = np.clip(CS.brakingOffset if hasattr(CS, 'brakingOffset') else 1.0, 0.8, 1.2)
     adjusted_a_target = a_target / braking_factor
 
     self.long_control_state = long_control_state_trans(self.CP, active, self.long_control_state, CS.vEgo,
