@@ -71,9 +71,6 @@ class LongControl:
     self.pid.neg_limit = accel_limits[0]
     self.pid.pos_limit = accel_limits[1]
 
-    braking_factor = np.clip(CS.brakingOffset if hasattr(CS, 'brakingOffset') else 1.0, 0.8, 1.2)
-    adjusted_a_target = a_target / braking_factor
-
     self.long_control_state = long_control_state_trans(self.CP, active, self.long_control_state, CS.vEgo,
                                                        should_stop, CS.brakePressed,
                                                        CS.cruiseState.standstill)
@@ -93,14 +90,14 @@ class LongControl:
       self.reset()
 
     else:  # LongCtrlState.pid
-      error = adjusted_a_target - CS.aEgo
+      error = a_target - CS.aEgo
       # output_accel = self.pid.update(error, speed=CS.vEgo,
       #                                feedforward=a_target)
       # TOP apply deadzone to experimental mode
       error_deadzone = apply_deadzone(error, np.interp(CS.vEgo, [0, 6, 7, 20, 30], [0, 0.001, 0.003, 0.1, 0.15]))
 
       output_accel = self.pid.update(error_deadzone if Params().get_bool("ExperimentalMode") else error, speed=CS.vEgo,
-                                     feedforward=adjusted_a_target)
+                                     feedforward=a_target)
 
     self.last_output_accel = float(np.clip(output_accel, accel_limits[0], accel_limits[1]))
     return self.last_output_accel

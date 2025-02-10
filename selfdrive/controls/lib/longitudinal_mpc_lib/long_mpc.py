@@ -530,7 +530,7 @@ class LongitudinalMpc:
 
     self.params[:,2] = np.min(x_obstacles, axis=1)
     self.params[:,3] = np.copy(self.prev_a)
-    self.params[:,4] = np.clip(t_follow / self.braking_offset, 0.8 * t_follow, 1.2 * t_follow)
+    self.params[:,4] = t_follow
     self.params[:,6] = stop_distance
 
     self.run()
