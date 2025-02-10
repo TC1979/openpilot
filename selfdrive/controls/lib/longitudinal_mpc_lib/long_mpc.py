@@ -5,6 +5,7 @@ import numpy as np
 from cereal import log
 from opendbc.car.interfaces import ACCEL_MIN
 from opendbc.car.toyota.values import ToyotaFlags
+from openpilot.common.conversions import Conversions as CV
 from openpilot.common.params import Params
 from openpilot.common.realtime import DT_MDL
 from openpilot.common.swaglog import cloudlog
@@ -110,25 +111,19 @@ def get_STOP_DISTANCE(personality=log.LongitudinalPersonality.standard):
 
 
 def get_stopped_equivalence_factor(v_lead, v_ego):
-  v_diff_offset_max = 12  # Max additional offset distance
-  delta_speed = v_lead - v_ego  # Relative speed of lead vs. ego
-
-  v_diff_offset = np.zeros_like(delta_speed)  # Ensures proper shape
-
-  mask = delta_speed > 0  # Only apply logic when lead is pulling away
-
-  if np.any(mask):
-    # 🔧 **Stronger Low-Speed Acceleration Scaling**
-    scaling_factor = np.interp(v_ego, [0, 1, 3, 5, 9, 22], [2.0, 2.0, 0.95, 0.86, 0.82, 0.82])
-    v_diff_offset[mask] = delta_speed[mask] * scaling_factor
+  # KRKeegan this offset rapidly decreases the following distance when the lead pulls
+  # away, resulting in an early demand for acceleration.
+  v_diff_offset = 0
+  v_diff_offset_max = 12
+  speed_to_reach_max_v_diff_offset = 26 # in kp/h
+  speed_to_reach_max_v_diff_offset = speed_to_reach_max_v_diff_offset * CV.KPH_TO_MS
+  delta_speed = v_lead - v_ego
+  if np.all(delta_speed > 0):
+    v_diff_offset = delta_speed * 2
     v_diff_offset = np.clip(v_diff_offset, 0, v_diff_offset_max)
-
-    # 🔧 **Reduce Ego Speed Scaling Effect at Low Speeds**
-    ego_scaling = np.interp(v_ego, [0, 1, 3, 5, 20], [1.5, 1.3, 1.1, 1.0, 1.0])
-    v_diff_offset *= ego_scaling
-
-  stopping_distance = (v_lead**2) / (2 * COMFORT_BRAKE) + v_diff_offset
-  return stopping_distance
+                                                                    # increase in a linear behavior
+    v_diff_offset = np.maximum(v_diff_offset * ((speed_to_reach_max_v_diff_offset - v_ego)/speed_to_reach_max_v_diff_offset), 0)
+  return (v_lead**2) / (2 * COMFORT_BRAKE) + v_diff_offset
 
 def get_safe_obstacle_distance(v_ego, t_follow, stop_distance=None):
   if stop_distance is None:
@@ -330,32 +325,18 @@ class LongitudinalMpc:
     for i in range(N):
       self.solver.cost_set(i, 'Zl', Zl)
 
-  def set_weights(self, prev_accel_constraint=True, personality=log.LongitudinalPersonality.standard, v_lead0=0, v_lead1=0, distance_to_lead=100):
+  def set_weights(self, prev_accel_constraint=True, personality=log.LongitudinalPersonality.standard, v_lead0=0, v_lead1=0):
     jerk_factor = get_jerk_factor(personality)
     jerk_factor /= np.mean(self.braking_offset)
     v_ego = self.x0[1]
-
-    # Default values for dynamic scaling factors
+    v_ego_bps = [0, 10]
+    # KRKeegan adjustments to improve sluggish acceleration
+    # do not apply to deceleration
     j_ego_v_ego = 1
     a_change_v_ego = 1
-    v_ego_bps = [0, 10]
-    v_lead_speed = max(v_lead0, v_lead1)  # Get the highest lead speed
-    # v_gap = v_lead_speed - v_ego  # Speed difference
-    gap_factor = np.clip(distance_to_lead / 20, 0.5, 1.0)  # Reduce acceleration if too close to lead
-    # Prevent ego from accelerating too much if lead is slow
-    if (v_lead0 - v_ego >= 0) and (v_lead1 - v_ego >= 0) and v_lead_speed > 10:
-      j_ego_v_ego = np.interp(v_ego, v_ego_bps, [0.10, 1.0])
-      a_change_v_ego = np.interp(v_ego, v_ego_bps, [0.10, 1.0]) * gap_factor  # Reduce if too close
-
-      # If following distance is small, reduce acceleration force more aggressively
-      if distance_to_lead < 15:  # If too close, further reduce acceleration
-        a_change_v_ego *= 0.4  # More aggressive reduction when close
-        j_ego_v_ego *= 0.5    # Even further reduction in jerk when close
-
-      # Keep the following distance above a threshold
-      if distance_to_lead < 10:  # If we are really close
-        a_change_v_ego = max(a_change_v_ego * 0.3, 0.2)  # Do not allow full throttle when too close to lead
-
+    if (v_lead0 - v_ego >= 0) and (v_lead1 - v_ego >= 0):
+      j_ego_v_ego = np.interp(v_ego, v_ego_bps, [.05, 1.])
+      a_change_v_ego = np.interp(v_ego, v_ego_bps, [.05, 1.])
     if self.mode == 'acc':
       a_change_cost = A_CHANGE_COST if prev_accel_constraint else 0
       cost_weights = [X_EGO_OBSTACLE_COST, X_EGO_COST, V_EGO_COST, A_EGO_COST, jerk_factor * a_change_cost * a_change_v_ego, jerk_factor * J_EGO_COST * j_ego_v_ego]
