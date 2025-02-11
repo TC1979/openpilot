@@ -48,7 +48,7 @@ ACADOS_SOLVER_TYPE = 'SQP_RTI'
 CITY_SPEED_LIMIT = 25  # ~55mph
 CRUISING_SPEED = 5     # ~11mph
 MIN_LEAD_DISTANCE = 5
-MIN_T_FOLLOW_STOPPED = 2.0
+MIN_T_FOLLOW_STOPPED = 1.2
 
 
 # Fewer timestamps don't hurt performance and lead to
@@ -417,10 +417,15 @@ class LongitudinalMpc:
                             lead_prob > 0.9)
 
     if self.smoother_braking:
-      v_lead = lead_xv_0[0,1]
-      lead_distance = lead_xv_0[0,0]
+      v_lead = lead_xv_0[0, 1]
+      lead_distance = lead_xv_0[0, 0]
       COMFORT_BRAKE = np.interp(v_ego, [0, 20, 40], [1.5, 2.5, 3.0])
+      safe_distance = get_safe_obstacle_distance(v_ego, t_follow, stop_distance)
 
+      distance_factor = max(MIN_LEAD_DISTANCE, 1.0)
+      standstill_offset = max(stop_distance - v_ego, 1.0)
+      far_lead_offset = max(v_ego - CITY_SPEED_LIMIT, 1.0)
+      self.braking_offset = max((v_ego - v_lead) * 0.5, 1.0)
       if v_lead > v_ego:
         distance_factor = max(max(lead_distance, MIN_LEAD_DISTANCE) - (v_ego * t_follow), 1)
         standstill_offset = max(stop_distance - v_ego, 1)
@@ -430,16 +435,22 @@ class LongitudinalMpc:
         else:
           t_follow = max(t_follow / self.braking_offset, 0.8)
 
-      elif v_lead < v_ego and v_ego > CRUISING_SPEED:
-        distance_factor = max(lead_distance - (v_lead * t_follow), 1)
-        far_lead_offset = max(v_lead - CITY_SPEED_LIMIT, 1)
-        self.braking_offset = np.clip(min(v_ego - v_lead, v_lead) * far_lead_offset - COMFORT_BRAKE, 1, distance_factor)
-
-        if v_lead < 0.5 and v_ego > CRUISING_SPEED:
-          emergency_braking_factor = np.clip((v_ego - v_lead) / 10, 1, 5)
-          t_follow = max(t_follow / emergency_braking_factor, 0.8)
+      elif v_lead < v_ego:
+        if v_ego <= CRUISING_SPEED:
+          t_follow = MIN_T_FOLLOW_STOPPED
         else:
-          t_follow = max(t_follow / self.braking_offset, 0.8)
+          distance_factor = max(lead_distance - (v_lead * t_follow), 1)
+          far_lead_offset = max(v_lead - CITY_SPEED_LIMIT, 1)
+          self.braking_offset = np.clip(min(v_ego - v_lead, v_lead) * far_lead_offset - COMFORT_BRAKE, 1, distance_factor)
+
+          if v_lead < 1 and v_ego > CRUISING_SPEED:
+            if lead_distance > safe_distance:
+              emergency_braking_factor = np.clip((v_ego - v_lead) / 10, 1, 3)
+            else:
+              emergency_braking_factor = np.clip((v_ego - v_lead) / 10, 1, np.clip((v_ego - v_lead) / 5, 5, 10))
+            t_follow = max(t_follow / emergency_braking_factor, 0.8)
+          else:
+            t_follow = max(t_follow / self.braking_offset, 0.8)
 
         self.slower_lead = self.braking_offset / far_lead_offset > 1
 
