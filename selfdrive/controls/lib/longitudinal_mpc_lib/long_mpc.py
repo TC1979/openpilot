@@ -47,6 +47,8 @@ LIMIT_COST = 1e6
 ACADOS_SOLVER_TYPE = 'SQP_RTI'
 CITY_SPEED_LIMIT = 25  # ~55mph
 CRUISING_SPEED = 5     # ~11mph
+MIN_LEAD_DISTANCE = 5
+MIN_T_FOLLOW_STOPPED = 2.0
 
 
 # Fewer timestamps don't hurt performance and lead to
@@ -406,23 +408,40 @@ class LongitudinalMpc:
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
     lead = radarstate.leadOne
+    lead_prob = getattr(lead, "modelProb", 1.0)
 
-    self.smoother_braking = True if lead.status and self.mode == 'acc' and v_ego < 20 and lead_xv_0[0,0] < 40 else False
+    self.smoother_braking = (lead.status and
+                            self.mode == 'acc' and
+                            v_ego < 20 and
+                            lead_xv_0[0,0] < 40 and
+                            lead_prob > 0.9)
     if self.smoother_braking:
       v_lead = lead_xv_0[0,1]
       lead_distance = lead_xv_0[0,0]
+      COMFORT_BRAKE = np.interp(v_ego, [0, 20, 40], [1.5, 2.5, 3.0])
 
       if v_lead > v_ego:
-        distance_factor = max(lead_distance - (v_ego * t_follow), 1)
+        distance_factor = max(max(lead_distance, MIN_LEAD_DISTANCE) - (v_ego * t_follow), 1)
         standstill_offset = max(stop_distance - v_ego, 1)
         self.braking_offset = np.clip((v_lead - v_ego) * standstill_offset - COMFORT_BRAKE, 1, distance_factor)
-        t_follow /= self.braking_offset
+        if v_ego < 1.5:
+          t_follow = MIN_T_FOLLOW_STOPPED
+        else:
+          t_follow = max(t_follow / self.braking_offset, 0.8)
+
       elif v_lead < v_ego and v_ego > CRUISING_SPEED:
         distance_factor = max(lead_distance - (v_lead * t_follow), 1)
         far_lead_offset = max(v_lead - CITY_SPEED_LIMIT, 1)
         self.braking_offset = np.clip(min(v_ego - v_lead, v_lead) * far_lead_offset - COMFORT_BRAKE, 1, distance_factor)
-        t_follow /= self.braking_offset
+
+        if v_lead < 0.5 and v_ego > CRUISING_SPEED:
+          emergency_braking_factor = np.clip((v_ego - v_lead) / 10, 1, 5)
+          t_follow = max(t_follow / emergency_braking_factor, 0.8)
+        else:
+          t_follow = max(t_follow / self.braking_offset, 0.8)
+
         self.slower_lead = self.braking_offset / far_lead_offset > 1
+
       else:
         self.braking_offset = 1
         self.slower_lead = False
