@@ -48,7 +48,7 @@ ACADOS_SOLVER_TYPE = 'SQP_RTI'
 CITY_SPEED_LIMIT = 25  # ~55mph
 CRUISING_SPEED = 5     # ~11mph
 MIN_LEAD_DISTANCE = 5
-MIN_T_FOLLOW_STOPPED = 1.2
+MIN_T_FOLLOW_STOPPED = 1.0
 
 
 # Fewer timestamps don't hurt performance and lead to
@@ -429,7 +429,7 @@ class LongitudinalMpc:
         distance_factor = max(max(lead_distance, MIN_LEAD_DISTANCE) - (v_ego * t_follow), 1)
         standstill_offset = max(stop_distance - v_ego, 1)
         self.braking_offset = np.clip((v_lead - v_ego) * standstill_offset - COMFORT_BRAKE, 1, distance_factor)
-        if v_ego < 1.5:
+        if v_ego < 3:
           t_follow = MIN_T_FOLLOW_STOPPED
         else:
           t_follow = max(t_follow / self.braking_offset, 0.8)
