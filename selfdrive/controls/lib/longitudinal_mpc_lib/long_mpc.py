@@ -48,7 +48,7 @@ ACADOS_SOLVER_TYPE = 'SQP_RTI'
 CITY_SPEED_LIMIT = 25  # ~55mph
 CRUISING_SPEED = 5     # ~11mph
 MIN_LEAD_DISTANCE = 5
-MIN_T_FOLLOW_STOPPED = 1.0
+MIN_T_FOLLOW_STOPPED = 1.2
 
 
 # Fewer timestamps don't hurt performance and lead to
