@@ -5,7 +5,7 @@ import numpy as np
 from cereal import log
 from opendbc.car.interfaces import ACCEL_MIN, ACCEL_MAX
 from opendbc.car.toyota.values import ToyotaFlags
-from openpilot.common.conversions import Conversions as CV
+# from openpilot.common.conversions import Conversions as CV
 from openpilot.common.params import Params
 from openpilot.common.realtime import DT_MDL
 from openpilot.common.swaglog import cloudlog
@@ -119,20 +119,33 @@ def get_STOP_DISTANCE(personality=log.LongitudinalPersonality.standard):
     raise NotImplementedError("Longitudinal personality not supported")
 
 
-def get_stopped_equivalence_factor(v_lead, v_ego):
-  # KRKeegan this offset rapidly decreases the following distance when the lead pulls
-  # away, resulting in an early demand for acceleration.
-  v_diff_offset = 0
-  v_diff_offset_max = 12
-  speed_to_reach_max_v_diff_offset = 26 # in kp/h
-  speed_to_reach_max_v_diff_offset = speed_to_reach_max_v_diff_offset * CV.KPH_TO_MS
+def get_stopped_equivalence_factor(v_lead, v_ego, time_to_max_brake=0.3):
+  v_diff_offset = np.zeros_like(v_lead)
   delta_speed = v_lead - v_ego
-  if np.all(delta_speed > 0):
-    v_diff_offset = delta_speed * 2
-    v_diff_offset = np.clip(v_diff_offset, 0, v_diff_offset_max)
-                                                                    # increase in a linear behavior
-    v_diff_offset = np.maximum(v_diff_offset * ((speed_to_reach_max_v_diff_offset - v_ego)/speed_to_reach_max_v_diff_offset), 0)
-  return (v_lead**2) / (2 * COMFORT_BRAKE) + v_diff_offset
+
+  # Smooth offset increase based on relative speed, capped to a fraction of the stop distance
+  if np.any(delta_speed > 0):
+    v_diff_offset = np.clip(delta_speed, 0, 3)
+
+    # Adaptive scaling factor based on ego vehicle speed (smooth transition)
+    scaling_factor = np.interp(v_ego, [0, 10, 30], [1, 0.5, 0.2])  # More gradual scaling
+    v_diff_offset *= scaling_factor
+
+    # Increase offset more aggressively if the ego vehicle is at low speed and lead speed is high
+    fast_takeoff_condition = (v_ego < 10) & (delta_speed > 2)
+    v_diff_offset = np.where(fast_takeoff_condition, np.clip(v_diff_offset * 2.0, 0, 3), v_diff_offset)
+
+  # Smoother initial braking using a sigmoid function
+  initial_brake_factor = 1 / (1 + np.exp(-5 * (v_ego / 30 - 0.5)))  # Soft brake factor
+  smooth_initial_brake = np.clip(initial_brake_factor / time_to_max_brake, 0, 1)
+
+  # Calculate stopping distance with smoother braking force
+  distance = (v_lead**2) / (2 * COMFORT_BRAKE) + v_diff_offset
+  distance *= smooth_initial_brake  # Apply smooth brake force
+
+  return distance
+
+
 
 def get_safe_obstacle_distance(v_ego, t_follow, stop_distance=None):
   if stop_distance is None:
