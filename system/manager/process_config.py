@@ -54,9 +54,6 @@ def only_onroad(started: bool, params: Params, CP: car.CarParams) -> bool:
 def only_offroad(started: bool, params: Params, CP: car.CarParams) -> bool:
   return not started
 
-def not_first_boot(started: bool, params: Params, CP: car.CarParams) -> bool:
-  return bool(params.get_bool("SecondBoot"))
-
 def or_(*fns):
   return lambda *args: operator.or_(*(fn(*args) for fn in fns))
 
@@ -110,7 +107,7 @@ procs = [
   PythonProcess("uploader", "system.loggerd.uploader", always_run),
   PythonProcess("statsd", "system.statsd", always_run),
 
-  PythonProcess("fleetmanager", "system.fleetmanager.fleet_manager", not_first_boot),
+  PythonProcess("fleetmanager", "system.fleetmanager.fleet_manager", always_run),
 
   # debug procs
   NativeProcess("bridge", "cereal/messaging", ["./bridge"], notcar),

@@ -106,7 +106,6 @@ function launch {
     # read -n 1 -s
   else
     echo "Flask is already installed"
-    echo -en "1" > /data/params/d/SecondBoot
   fi
 
   # start manager
