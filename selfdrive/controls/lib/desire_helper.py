@@ -61,18 +61,21 @@ class DesireHelper:
       min_lane_threshold = 2.5
       # Set the blinker index based on which signal is on
       blinker_index = 0 if carstate.leftBlinker else 1
-      desired_edge = md.roadEdges[blinker_index]
-      current_lane = md.laneLines[blinker_index + 1]
-      # Check if both the desired lane and the current lane have valid x and y values
-      if all([desired_edge.x, desired_edge.y, current_lane.x, current_lane.y]) and len(desired_edge.x) == len(current_lane.x):
-        # Interpolate the x and y values to the same length
-        x = np.linspace(desired_edge.x[0], desired_edge.x[-1], num=len(desired_edge.x))
-        lane_y = np.interp(x, current_lane.x, current_lane.y)
-        desired_y = np.interp(x, desired_edge.x, desired_edge.y)
-        # Calculate the width of the lane we're wanting to change into
-        lane_width = np.abs(desired_y - lane_y)
-        # Set lane_available to True if the lane width is larger than the threshold
-        self.lane_available = np.amax(lane_width) >= min_lane_threshold
+      if len(md.roadEdges) > blinker_index and len(md.laneLines) > (blinker_index + 1):
+        desired_edge = md.roadEdges[blinker_index]
+        current_lane = md.laneLines[blinker_index + 1]
+        # Check if both the desired lane and the current lane have valid x and y values
+        if all([desired_edge.x, desired_edge.y, current_lane.x, current_lane.y]) and len(desired_edge.x) == len(current_lane.x):
+          # Interpolate the x and y values to the same length
+          x = np.linspace(desired_edge.x[0], desired_edge.x[-1], num=len(desired_edge.x))
+          lane_y = np.interp(x, current_lane.x, current_lane.y)
+          desired_y = np.interp(x, desired_edge.x, desired_edge.y)
+          # Calculate the width of the lane we're wanting to change into
+          lane_width = np.abs(desired_y - lane_y)
+          # Set lane_available to True if the lane width is larger than the threshold
+          self.lane_available = np.amax(lane_width) >= min_lane_threshold
+        else:
+          self.lane_available = False
       else:
         self.lane_available = False
     else:
