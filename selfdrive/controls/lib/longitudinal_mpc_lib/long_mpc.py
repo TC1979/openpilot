@@ -64,8 +64,8 @@ COMFORT_BRAKE = 2.5
 # CRUISE_MIN_ACCEL = -1.2
 CRUISE_MAX_ACCEL = 2.0
 
-A_CRUISE_MIN_VALS = [-0.01, -0.01, -0.05, -0.1, -0.2, -0.3, -0.4, -0.6, -0.8, -1.2]
-A_CRUISE_MIN_BP =   [ 0.,   .01,   .02,   .3,    1.,   2.,   3.,   5.,   8.,   10.]
+A_CRUISE_MIN_VALS = [-0.01, -0.01, -0.05, -0.1, -0.2, -0.3, -0.4, -0.6, -0.7, -0.8., -1.2]
+A_CRUISE_MIN_BP =   [ 0.,   .01,   .02,   .3,    1.,   2.,   3.,   5.,   8.,   10.,   20.]
 
 def get_cruise_min_accel(v_ego):
     return np.interp(v_ego, A_CRUISE_MIN_BP, A_CRUISE_MIN_VALS)
@@ -417,14 +417,11 @@ class LongitudinalMpc:
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
-    lead = radarstate.leadOne
-    lead_prob = getattr(lead, "modelProb", 1.0)
+    # lead = radarstate.leadOne
+    # lead_prob = getattr(lead, "modelProb", 1.0)
 
-    self.smoother_braking = (lead.status and
-                            self.mode == 'acc' and
-                            v_ego < 20 and
-                            lead_xv_0[0,0] < 40 and
-                            lead_prob > 0.9)
+    self.smoother_braking = True
+    # (lead.status and self.mode == 'acc' and v_ego < 20 and lead_xv_0[0,0] < 40 and lead_prob > 0.9)
 
     if self.smoother_braking:
       v_lead = lead_xv_0[0, 1]
