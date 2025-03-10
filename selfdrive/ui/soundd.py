@@ -56,6 +56,7 @@ def check_selfdrive_timeout_alert(sm):
 class Soundd:
   def __init__(self):
     self.load_sounds()
+    self.params = Params()
 
     self.current_alert = AudibleAlert.none
     self.current_volume = MIN_VOLUME
@@ -92,11 +93,6 @@ class Soundd:
       current_sound_frame = self.current_sound_frame % len(sound_data)
       loops = self.current_sound_frame // len(sound_data)
 
-      # Check if QuietDrive is enabled
-      quiet_drive = Params().get_bool("QuietDrive")
-      if quiet_drive and self.current_alert not in [AudibleAlert.warningSoft, AudibleAlert.warningImmediate]:
-        return ret * self.current_volume
-
       while written_frames < frames and (num_loops is None or loops < num_loops):
         available_frames = sound_data.shape[0] - current_sound_frame
         frames_to_write = min(available_frames, frames - written_frames)
@@ -112,6 +108,10 @@ class Soundd:
     data_out[:frames, 0] = self.get_sound_data(frames)
 
   def update_alert(self, new_alert):
+    quiet_drive = self.params.get_bool("QuietDrive")
+    if quiet_drive and new_alert not in [AudibleAlert.warningSoft, AudibleAlert.warningImmediate, AudibleAlert.none]:
+      new_alert = AudibleAlert.none
+
     current_alert_played_once = self.current_alert == AudibleAlert.none or self.current_sound_frame > len(self.loaded_sounds[self.current_alert])
     if self.current_alert != new_alert and (new_alert != AudibleAlert.none or current_alert_played_once):
       self.current_alert = new_alert
