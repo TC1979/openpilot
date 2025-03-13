@@ -9,6 +9,7 @@ ROOT = HERE + "/.."
 blacklist = [
   "opendbc_repo/opendbc/car/torque_data/lat_models/*",
   ".git/",
+  ".github/workflows/",
 
   "matlab.*.md",
 
