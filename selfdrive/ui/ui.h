@@ -45,7 +45,7 @@ typedef enum UIStatus {
   STATUS_WARNING,
   STATUS_ALERT,
   // dpatl {{
-  STATUS_LAT_ALLOWED,
+  STATUS_ALKA,
   // }} dpatl
 } UIStatus;
 
@@ -54,7 +54,7 @@ const QColor bg_colors [] = {
   [STATUS_OVERRIDE] = QColor(0x91, 0x9b, 0x95, 0xf1),
   [STATUS_ENGAGED] = QColor(0x17, 0x86, 0x44, 0xf1),
   // dpatl {{
-  [STATUS_LAT_ALLOWED] = QColor(0x6f, 0xc0, 0xc9, 0xf1),
+  [STATUS_ALKA] = QColor(0x6f, 0xc0, 0xc9, 0xf1),
   // }} dpatl
 };
 
@@ -66,7 +66,7 @@ typedef struct UIScene {
   cereal::LongitudinalPersonality personality;
 
   float light_sensor = -1;
-  bool started, ignition, is_metric, longitudinal_control;
+  bool started, ignition, is_metric, longitudinal_control, alka_active;
   uint64_t started_frame;
   bool onroadScreenOff;
   bool blind_spot_left;

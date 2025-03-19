@@ -58,6 +58,8 @@ class SelfdriveD:
     self.car_events = CarSpecificEvents(self.CP)
     self.disengage_on_accelerator = not (self.CP.alternativeExperience & ALTERNATIVE_EXPERIENCE.DISABLE_DISENGAGE_ON_GAS)
 
+    self.alka = (self.CP.alternativeExperience & ALTERNATIVE_EXPERIENCE.ALKA)
+
     # Setup sockets
     self.pm = messaging.PubMaster(['selfdriveState', 'onroadEvents'])
 
@@ -96,7 +98,6 @@ class SelfdriveD:
                                   ignore_valid=ignore, frequency=int(1/DT_CTRL))
 
     # read params
-    self.dp_atl = self.params.get_bool("dp_atl")
     self.is_metric = self.params.get_bool("IsMetric")
     self.is_ldw_enabled = self.params.get_bool("IsLdwEnabled")
 
@@ -126,7 +127,7 @@ class SelfdriveD:
     self.experimental_mode = False
     self.personality = self.read_personality_param()
     self.recalibrating_seen = False
-    self.state_machine = StateMachine()
+    self.state_machine = StateMachine(self.alka)
     self.rk = Ratekeeper(100, print_delay_threshold=None)
     self.nn_alert_shown = False
 

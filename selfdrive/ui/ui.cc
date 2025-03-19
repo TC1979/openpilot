@@ -80,6 +80,7 @@ static void update_state(UIState *s) {
     scene.light_sensor = -1;
   }
   scene.started = sm["deviceState"].getDeviceState().getStarted() && scene.ignition;
+  scene.alka_active = sm["topControlsState"].getTopControlsState().getAlkaActive();
 }
 
 void ui_update_params(UIState *s) {
@@ -139,6 +140,7 @@ UIState::UIState(QObject *parent) : QObject(parent) {
     "modelV2", "controlsState", "liveCalibration", "radarState", "deviceState",
     "pandaStates", "carParams", "driverMonitoringState", "carState", "driverStateV2",
     "wideRoadCameraState", "managerState", "selfdriveState", "longitudinalPlan",
+    "topControlsState",
   });
   scene.world_objects_visible = true;
   scene.wide_cam = false;
