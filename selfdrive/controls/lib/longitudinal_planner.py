@@ -178,7 +178,7 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
       if self.mpc.mode == 'acc':
         steer_angle_without_offset = sm['carState'].steeringAngleDeg - sm['liveParameters'].angleOffsetDeg
         accel_clip = limit_accel_in_turns(v_ego, steer_angle_without_offset, accel_clip, self.CP)
-    
+
       if self.CP.openpilotLongitudinalControl:
         print(f"Accel Controller: mode={self.mpc.mode}, v_ego={v_ego:.2f}, accel_clip={accel_clip}")
     else:
