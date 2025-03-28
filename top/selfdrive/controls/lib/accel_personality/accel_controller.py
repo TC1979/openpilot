@@ -25,6 +25,7 @@ from cereal import custom
 from numpy import interp
 from openpilot.common.realtime import DT_MDL
 from openpilot.common.params import Params
+from typing import Tuple, List
 
 AccelPersonality = custom.LongitudinalPlanTOP.AccelerationPersonality
 

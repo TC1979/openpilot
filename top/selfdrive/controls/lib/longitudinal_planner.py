@@ -5,8 +5,8 @@ This file is part of sunnypilot and is licensed under the MIT License.
 See the LICENSE.md file in the root directory for more details.
 """
 
+from cereal import messaging
 from openpilot.top.selfdrive.controls.lib.accel_personality.accel_controller import AccelController
-
 
 class LongitudinalPlannerTOP:
   def __init__(self):
