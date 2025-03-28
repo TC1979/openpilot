@@ -2,7 +2,7 @@
 import math
 import numpy as np
 from openpilot.common.params import Params
-
+from cereal import custom
 import cereal.messaging as messaging
 from opendbc.car.interfaces import ACCEL_MIN, ACCEL_MAX
 from openpilot.common.conversions import Conversions as CV
@@ -20,6 +20,8 @@ from openpilot.top.selfdrive.controls.lib.longitudinal_planner import Longitudin
 # PFEIFER - VTSC {{
 from openpilot.selfdrive.controls.vtsc import vtsc
 # }} PFEIFER - VTSC
+
+AccelPersonality = custom.LongitudinalPlanTOP.AccelerationPersonality
 
 LON_MPC_STEP = 0.2  # first step is 0.2s
 A_CRUISE_MAX_VALS = [1.6, 1.2, 0.8, 0.6]
@@ -156,26 +158,32 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
     else:
       accel_clip = [ACCEL_MIN, ACCEL_MAX]
 
-    # Override accel using Accel Controller if enabled
-    if self.accel_controller.is_enabled:
-      max_limit = self.accel_controller.get_accel_limits(v_ego, accel_clip)
+    accel_personality = AccelPersonality.stock
+    if hasattr(sm, 'longitudinalPlanTOP') and sm['longitudinalPlanTOP'].valid:
+      accel_personality = sm['longitudinalPlanTOP'].accelPersonality
+    else:
+      params_personality = self.params.get("AccelPersonality", encoding='utf-8')
+      if params_personality is not None:
+        try:
+          accel_personality = int(params_personality)
+        except ValueError:
+          accel_personality = AccelPersonality.stock
 
-      # Ensure max_limit is a single float value
-      if isinstance(max_limit, list):
-        max_limit = max_limit[1]
-      print(f"Accel Controller: max_limit={max_limit:.2f}")
+    if self.accel_controller.is_enabled(accel_personality):
+      accel_limits = self.accel_controller.get_accel_limits(v_ego, accel_clip)
+
+      if isinstance(accel_limits, tuple) and len(accel_limits) == 2:
+        accel_clip = [accel_limits[0], accel_limits[1]]
 
       if self.mpc.mode == 'acc':
-        # Use the accel controller limits directly
-        accel_clip = [ACCEL_MIN, max_limit]
-        # Recalculate limit turn according to the new max limit
         steer_angle_without_offset = sm['carState'].steeringAngleDeg - sm['liveParameters'].angleOffsetDeg
         accel_clip = limit_accel_in_turns(v_ego, steer_angle_without_offset, accel_clip, self.CP)
-        print(f"ACC Mode Final: v_ego={v_ego:.2f}, accel_clip={accel_clip}")
-      else:
-        print(f"Blended Mode (Accel Controller Enabled): accel_clip={accel_clip}")
+    
+      if self.CP.openpilotLongitudinalControl:
+        print(f"Accel Controller: mode={self.mpc.mode}, v_ego={v_ego:.2f}, accel_clip={accel_clip}")
     else:
-      print(f"Accel Controller Disabled: accel_clip={accel_clip}")
+      if self.CP.openpilotLongitudinalControl:
+        print(f"Accel Controller Disabled: accel_clip={accel_clip}")
 
     if reset_state:
       self.v_desired_filter.x = v_ego
