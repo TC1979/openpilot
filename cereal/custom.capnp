@@ -14,7 +14,14 @@ struct TopControlsState @0x81c2f05a394cf4af {
   alkaActive @0 :Bool;
 }
 
-struct CustomReserved1 @0xaedffd8f31e7b55d {
+struct LongitudinalPlanTOP @0xaedffd8f31e7b55d {
+  accelPersonality @1 :AccelerationPersonality;
+  enum AccelerationPersonality {
+    sport @0;
+    normal @1;
+    eco @2;
+    stock @3;
+  }
 }
 
 struct CustomReserved2 @0xf35cc4560bbf6ec2 {

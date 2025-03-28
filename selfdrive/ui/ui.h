@@ -64,6 +64,7 @@ typedef struct UIScene {
   cereal::PandaState::PandaType pandaType;
 
   cereal::LongitudinalPersonality personality;
+  cereal::LongitudinalPlanTOP::AccelerationPersonality accel_personality;
 
   float light_sensor = -1;
   bool started, ignition, is_metric, longitudinal_control, alka_active;
