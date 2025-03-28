@@ -25,7 +25,6 @@ from cereal import custom
 from numpy import interp
 from openpilot.common.realtime import DT_MDL
 from openpilot.common.params import Params
-from typing import Tuple, List
 
 AccelPersonality = custom.LongitudinalPlanTOP.AccelerationPersonality
 
@@ -56,7 +55,7 @@ class AccelController:
         if personality_int in [AccelPersonality.stock, AccelPersonality.normal, AccelPersonality.eco, AccelPersonality.sport]:
           self._personality = personality_int
 
-  def _dp_calc_cruise_accel_limits(self, v_ego: float) -> Tuple[float, float]:
+  def _dp_calc_cruise_accel_limits(self, v_ego: float) -> tuple[float, float]:
     self._read_params()  # Ensure personality updates
 
     # if self._personality == AccelPersonality.eco:
@@ -85,7 +84,7 @@ class AccelController:
 
     return (a_cruise_min, a_cruise_max)
 
-  def get_accel_limits(self, v_ego: float, accel_limits: List[float]) -> Tuple[float, float]:
+  def get_accel_limits(self, v_ego: float, accel_limits: list[float]) -> tuple[float, float]:
     self._read_params()
 
     if self._personality == AccelPersonality.stock:
