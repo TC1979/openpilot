@@ -163,6 +163,7 @@ void TogglesPanel::updateToggles() {
       long_personality_setting->setEnabled(true);
       long_personality_setting->refresh();
       accel_personality_setting->setEnabled(true);
+      accel_personality_setting->refresh();
     } else {
       // no long for now
       experimental_mode_toggle->setEnabled(false);

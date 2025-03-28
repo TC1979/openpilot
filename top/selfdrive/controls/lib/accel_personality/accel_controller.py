@@ -55,7 +55,7 @@ class AccelController:
         if personality_int in [AccelPersonality.stock, AccelPersonality.normal, AccelPersonality.eco, AccelPersonality.sport]:
           self._personality = personality_int
 
-  def _dp_calc_cruise_accel_limits(self, v_ego: float) -> tuple[float, float]:
+  def _dp_calc_cruise_accel_limits(self, v_ego: float) -> Tuple[float, float]:
     self._read_params()  # Ensure personality updates
 
     # if self._personality == AccelPersonality.eco:
@@ -79,17 +79,23 @@ class AccelController:
       #print("normal")
 
     # a_cruise_min = interp(v_ego, _DP_CRUISE_MIN_BP, min_v)
-    a_cruise_max = interp(v_ego, _DP_CRUISE_MAX_BP, max_v)
+    a_cruise_min = -1.0
+    a_cruise_max = float(interp(v_ego, _DP_CRUISE_MAX_BP, max_v))
 
-    return a_cruise_max
+    return (a_cruise_min, a_cruise_max)
 
-  def get_accel_limits(self, v_ego: float, accel_limits: list[float]) -> tuple[float, float]:
+  def get_accel_limits(self, v_ego: float, accel_limits: List[float]) -> Tuple[float, float]:
     self._read_params()
-    return accel_limits if self._personality == AccelPersonality.stock else self._dp_calc_cruise_accel_limits(v_ego)
+
+    if self._personality == AccelPersonality.stock:
+      return (accel_limits[0], accel_limits[1])
+    else:
+      return self._dp_calc_cruise_accel_limits(v_ego)
 
   def is_enabled(self, accel_personality: int = AccelPersonality.stock) -> bool:
     self._personality = accel_personality
-    return self._personality != AccelPersonality.stock
+    enabled: bool = (self._personality != AccelPersonality.stock)
+    return enabled
 
   def update(self):
     self._frame += 1

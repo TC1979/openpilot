@@ -15,7 +15,7 @@ struct TopControlsState @0x81c2f05a394cf4af {
 }
 
 struct LongitudinalPlanTOP @0xaedffd8f31e7b55d {
-  accelPersonality @1 :AccelerationPersonality;
+  accelPersonality @0 :AccelerationPersonality;
   enum AccelerationPersonality {
     sport @0;
     normal @1;

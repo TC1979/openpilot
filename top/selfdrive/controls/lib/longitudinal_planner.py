@@ -5,7 +5,6 @@ This file is part of sunnypilot and is licensed under the MIT License.
 See the LICENSE.md file in the root directory for more details.
 """
 
-from cereal import messaging, custom
 from openpilot.top.selfdrive.controls.lib.accel_personality.accel_controller import AccelController
 
 
@@ -20,7 +19,5 @@ class LongitudinalPlannerTOP:
     plan_top_send = messaging.new_message('longitudinalPlanTOP')
 
     plan_top_send.valid = sm.all_checks(service_list=['carState', 'controlsState'])
-
-    longitudinalPlanTOP = plan_top_send.longitudinalPlanTOP
 
     pm.send('longitudinalPlanTOP', plan_top_send)

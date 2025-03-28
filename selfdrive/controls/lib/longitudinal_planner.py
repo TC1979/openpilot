@@ -40,9 +40,6 @@ _A_TOTAL_MAX_BP = [20., 40.]
 def get_max_accel(v_ego):
   return np.interp(v_ego, A_CRUISE_MAX_BP, A_CRUISE_MAX_VALS)
 
-def get_max_accel_df(v_ego):
-  return np.interp(v_ego, A_CRUISE_MAX_BP_DF, A_CRUISE_MAX_VALS_DF)
-
 def get_max_accel_toyota(v_ego):
   return np.interp(v_ego, A_CRUISE_MAX_BP_TOYOTA, A_CRUISE_MAX_VALS_TOYOTA)
 
@@ -152,8 +149,6 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
     if self.mpc.mode == 'acc':
       if self.CP.brand == "toyota":
         accel_clip = [ACCEL_MIN, get_max_accel_toyota(v_ego)]
-      elif self.dynamic_follow:
-        accel_clip = [ACCEL_MIN, get_max_accel_df(v_ego)]
       else:
         accel_clip = [ACCEL_MIN, get_max_accel(v_ego)]
       steer_angle_without_offset = sm['carState'].steeringAngleDeg - sm['liveParameters'].angleOffsetDeg
