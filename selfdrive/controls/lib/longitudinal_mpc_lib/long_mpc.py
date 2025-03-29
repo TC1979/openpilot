@@ -6,7 +6,6 @@ from cereal import log
 from opendbc.car.interfaces import ACCEL_MIN, ACCEL_MAX
 from opendbc.car.toyota.values import ToyotaFlags
 from openpilot.common.conversions import Conversions as CV
-from openpilot.common.params import Params
 from openpilot.common.realtime import DT_MDL
 from openpilot.common.swaglog import cloudlog
 # WARNING: imports outside of constants will not trigger a rebuild
@@ -61,14 +60,8 @@ FCW_IDXS = T_IDXS < 5.0
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
 COMFORT_BRAKE = 2.5
 # STOP_DISTANCE = 6.0
-# CRUISE_MIN_ACCEL = -1.2
+CRUISE_MIN_ACCEL = -1.2
 CRUISE_MAX_ACCEL = 2.0
-
-A_CRUISE_MIN_VALS = [-1.2, -1.15, -1.1, -1.15, -1.2]
-A_CRUISE_MIN_BP =   [ 0.,  .01,   .02,   .3,    1.]
-
-def get_cruise_min_accel(v_ego):
-    return np.interp(v_ego, A_CRUISE_MIN_BP, A_CRUISE_MIN_VALS)
 
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
@@ -87,7 +80,7 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   elif personality==log.LongitudinalPersonality.standard:
     return 1.3
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 0.85
+    return 0.9
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
@@ -410,15 +403,10 @@ class LongitudinalMpc:
     if not (self.CP.flags & ToyotaFlags.SMART_DSU):
       stop_distance += 0.5
 
-    if Params().get_bool("ToyotaTune"):
-      stop_distance += 0.5
-
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
-    # lead = radarstate.leadOne
-    # lead_prob = getattr(lead, "modelProb", 1.0)
 
     self.smoother_braking = (self.mode == 'acc' and v_ego < 20 and lead_xv_0[0,0] > 13 and lead_xv_0[0,0] < 40)
 
@@ -464,11 +452,9 @@ class LongitudinalMpc:
 
       # Fake an obstacle for cruise, this ensures smooth acceleration to set speed
       # when the leads are no factor.
-      cruise_min_accel_val = get_cruise_min_accel(v_ego)
-      v_lower = v_ego + (T_IDXS * cruise_min_accel_val * 1.05)
+      v_lower = v_ego + (T_IDXS * CRUISE_MIN_ACCEL * 1.05)
       # TODO does this make sense when max_a is negative?
-      cruise_max_accel_val = CRUISE_MAX_ACCEL
-      v_upper = v_ego + (T_IDXS * cruise_max_accel_val * 1.05)
+      v_upper = v_ego + (T_IDXS * CRUISE_MAX_ACCEL * 1.05)
       v_cruise_clipped = np.clip(v_cruise * np.ones(N+1),
                                  v_lower,
                                  v_upper)
