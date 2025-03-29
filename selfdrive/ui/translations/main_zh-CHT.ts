@@ -1212,13 +1212,13 @@ Internet access from mobile phone (tethering) is required.</source>
     </message>
     <message>
         <source>Enable Toyota Drive Mode Button</source>
-        <translation>開啟Toyota 駕駛模式按扭連動</translation>
+        <translation>開啟Toyota 駕駛模式按鍵連動</translation>
     </message>
     <message>
         <source>TOP will link the Acceleration Personality to the car&apos;s physical drive mode selector.
 Reboot Required.</source>
-        <translation>TOP 將會連結個性化加速模式與Toyota駕駛模式選擇&apos;s 透過實體按鈕選擇。
-需要重啟後生效</translation>
+        <translation>TOP 將會連結個性化加速模式與Toyota駕駛模式按鍵，開啟後可透過實體按鍵選擇個性化加速模式。
+需要重啟後生效。</translation>
     </message>
 </context>
 <context>
