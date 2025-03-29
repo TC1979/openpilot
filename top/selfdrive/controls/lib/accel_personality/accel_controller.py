@@ -83,7 +83,7 @@ class AccelController:
 
     return a_cruise_max
 
-  def get_accel_limits(self, v_ego: float, accel_limits: list[float]) -> tuple[float, float]:
+  def get_accel_limits(self, v_ego: float, accel_limits: list[float]) -> tuple[float]:
     self._read_params()
 
     if self._personality == AccelPersonality.stock:
