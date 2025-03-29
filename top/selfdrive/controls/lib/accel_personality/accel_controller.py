@@ -78,17 +78,16 @@ class AccelController:
       max_v = _DP_CRUISE_MAX_V_NORMAL
       #print("normal")
 
-    # a_cruise_min = interp(v_ego, _DP_CRUISE_MIN_BP, min_v)
-    a_cruise_min = -1.0
+    # a_cruise_min = float(interp(v_ego, _DP_CRUISE_MIN_BP, min_v))
     a_cruise_max = float(interp(v_ego, _DP_CRUISE_MAX_BP, max_v))
 
-    return (a_cruise_min, a_cruise_max)
+    return a_cruise_max
 
   def get_accel_limits(self, v_ego: float, accel_limits: list[float]) -> tuple[float, float]:
     self._read_params()
 
     if self._personality == AccelPersonality.stock:
-      return (accel_limits[0], accel_limits[1])
+      return accel_limits
     else:
       return self._dp_calc_cruise_accel_limits(v_ego)
 
