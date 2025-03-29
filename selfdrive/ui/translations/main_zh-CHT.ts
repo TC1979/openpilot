@@ -1212,12 +1212,13 @@ Internet access from mobile phone (tethering) is required.</source>
     </message>
     <message>
         <source>Enable Toyota Drive Mode Button</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟Toyota 駕駛模式按扭連動</translation>
     </message>
     <message>
         <source>TOP will link the Acceleration Personality to the car&apos;s physical drive mode selector.
 Reboot Required.</source>
-        <translation type="unfinished"></translation>
+        <translation>TOP 將會連結個性化加速模式與Toyota駕駛模式選擇&apos;s 透過實體按鈕選擇。
+需要重啟後生效</translation>
     </message>
 </context>
 <context>
@@ -1335,7 +1336,7 @@ Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Normal</source>
+        <source>正常</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1348,11 +1349,11 @@ Reboot Required.</source>
     </message>
     <message>
         <source>Acceleration Personality</source>
-        <translation type="unfinished"></translation>
+        <translation>個性化加速模式</translation>
     </message>
     <message>
         <source>Normal is recommended. In sport mode, TOP will provide aggressive acceleration for a dynamic driving experience. In eco mode, TOP will apply smoother and more relaxed acceleration. On supported cars, you can cycle through these acceleration personality within Onroad Settings on the driving screen.</source>
-        <translation type="unfinished"></translation>
+        <translation>正常模式是建議的選擇。Sport模式，TOP將會採用較積極的油門加速，提供動力較充足的跟車節奏。Eco模式，TOP將會採用較為平順的油門加速，以提供舒適的乘坐感。</translation>
     </message>
 </context>
 <context>
