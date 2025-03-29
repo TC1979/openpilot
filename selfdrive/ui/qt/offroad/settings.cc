@@ -597,7 +597,7 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
 
   toggles.append(new ParamControl("ToyotaDriveMode",
                                   tr("Enable Toyota Drive Mode Button"),
-                                  tr("TOP will link the Acceleration Personality to the car's physical drive mode selector.\nReboot Required.""),
+                                  tr("TOP will link the Acceleration Personality to the car's physical drive mode selector.\nReboot Required."),
                                   "../assets/offroad/icon_road.png",
                                   this));
 
