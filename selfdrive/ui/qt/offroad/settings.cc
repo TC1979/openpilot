@@ -595,6 +595,12 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/offroad/icon_road.png",
                                   this));
 
+  toggles.append(new ParamControl("ToyotaDriveMode",
+                                  tr("Enable Toyota Drive Mode Button"),
+                                  tr("TOP will link the Acceleration Personality to the car's physical drive mode selector.\nReboot Required.""),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
   toggles.append(new ParamControl("toyotaautolock",
                                   tr("Enable Door Auto Lock"),
                                   tr("Enabled this to lock doors when drive above 25 km/h. Only work on some Toyota vehicles."),
