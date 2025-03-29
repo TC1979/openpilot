@@ -1336,8 +1336,8 @@ Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>正常</source>
-        <translation type="unfinished"></translation>
+        <source>Normal</source>
+        <translation>普通</translation>
     </message>
     <message>
         <source>Eco</source>
@@ -1345,7 +1345,7 @@ Reboot Required.</source>
     </message>
     <message>
         <source>Stock</source>
-        <translation type="unfinished"></translation>
+        <translation>預設</translation>
     </message>
     <message>
         <source>Acceleration Personality</source>
@@ -1353,7 +1353,7 @@ Reboot Required.</source>
     </message>
     <message>
         <source>Normal is recommended. In sport mode, TOP will provide aggressive acceleration for a dynamic driving experience. In eco mode, TOP will apply smoother and more relaxed acceleration. On supported cars, you can cycle through these acceleration personality within Onroad Settings on the driving screen.</source>
-        <translation>正常模式是建議的選擇。Sport模式，TOP將會採用較積極的油門加速，提供動力較充足的跟車節奏。Eco模式，TOP將會採用較為平順的油門加速，以提供舒適的乘坐感。</translation>
+        <translation>普通模式是建議的選擇。Sport模式，TOP將會採用較積極的油門加速，提供動力較充足的跟車節奏。Eco模式，TOP將會採用較為平順的油門加速，以提供舒適的乘坐感。</translation>
     </message>
 </context>
 <context>

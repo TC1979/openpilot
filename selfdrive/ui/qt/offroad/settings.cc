@@ -79,7 +79,7 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
                                           tr("Normal is recommended. In sport mode, TOP will provide aggressive acceleration for a dynamic driving experience. "
                                              "In eco mode, TOP will apply smoother and more relaxed acceleration. On supported cars, you can cycle through these "
                                              "acceleration personality within Onroad Settings on the driving screen."),
-                                          "",
+                                          "../assets/offroad/icon_speed_limit.png",
                                           accel_personality_texts);
   accel_personality_setting->showDescription();
 
