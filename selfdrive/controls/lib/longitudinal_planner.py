@@ -158,7 +158,7 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
     else:
       accel_clip = [ACCEL_MIN, ACCEL_MAX]
 
-    accel_personality = AccelPersonality.stock
+    accel_personality = AccelPersonality.normal
     if hasattr(sm, 'longitudinalPlanTOP') and sm['longitudinalPlanTOP'].valid:
       accel_personality = sm['longitudinalPlanTOP'].accelPersonality
     else:
