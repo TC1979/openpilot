@@ -6,6 +6,7 @@ from cereal import log
 from opendbc.car.interfaces import ACCEL_MIN, ACCEL_MAX
 from opendbc.car.toyota.values import ToyotaFlags
 from openpilot.common.conversions import Conversions as CV
+from openpilot.common.params import Params
 from openpilot.common.realtime import DT_MDL
 from openpilot.common.swaglog import cloudlog
 # WARNING: imports outside of constants will not trigger a rebuild
@@ -44,9 +45,6 @@ CRASH_DISTANCE = .25
 LEAD_DANGER_FACTOR = 0.75
 LIMIT_COST = 1e6
 ACADOS_SOLVER_TYPE = 'SQP_RTI'
-CITY_SPEED_LIMIT = 20  # ~70 km/h
-CRUISING_SPEED = 5     # ~18 km/h
-MIN_LEAD_DISTANCE = 5
 
 
 # Fewer timestamps don't hurt performance and lead to
@@ -107,7 +105,7 @@ def get_STOP_DISTANCE(personality=log.LongitudinalPersonality.standard):
   elif personality==log.LongitudinalPersonality.standard:
     return 4.0
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 3.5
+    return 4.0
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
@@ -275,7 +273,6 @@ def gen_long_ocp():
 class LongitudinalMpc:
   def __init__(self, CP, mode='acc', dt=DT_MDL):
     self.CP = CP
-    self.braking_offset = 1
     self.mode = mode
     self.dt = dt
     self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
@@ -329,12 +326,6 @@ class LongitudinalMpc:
 
   def set_weights(self, prev_accel_constraint=True, personality=log.LongitudinalPersonality.standard, v_lead0=0, v_lead1=0):
     jerk_factor = get_jerk_factor(personality)
-    if isinstance(self.braking_offset, (list, np.ndarray)) and len(self.braking_offset) == 0:
-      mean_braking_offset = 1.0
-    else:
-      mean_braking_offset = np.clip(np.mean(self.braking_offset), 1, 2.5)
-
-    jerk_factor = max(jerk_factor / mean_braking_offset, 0.3)
     v_ego = self.x0[1]
     v_ego_bps = [0, 10]
     # KRKeegan adjustments to improve sluggish acceleration
@@ -400,42 +391,14 @@ class LongitudinalMpc:
     v_ego = self.x0[1]
     t_follow = get_T_FOLLOW(personality) if not dynamic_follow else get_dynamic_follow(v_ego, personality)
     stop_distance = get_STOP_DISTANCE(personality)
-    if not (self.CP.flags & ToyotaFlags.SMART_DSU):
-      stop_distance += 0.5
+
+    if Params().get_bool("ToyotaTune") and not (self.CP.flags & ToyotaFlags.SMART_DSU):
+      stop_distance += 1
 
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
-
-    self.smoother_braking = (self.mode == 'acc' and v_ego < 20 and lead_xv_0[0,0] > 13 and lead_xv_0[0,0] < 40)
-
-    if self.smoother_braking:
-      v_lead = lead_xv_0[0, 1]
-      lead_distance = lead_xv_0[0, 0]
-
-      distance_factor = max(MIN_LEAD_DISTANCE, 1.0)
-      standstill_offset = max(stop_distance - v_ego, 1.0)
-      far_lead_offset = max(v_ego - CITY_SPEED_LIMIT, 1.0)
-      self.braking_offset = max((v_ego - v_lead) * 0.5, 1.0)
-      if v_lead > v_ego:
-        distance_factor = max(max(lead_distance, MIN_LEAD_DISTANCE) - (v_ego * t_follow), 1)
-        standstill_offset = max(stop_distance - v_ego, 1)
-        self.braking_offset = np.clip((v_lead - v_ego) * standstill_offset - COMFORT_BRAKE, 1, distance_factor)
-        t_follow = max(t_follow / self.braking_offset, np.clip(v_ego / 20, 0.7, 1.2))
-
-      elif v_lead < v_ego:
-        if v_ego <= CRUISING_SPEED:
-          t_follow = np.clip(v_ego / 10, 0.8, 1.2)
-        else:
-          distance_factor = max(lead_distance - (v_lead * t_follow), 1)
-          far_lead_offset = max(v_lead - CITY_SPEED_LIMIT, 1)
-          self.braking_offset = np.clip(min(v_ego - v_lead, v_lead) * far_lead_offset - COMFORT_BRAKE, 1.5, distance_factor)
-          min_t_follow = np.clip(v_ego / 25, 0.85, 1.45)
-          t_follow = max(t_follow / (self.braking_offset * np.clip((v_ego - v_lead) / 5, 1, 3)), min_t_follow)
-
-    else:
-      self.braking_offset = 1
 
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
