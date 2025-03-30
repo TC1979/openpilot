@@ -88,7 +88,6 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
     self.fcw = False
     self.dt = dt
     self.allow_throttle = True
-    self.accel_controller = AccelController()
 
     self.a_desired = init_a
     self.v_desired_filter = FirstOrderFilter(init_v, 2.0, self.dt)
