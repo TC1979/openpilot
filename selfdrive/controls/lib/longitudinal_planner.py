@@ -170,20 +170,24 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
           accel_personality = AccelPersonality.stock
 
     if self.accel_controller.is_enabled(accel_personality):
-      accel_limits = self.accel_controller.get_accel_limits(v_ego, accel_clip)
+      max_limit = self.accel_controller.get_accel_limits(v_ego, accel_clip)
 
-      if isinstance(accel_limits, tuple) and len(accel_limits) == 2:
-        accel_clip = [accel_limits[0], accel_limits[1]]
+      # Ensure max_limit is a single float value
+      if isinstance(max_limit, list):
+        max_limit = max_limit[1]
+      print(f"Accel Controller: max_limit={max_limit:.2f}")
 
       if self.mpc.mode == 'acc':
+        # Use the accel controller limits directly
+        accel_clip = [ACCEL_MIN, max_limit]
+        # Recalculate limit turn according to the new max limit
         steer_angle_without_offset = sm['carState'].steeringAngleDeg - sm['liveParameters'].angleOffsetDeg
         accel_clip = limit_accel_in_turns(v_ego, steer_angle_without_offset, accel_clip, self.CP)
-
-      if self.CP.openpilotLongitudinalControl:
-        print(f"Accel Controller: mode={self.mpc.mode}, v_ego={v_ego:.2f}, accel_clip={accel_clip}")
+        print(f"ACC Mode Final: v_ego={v_ego:.2f}, accel_clip={accel_clip}")
+      else:
+        print(f"Blended Mode (Accel Controller Enabled): accel_clip={accel_clip}")
     else:
-      if self.CP.openpilotLongitudinalControl:
-        print(f"Accel Controller Disabled: accel_clip={accel_clip}")
+      print(f"Accel Controller Disabled: accel_clip={accel_clip}")
 
     if reset_state:
       self.v_desired_filter.x = v_ego
