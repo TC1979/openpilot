@@ -88,6 +88,7 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
     self.fcw = False
     self.dt = dt
     self.allow_throttle = True
+    self.accel_controller = AccelController()
 
     self.a_desired = init_a
     self.v_desired_filter = FirstOrderFilter(init_v, 2.0, self.dt)
@@ -125,6 +126,7 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
     return x, v, a, j, throttle_prob
 
   def update(self, sm):
+    LongitudinalPlannerTOP.update(self, sm)
     self.mpc.mode = 'blended' if sm['selfdriveState'].experimentalMode else 'acc'
 
     if len(sm['carControl'].orientationNED) == 3:

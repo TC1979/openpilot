@@ -94,6 +94,7 @@ class AccelController:
 
   def is_enabled(self, accel_personality: int = AccelPersonality.stock) -> bool:
     self._personality = accel_personality
+    self._read_params()
     enabled: bool = (self._personality != AccelPersonality.stock)
     return enabled
 
