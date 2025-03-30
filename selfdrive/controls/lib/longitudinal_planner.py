@@ -170,11 +170,7 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
           accel_personality = AccelPersonality.stock
 
     if self.accel_controller.is_enabled(accel_personality):
-      max_limit = self.accel_controller.get_accel_limits(v_ego, accel_clip)
-
-      # Ensure max_limit is a single float value
-      if isinstance(max_limit, list):
-        max_limit = max_limit[1]
+      _, max_limit = self.accel_controller.get_accel_limits(v_ego, accel_clip)
       print(f"Accel Controller: max_limit={max_limit:.2f}")
 
       if self.mpc.mode == 'acc':
