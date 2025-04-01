@@ -35,9 +35,10 @@ _DP_CRUISE_MIN_V_NORMAL = [-0.015, -0.015, -0.12, -1.21]
 _DP_CRUISE_MIN_V_SPORT =  [-0.02, -0.02, -0.14, -1.22]
 _DP_CRUISE_MIN_BP =       [0.,     2.0,  11,   25.]
 
-_DP_CRUISE_MAX_V_ECO =    [2.0, 1.7, 1.3,  .95, .75, .70, .65, .45, .32, .20, .085]
+_DP_CRUISE_MAX_V_ECO =    [2.0, 1.7, 1.1,  .95, .75, .70, .65, .45, .32, .20, .085]
 _DP_CRUISE_MAX_V_NORMAL = [2.2, 1.9, 1.4, 1.22, .95, .83, .71, .54, .45, .38, .15]
 _DP_CRUISE_MAX_V_SPORT =  [3.0, 2.4, 2.0, 1.45, 1.2, 1.0, .92, .75, .63, .55, .25]
+# CRUISE_MAX_BP in kmh =  [0.,  3,   10,   20,   30,  40,  53,  72,  90,  107, 150]
 _DP_CRUISE_MAX_BP =       [0.,  1,   3.,   6.,   8.,  11., 15., 20., 25., 30., 55.]
 
 
@@ -70,13 +71,10 @@ class AccelController:
 
     if self._personality == AccelPersonality.eco:
       max_v = _DP_CRUISE_MAX_V_ECO
-      print("eco")
     elif self._personality == AccelPersonality.sport:
       max_v = _DP_CRUISE_MAX_V_SPORT
-      print("sport")
     else:
       max_v = _DP_CRUISE_MAX_V_NORMAL
-      print("normal")
 
     # a_cruise_min = float(interp(v_ego, _DP_CRUISE_MIN_BP, min_v))
     a_cruise_max = float(interp(v_ego, _DP_CRUISE_MAX_BP, max_v))

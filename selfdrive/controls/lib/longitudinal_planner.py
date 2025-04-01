@@ -172,7 +172,6 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
 
     if self.accel_controller.is_enabled(accel_personality):
       _, max_limit = self.accel_controller.get_accel_limits(v_ego, accel_clip)
-      print(f"Accel Controller: max_limit={max_limit:.2f}")
 
       if self.mpc.mode == 'acc':
         # Use the accel controller limits directly
@@ -180,11 +179,6 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
         # Recalculate limit turn according to the new max limit
         steer_angle_without_offset = sm['carState'].steeringAngleDeg - sm['liveParameters'].angleOffsetDeg
         accel_clip = limit_accel_in_turns(v_ego, steer_angle_without_offset, accel_clip, self.CP)
-        print(f"ACC Mode Final: v_ego={v_ego:.2f}, accel_clip={accel_clip}")
-      else:
-        print(f"Blended Mode (Accel Controller Enabled): accel_clip={accel_clip}")
-    else:
-      print(f"Accel Controller Disabled: accel_clip={accel_clip}")
 
     if reset_state:
       self.v_desired_filter.x = v_ego
