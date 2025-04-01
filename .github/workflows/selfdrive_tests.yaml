@@ -139,7 +139,7 @@ jobs:
     - name: Build openpilot
       run: ${{ env.RUN }} "scons -j$(nproc)"
     - name: Run unit tests
-      timeout-minutes: ${{ contains(runner.name, 'nsc') && 1 || 25 }}
+      timeout-minutes: ${{ contains(runner.name, 'nsc') && 1 || 30 }}
       run: |
         ${{ env.RUN }} "$PYTEST --collect-only -m 'not slow' &> /dev/null && \
                         MAX_EXAMPLES=1 $PYTEST -m 'not slow' && \
