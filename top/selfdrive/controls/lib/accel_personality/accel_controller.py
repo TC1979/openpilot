@@ -28,7 +28,7 @@ from openpilot.common.params import Params
 
 AccelPersonality = custom.LongitudinalPlanTOP.AccelerationPersonality
 
-# Accel personality by @arne182 modified by cgw and kumar
+# Accel personality by @arne182 modified by ct921
 
 _DP_CRUISE_MIN_V_ECO =    [-0.01, -0.01, -0.10, -1.2]
 _DP_CRUISE_MIN_V_NORMAL = [-0.015, -0.015, -0.12, -1.21]
