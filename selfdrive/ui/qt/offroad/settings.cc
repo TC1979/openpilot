@@ -595,6 +595,12 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
                                   "../assets/offroad/icon_road.png",
                                   this));
 
+  toggles.append(new ParamControl("toyota_stock_long",
+                                  tr("Use Toyota Stock Longitudinal Control"),
+                                  tr("Enable to use Toyota's stock longitudinal control."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
   toggles.append(new ParamControl("ToyotaDriveMode",
                                   tr("Enable Toyota Drive Mode Button"),
                                   tr("TOP will link the Acceleration Personality to the car's physical drive mode selector.\nReboot Required."),

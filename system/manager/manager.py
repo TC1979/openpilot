@@ -50,13 +50,12 @@ def manager_init() -> None:
 
     ("AleSato_AutomaticBrakeHold", "0"),
     ("CarModel", "[-Not selected-]"),
-    ("ToyotaTune", "1"),
     ("dp_atl", "0"),
     ("dp_jetson", "0"),
     ("fleetmanager", "1"),
     ("DrivingPersonalitiesUIWheel", "1"),
-    ("e2e_link", "1"),
     ("Dynamic_Follow", "0"),
+    ("e2e_link", "1"),
     ("NudgelessLaneChange", "0"),
     ("NNFF", "0"),
     ("ReverseAccChange", "1"),
@@ -65,6 +64,8 @@ def manager_init() -> None:
     ("toyotaautounlock", "1"),
     ("toyota_bsm", "0"),
     ("ToyotaDriveMode", "0"),
+    ("toyota_stock_long", "0"),
+    ("ToyotaTune", "1"),
     ("TurnVisionControl", "1"),
   ]
 
