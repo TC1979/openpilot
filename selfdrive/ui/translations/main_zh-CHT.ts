@@ -1222,11 +1222,11 @@ Reboot Required.</source>
     </message>
     <message>
         <source>Use Toyota Stock Longitudinal Control</source>
-        <translation type="unfinished"></translation>
+        <translation>使用Toyota原廠蹤向控制</translation>
     </message>
     <message>
         <source>Enable to use Toyota&apos;s stock longitudinal control.</source>
-        <translation type="unfinished"></translation>
+        <translation>開啟後將以Toyota原廠的蹤向控制加減速，而openpilot只進行方向盤的橫向車道維持。</translation>
     </message>
 </context>
 <context>
