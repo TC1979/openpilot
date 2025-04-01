@@ -2,7 +2,7 @@
 import math
 import numpy as np
 from openpilot.common.params import Params
-
+from cereal import custom
 import cereal.messaging as messaging
 from opendbc.car.interfaces import ACCEL_MIN, ACCEL_MAX
 from openpilot.common.conversions import Conversions as CV
@@ -15,22 +15,19 @@ from openpilot.selfdrive.controls.lib.longitudinal_mpc_lib.long_mpc import T_IDX
 from openpilot.selfdrive.controls.lib.drive_helpers import CONTROL_N, get_speed_error
 from openpilot.selfdrive.car.cruise import V_CRUISE_MAX, V_CRUISE_UNSET
 from openpilot.common.swaglog import cloudlog
+from openpilot.top.selfdrive.controls.lib.longitudinal_planner import LongitudinalPlannerTOP
 
 # PFEIFER - VTSC {{
 from openpilot.selfdrive.controls.vtsc import vtsc
 # }} PFEIFER - VTSC
 
+AccelPersonality = custom.LongitudinalPlanTOP.AccelerationPersonality
+
 LON_MPC_STEP = 0.2  # first step is 0.2s
 A_CRUISE_MAX_VALS = [1.6, 1.2, 0.8, 0.6]
 A_CRUISE_MAX_BP = [0., 10.0, 25., 40.]
-# A_CRUISE_MIN_VALS =    [-0.7, -0.6, -0.8, -1.2, -1.2, -1.2, -1.2, -1.2, -1.2]
-# A_CRUISE_MIN_BP =      [ 0.,  .01,  .02,  .3,    5.,   8.,   11.,  16.,  22.]
-# A_CRUISE_MIN_VALS_DF = [-0.2, -0.11, -0.1, -0.15, -0.25, -0.35, -0.55, -0.85, -1.0]
-# A_CRUISE_MIN_BP_DF =   [ 0.,  .01,   .02,  .3,     5.,    8.,    11.,   16.,   22.]
-A_CRUISE_MAX_VALS_DF =       [3.0, 2.4, 2.0,  1.15, .85, .75, .65, .45, .32, .20, .085]  # Sets the limits of the planner accel, PID may exceed
-A_CRUISE_MAX_BP_DF =         [0.,  1,   3.,   6.,    8.,  11., 15., 20., 25., 30., 55.]
-A_CRUISE_MAX_VALS_TOYOTA = [2.0, 1.7, 1.3,  .95,  .75, .70, .65, .45, .32, .20, .085]  # Sets the limits of the planner accel, PID may exceed
-# A_CRUISE_MAX_VALS_TOYOTA =   [2.0, 1.7, 1.32, 1.22, .95, .82, .68, .53, .32, .20, .085]  # Sets the limits of the planner accel, PID may exceed
+# A_CRUISE_MAX_VALS_TOYOTA = [2.0, 1.7, 1.3,  .95,  .75, .70, .65, .45, .32, .20, .085]  # Sets the limits of the planner accel, PID may exceed
+A_CRUISE_MAX_VALS_TOYOTA =   [2.0, 1.7, 1.32, 1.22, .95, .82, .68, .53, .32, .20, .085]  # Sets the limits of the planner accel, PID may exceed
 # CRUISE_MAX_BP in kmh =     [0.,  3,   10,   20,    30,  40,  53,  72,  90,  107, 150]
 A_CRUISE_MAX_BP_TOYOTA =     [0.,  1,   3.,   6.,    8.,  11., 15., 20., 25., 30., 55.]
 CONTROL_N_T_IDX = ModelConstants.T_IDXS[:CONTROL_N]
@@ -44,9 +41,6 @@ _A_TOTAL_MAX_BP = [20., 40.]
 
 def get_max_accel(v_ego):
   return np.interp(v_ego, A_CRUISE_MAX_BP, A_CRUISE_MAX_VALS)
-
-def get_max_accel_df(v_ego):
-  return np.interp(v_ego, A_CRUISE_MAX_BP_DF, A_CRUISE_MAX_VALS_DF)
 
 def get_max_accel_toyota(v_ego):
   return np.interp(v_ego, A_CRUISE_MAX_BP_TOYOTA, A_CRUISE_MAX_VALS_TOYOTA)
@@ -86,10 +80,11 @@ def get_accel_from_plan(speeds, accels, action_t=DT_MDL, vEgoStopping=0.05):
   return a_target, should_stop
 
 
-class LongitudinalPlanner:
+class LongitudinalPlanner(LongitudinalPlannerTOP):
   def __init__(self, CP, init_v=0.0, init_a=0.0, dt=DT_MDL):
     self.CP = CP
     self.mpc = LongitudinalMpc(CP, dt=dt)
+    LongitudinalPlannerTOP.__init__(self)
     self.fcw = False
     self.dt = dt
     self.allow_throttle = True
@@ -130,6 +125,7 @@ class LongitudinalPlanner:
     return x, v, a, j, throttle_prob
 
   def update(self, sm):
+    LongitudinalPlannerTOP.update(self, sm)
     self.mpc.mode = 'blended' if sm['selfdriveState'].experimentalMode else 'acc'
 
     if len(sm['carControl'].orientationNED) == 3:
@@ -156,14 +152,33 @@ class LongitudinalPlanner:
     if self.mpc.mode == 'acc':
       if self.CP.brand == "toyota":
         accel_clip = [ACCEL_MIN, get_max_accel_toyota(v_ego)]
-      elif self.dynamic_follow:
-        accel_clip = [ACCEL_MIN, get_max_accel_df(v_ego)]
       else:
         accel_clip = [ACCEL_MIN, get_max_accel(v_ego)]
       steer_angle_without_offset = sm['carState'].steeringAngleDeg - sm['liveParameters'].angleOffsetDeg
       accel_clip = limit_accel_in_turns(v_ego, steer_angle_without_offset, accel_clip, self.CP)
     else:
       accel_clip = [ACCEL_MIN, ACCEL_MAX]
+
+    accel_personality = AccelPersonality.normal
+    if hasattr(sm, 'longitudinalPlanTOP') and sm['longitudinalPlanTOP'].valid:
+      accel_personality = sm['longitudinalPlanTOP'].accelPersonality
+    else:
+      params_personality = self.params.get("AccelPersonality", encoding='utf-8')
+      if params_personality is not None:
+        try:
+          accel_personality = int(params_personality)
+        except ValueError:
+          accel_personality = AccelPersonality.stock
+
+    if self.accel_controller.is_enabled(accel_personality):
+      _, max_limit = self.accel_controller.get_accel_limits(v_ego, accel_clip)
+
+      if self.mpc.mode == 'acc':
+        # Use the accel controller limits directly
+        accel_clip = [ACCEL_MIN, max_limit]
+        # Recalculate limit turn according to the new max limit
+        steer_angle_without_offset = sm['carState'].steeringAngleDeg - sm['liveParameters'].angleOffsetDeg
+        accel_clip = limit_accel_in_turns(v_ego, steer_angle_without_offset, accel_clip, self.CP)
 
     if reset_state:
       self.v_desired_filter.x = v_ego
@@ -247,3 +262,4 @@ class LongitudinalPlanner:
     longitudinalPlan.allowThrottle = bool(self.allow_throttle)
 
     pm.send('longitudinalPlan', plan_send)
+    self.publish_longitudinal_plan_top(sm, pm)

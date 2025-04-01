@@ -38,11 +38,8 @@ class Controls:
     self.sm = messaging.SubMaster(['liveParameters', 'liveTorqueParameters', 'modelV2', 'selfdriveState',
                                    'liveCalibration', 'livePose', 'longitudinalPlan', 'carState', 'carOutput',
                                    'driverMonitoringState', 'onroadEvents', 'driverAssistance'], poll='selfdriveState')
-    self.pm = messaging.PubMaster(['carControl', 'controlsState'])
+    self.pm = messaging.PubMaster(['carControl', 'controlsState', 'topControlsState'])
 
-    # Initialize attributes
-    self.initialized = False
-    self.dp_atl = self.params.get_bool("dp_atl")
     self.steer_limited_by_controls = False
     self.desired_curvature = 0.0
     self.live_torque = False
@@ -60,6 +57,9 @@ class Controls:
     elif self.CP.lateralTuning.which() == 'torque':
       self.LaC = LatControlTorque(self.CP, self.CI)
 
+    self.dp_atl = self.params.get_bool("dp_atl")
+    self.alka_active = False
+
   def update(self):
     self.sm.update(15)
     if self.sm.updated["liveCalibration"]:
@@ -67,10 +67,6 @@ class Controls:
     if self.sm.updated["livePose"]:
       device_pose = Pose.from_live_pose(self.sm['livePose'])
       self.calibrated_pose = self.pose_calibrator.build_calibrated_pose(device_pose)
-
-    # Set initialized when selfdriveState is seen
-    if self.sm.all_checks(['selfdriveState']) and not self.initialized:
-      self.initialized = True
 
   def state_control(self):
     CS = self.sm['carState']
@@ -97,21 +93,10 @@ class Controls:
 
     # Check which actuators can be enabled
     standstill = abs(CS.vEgo) <= max(self.CP.minSteerSpeed, MIN_LATERAL_CONTROL_SPEED) or CS.standstill
-    CC.latActive = self.sm['selfdriveState'].active and not CS.steerFaultTemporary and not CS.steerFaultPermanent and not standstill
+    self.alka_active = self.dp_atl and CS.cruiseState.available and not standstill and CS.gearShifter != car.CarState.GearShifter.reverse
+    lat_active = self.sm['selfdriveState'].active or self.alka_active
+    CC.latActive = lat_active and not CS.steerFaultTemporary and not CS.steerFaultPermanent and not standstill
     CC.longActive = CC.enabled and not any(e.overrideLongitudinal for e in self.sm['onroadEvents']) and self.CP.openpilotLongitudinalControl
-
-    # ATL override
-    if not self.CP.passive and self.initialized and self.dp_atl and not standstill and CS.cruiseState.available:
-      if self.sm['liveCalibration'].calStatus != log.LiveCalibrationData.Status.calibrated:
-        pass
-      elif abs(CS.steeringAngleDeg) >= 450:
-        pass
-      elif CS.steerFaultTemporary or CS.steerFaultPermanent:
-        pass
-      elif CS.gearShifter == car.CarState.GearShifter.reverse:
-        pass
-      else:
-        CC.latActive = True
 
     actuators = CC.actuators
     actuators.longControlState = self.LoC.long_control_state
@@ -190,6 +175,13 @@ class Controls:
 
     # TODO: both controlsState and carControl valids should be set by
     #       sm.all_checks(), but this creates a circular dependency
+
+    # topControlsState
+    dat = messaging.new_message('topControlsState')
+    dat.valid = True
+    ncs = dat.topControlsState
+    ncs.alkaActive = self.alka_active
+    self.pm.send('topControlsState', dat)
 
     # controlsState
     dat = messaging.new_message('controlsState')

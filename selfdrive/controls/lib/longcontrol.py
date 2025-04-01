@@ -58,7 +58,7 @@ class LongControl:
   def __init__(self, CP):
     self.CP = CP
     self.long_control_state = LongCtrlState.off
-    pos_p_limit = 0.0 if not Params().get_bool("ToyotaTune") else None # put parameter-based control here
+    pos_p_limit = 0.0 # if params("NoPositivePResponse") else None # put parameter-based control here
     self.pid = PIDController((CP.longitudinalTuning.kpBP, CP.longitudinalTuning.kpV),
                              (CP.longitudinalTuning.kiBP, CP.longitudinalTuning.kiV),
                              k_f=CP.longitudinalTuning.kf, rate=1 / DT_CTRL,

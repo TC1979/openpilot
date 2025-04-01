@@ -1210,6 +1210,16 @@ Internet access from mobile phone (tethering) is required.</source>
 使用瀏覽器的Web界面連結下面網址以操作導航服務： *http://&lt;device_ip&gt;:8082*.
 開啟此服務需要讓機器連接到網際網路才可運作。</translation>
     </message>
+    <message>
+        <source>Enable Toyota Drive Mode Button</source>
+        <translation>開啟Toyota 駕駛模式按鍵連動</translation>
+    </message>
+    <message>
+        <source>TOP will link the Acceleration Personality to the car&apos;s physical drive mode selector.
+Reboot Required.</source>
+        <translation>TOP 將會連結個性化加速模式與Toyota駕駛模式按鍵，開啟後可透過實體按鍵選擇個性化加速模式。
+需要重啟後生效。</translation>
+    </message>
 </context>
 <context>
     <name>TogglesPanel</name>
@@ -1320,6 +1330,30 @@ Internet access from mobile phone (tethering) is required.</source>
     <message>
         <source>Enable driver monitoring even when openpilot is not engaged.</source>
         <translation>即使在openpilot未激活時也啟用駕駛監控。</translation>
+    </message>
+    <message>
+        <source>Sport</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>普通</translation>
+    </message>
+    <message>
+        <source>Eco</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stock</source>
+        <translation>預設</translation>
+    </message>
+    <message>
+        <source>Acceleration Personality</source>
+        <translation>個性化加速模式</translation>
+    </message>
+    <message>
+        <source>Normal is recommended. In sport mode, TOP will provide aggressive acceleration for a dynamic driving experience. In eco mode, TOP will apply smoother and more relaxed acceleration. On supported cars, you can cycle through these acceleration personality within Onroad Settings on the driving screen.</source>
+        <translation>普通模式是建議的選擇。Sport模式，TOP將會採用較積極的油門加速，提供動力較充足的跟車節奏。Eco模式，TOP將會採用較為平順的油門加速，以提供舒適的乘坐感。</translation>
     </message>
 </context>
 <context>

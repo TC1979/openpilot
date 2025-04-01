@@ -51,11 +51,7 @@ void OnroadWindow::updateState(const UIState &s) {
   alerts->updateState(s);
   nvg->updateState(s);
 
-  QColor bgColor = bg_colors[s.status];
-  if (s.status == STATUS_DISENGAGED && Params().getBool("LateralAllowed")){
-    bgColor = bg_colors[STATUS_LAT_ALLOWED];
-  }
-
+  QColor bgColor = bg_colors[s.scene.alka_active && s.status == STATUS_DISENGAGED? STATUS_ALKA : s.status];
   if (bg != bgColor) {
     // repaint border
     bg = bgColor;

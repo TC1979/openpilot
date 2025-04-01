@@ -74,6 +74,9 @@ _services: dict[str, tuple] = {
   "userFlag": (True, 0., 1),
   "microphone": (True, 10., 10),
 
+  # TOP
+  "longitudinalPlanTOP": (True, 20., 10),
+  "topControlsState": (True, 100., 10),
   # debug
   "uiDebug": (True, 0., 1),
   "testJoystick": (True, 0.),

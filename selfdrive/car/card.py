@@ -82,6 +82,9 @@ class Car:
 
     self.can_callbacks = can_comm_callbacks(self.can_sock, self.pm.sock['sendcan'])
 
+    dp_atl = self.params.get_bool("dp_atl")
+    top_params = 0
+
     if CI is None:
       # wait for one pandaState and one CAN packet
       print("Waiting for CAN messages...")
@@ -99,6 +102,8 @@ class Car:
         with car.CarParams.from_bytes(cached_params_raw) as _cached_params:
           cached_params = _cached_params
 
+      if dp_atl:
+        top_params |= structs.TopFlags.LateralALKA
       self.CI = get_car(*self.can_callbacks, obd_callback(self.params), experimental_long_allowed, num_pandas, cached_params)
       self.RI = interfaces[self.CI.CP.carFingerprint].RadarInterface(self.CI.CP)
       self.CP = self.CI.CP
@@ -115,8 +120,7 @@ class Car:
     if not disengage_on_accelerator:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.DISABLE_DISENGAGE_ON_GAS
 
-    dp_atl = self.params.get_bool("dp_atl")
-    if dp_atl:
+    if top_params & structs.TopFlags.LateralALKA:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.ALKA
 
     auto_brakehold = self.params.get_bool("AleSato_AutomaticBrakeHold") and self.CP.carFingerprint in TSS2_CAR and not (self.CP.flags & ToyotaFlags.HYBRID.value)

@@ -119,6 +119,7 @@ inline static std::unordered_map<std::string, uint32_t> keys = {
     {"Version", PERSISTENT},
 
     // TOP
+    {"AccelPersonality", PERSISTENT},
     {"AleSato_AutomaticBrakeHold", PERSISTENT},
     {"Dynamic_Follow", PERSISTENT},
     {"CarModel", PERSISTENT},
@@ -141,6 +142,7 @@ inline static std::unordered_map<std::string, uint32_t> keys = {
     {"toyotaautolock", PERSISTENT},
     {"toyotaautounlock", PERSISTENT},
     {"toyota_bsm", PERSISTENT},
+    {"ToyotaDriveMode", PERSISTENT},
     {"TurnVisionControl", PERSISTENT},
     {"QuietDrive", PERSISTENT},
 };

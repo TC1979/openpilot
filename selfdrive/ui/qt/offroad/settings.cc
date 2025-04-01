@@ -73,6 +73,16 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
                                           "../assets/offroad/icon_speed_limit.png",
                                           longi_button_texts);
 
+  // accel controller
+  std::vector<QString> accel_personality_texts{tr("Sport"), tr("Normal"), tr("Eco"), tr("Stock")};
+  accel_personality_setting = new ButtonParamControl("AccelPersonality", tr("Acceleration Personality"),
+                                          tr("Normal is recommended. In sport mode, TOP will provide aggressive acceleration for a dynamic driving experience. "
+                                             "In eco mode, TOP will apply smoother and more relaxed acceleration. On supported cars, you can cycle through these "
+                                             "acceleration personality within Onroad Settings on the driving screen."),
+                                          "../assets/offroad/icon_speed_limit.png",
+                                          accel_personality_texts);
+  accel_personality_setting->showDescription();
+
   // set up uiState update for personality setting
   QObject::connect(uiState(), &UIState::uiUpdate, this, &TogglesPanel::updateState);
 
@@ -88,6 +98,7 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
     // insert longitudinal personality after NDOG toggle
     if (param == "DisengageOnAccelerator") {
       addItem(long_personality_setting);
+      addItem(accel_personality_setting);
     }
   }
 
@@ -105,6 +116,13 @@ void TogglesPanel::updateState(const UIState &s) {
       long_personality_setting->setCheckedButton(static_cast<int>(personality));
     }
     uiState()->scene.personality = personality;
+  }
+  if (sm.updated("longitudinalPlanTOP")) {
+    auto accel_personality = sm["longitudinalPlanTOP"].getLongitudinalPlanTOP().getAccelPersonality();
+    if (accel_personality != s.scene.accel_personality && s.scene.started && isVisible()) {
+      accel_personality_setting->setCheckedButton(static_cast<int>(accel_personality));
+    }
+    uiState()->scene.accel_personality = accel_personality;
   }
 }
 
@@ -144,10 +162,13 @@ void TogglesPanel::updateToggles() {
       experimental_mode_toggle->setDescription(e2e_description);
       long_personality_setting->setEnabled(true);
       long_personality_setting->refresh();
+      accel_personality_setting->setEnabled(true);
+      accel_personality_setting->refresh();
     } else {
       // no long for now
       experimental_mode_toggle->setEnabled(false);
       long_personality_setting->setEnabled(false);
+      accel_personality_setting->setEnabled(true);
       params.remove("ExperimentalMode");
 
       const QString unavailable = tr("Experimental mode is currently unavailable on this car since the car's stock ACC is used for longitudinal control.");
@@ -571,6 +592,12 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
   toggles.append(new ParamControl("fleetmanager",
                                   tr("Enable Local File Server"),
                                   tr("This will allow you to play or download openpilot driving record files through your browser.\nUse web interface to control it: *http://&lt;device_ip&gt;:8082*.\nInternet access from mobile phone (tethering) is required."),
+                                  "../assets/offroad/icon_road.png",
+                                  this));
+
+  toggles.append(new ParamControl("ToyotaDriveMode",
+                                  tr("Enable Toyota Drive Mode Button"),
+                                  tr("TOP will link the Acceleration Personality to the car's physical drive mode selector.\nReboot Required."),
                                   "../assets/offroad/icon_road.png",
                                   this));
 

@@ -1203,6 +1203,15 @@ Use web interface to control it: *http://&amp;lt;device_ip&amp;gt;:8082*.
 Internet access from mobile phone (tethering) is required.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Enable Toyota Drive Mode Button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TOP will link the Acceleration Personality to the car&apos;s physical drive mode selector.
+Reboot Required.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TogglesPanel</name>
@@ -1313,6 +1322,30 @@ Internet access from mobile phone (tethering) is required.</source>
     <message>
         <source>Enable driver monitoring even when openpilot is not engaged.</source>
         <translation>openpilot이 활성화되지 않은 경우에도 드라이버 모니터링을 활성화합니다.</translation>
+    </message>
+    <message>
+        <source>Sport</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Eco</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stock</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Acceleration Personality</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Normal is recommended. In sport mode, TOP will provide aggressive acceleration for a dynamic driving experience. In eco mode, TOP will apply smoother and more relaxed acceleration. On supported cars, you can cycle through these acceleration personality within Onroad Settings on the driving screen.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
