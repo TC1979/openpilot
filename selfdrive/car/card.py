@@ -5,7 +5,7 @@ import threading
 
 import cereal.messaging as messaging
 
-from cereal import car, log
+from cereal import car, log, custom
 
 from openpilot.common.params import Params
 from openpilot.common.realtime import config_realtime_process, Priority, Ratekeeper
@@ -22,6 +22,7 @@ from opendbc.safety import ALTERNATIVE_EXPERIENCE
 from openpilot.selfdrive.pandad import can_capnp_to_list, can_list_to_can_capnp
 from openpilot.selfdrive.car.cruise import VCruiseHelper
 from openpilot.selfdrive.car.car_specific import MockCarState
+from openpilot.top.selfdrive.controls.lib.accel_personality.accel_controller import AccelController
 
 REPLAY = "REPLAY" in os.environ
 
@@ -29,7 +30,7 @@ EventName = log.OnroadEvent.EventName
 
 # forward
 carlog.addHandler(ForwardingHandler(cloudlog))
-
+AccelPersonality = custom.LongitudinalPlanTOP.AccelerationPersonality
 
 def obd_callback(params: Params) -> ObdCallback:
   def set_obd_multiplexing(obd_multiplexing: bool):
@@ -84,6 +85,7 @@ class Car:
 
     dp_atl = self.params.get_bool("dp_atl")
     top_params = 0
+    self.accel_controller = AccelController()
 
     if CI is None:
       # wait for one pandaState and one CAN packet
@@ -127,7 +129,8 @@ class Car:
     if auto_brakehold:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.ALLOW_AEB
 
-    sport_mode = self.params.get_bool("Dynamic_Follow")
+    current_personality = AccelPersonality(self.params.get_int("AccelPersonality", default=AccelPersonality.stock))
+    sport_mode = current_personality != AccelPersonality.ECO
     if sport_mode:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX
 
@@ -286,6 +289,10 @@ class Car:
     while not evt.is_set():
       self.is_metric = self.params.get_bool("IsMetric")
       self.experimental_mode = self.params.get_bool("ExperimentalMode") and self.CP.openpilotLongitudinalControl
+
+      if hasattr(self, 'accel_controller'):
+          self.accel_controller.update()
+
       time.sleep(0.1)
 
   def card_thread(self):
