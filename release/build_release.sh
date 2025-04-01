@@ -11,10 +11,8 @@ cd $DIR
 BUILD_DIR=/data/openpilot
 SOURCE_DIR="$(git rev-parse --show-toplevel)"
 
-if [ -z "$RELEASE_BRANCH" ]; then
-  echo "RELEASE_BRANCH is not set"
-  exit 1
-fi
+FILES_SRC="release/files_tici"
+RELEASE_BRANCH="release3"
 
 if [ -z "$SOURCE_BRANCH" ]; then
   echo "SOURCE_BRANCH is not set"
