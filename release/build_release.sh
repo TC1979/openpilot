@@ -14,10 +14,6 @@ SOURCE_DIR="$(git rev-parse --show-toplevel)"
 FILES_SRC="release/files_tici"
 RELEASE_BRANCH="release3"
 
-if [ -z "$SOURCE_BRANCH" ]; then
-  echo "SOURCE_BRANCH is not set"
-  exit 1
-fi
 
 # set git identity
 source /data/identity.sh
