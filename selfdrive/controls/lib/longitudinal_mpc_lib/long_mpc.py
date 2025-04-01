@@ -78,7 +78,7 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   elif personality==log.LongitudinalPersonality.standard:
     return 1.3
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 0.9
+    return 0.95
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
@@ -113,17 +113,25 @@ def get_STOP_DISTANCE(personality=log.LongitudinalPersonality.standard):
 def get_stopped_equivalence_factor(v_lead, v_ego):
   # KRKeegan this offset rapidly decreases the following distance when the lead pulls
   # away, resulting in an early demand for acceleration.
-  v_diff_offset = 0
   v_diff_offset_max = 12
-  speed_to_reach_max_v_diff_offset = 26 # in kp/h
-  speed_to_reach_max_v_diff_offset = speed_to_reach_max_v_diff_offset * CV.KPH_TO_MS
+  speed_to_reach_max_v_diff_offset = 26 * CV.KPH_TO_MS  # in m/s
   delta_speed = v_lead - v_ego
-  if np.all(delta_speed > 0):
-    v_diff_offset = delta_speed * 2
-    v_diff_offset = np.clip(v_diff_offset, 0, v_diff_offset_max)
-                                                                    # increase in a linear behavior
-    v_diff_offset = np.maximum(v_diff_offset * ((speed_to_reach_max_v_diff_offset - v_ego)/speed_to_reach_max_v_diff_offset), 0)
-  return (v_lead**2) / (2 * COMFORT_BRAKE) + v_diff_offset
+
+  v_diff_offset = np.zeros_like(delta_speed)  # Ensure correct shape
+
+  if np.any(delta_speed > 0):
+    # Smooth scaling with a sigmoid-based approach
+    v_diff_offset = v_diff_offset_max * (1 / (1 + np.exp(-0.2 * (delta_speed - 5))))
+
+    # Adjust scaling factor for smooth decay at higher speeds
+    scaling_factor = np.clip((speed_to_reach_max_v_diff_offset - v_ego) / speed_to_reach_max_v_diff_offset, 0, 1)
+
+    # Cubic decay, but softened to avoid sudden drops
+    smooth_scaling = (scaling_factor ** 3) * (1.5 - 0.5 * scaling_factor)
+    v_diff_offset *= smooth_scaling
+
+  stopping_distance = (v_lead ** 2) / (2 * COMFORT_BRAKE) + v_diff_offset
+  return stopping_distance
 
 def get_safe_obstacle_distance(v_ego, t_follow, stop_distance=None):
   if stop_distance is None:
