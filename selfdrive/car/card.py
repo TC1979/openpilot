@@ -129,7 +129,15 @@ class Car:
     if auto_brakehold:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.ALLOW_AEB
 
-    current_personality = AccelPersonality(self.params.get_int("AccelPersonality", default=AccelPersonality.stock))
+    personality_int = self.params.get_int("AccelPersonality")
+    if personality_int is None:
+      current_personality = AccelPersonality.stock
+    else:
+      try:
+        current_personality = AccelPersonality(personality_int)
+      except (ValueError, TypeError):
+        current_personality = AccelPersonality.stock
+
     sport_mode = current_personality != AccelPersonality.ECO
     if sport_mode:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX
@@ -292,6 +300,17 @@ class Car:
 
       if hasattr(self, 'accel_controller'):
           self.accel_controller.update()
+
+      personality_int = self.params.get_int("AccelPersonality")
+      if personality_int is None:
+        current_personality = AccelPersonality.stock
+      else:
+        try:
+          current_personality = AccelPersonality(personality_int)
+        except (ValueError, TypeError):
+          current_personality = AccelPersonality.stock
+        
+      sport_mode = current_personality != AccelPersonality.ECO
 
       time.sleep(0.1)
 
