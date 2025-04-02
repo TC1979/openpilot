@@ -63,8 +63,8 @@ def manager_init() -> None:
     ("toyotaautolock", "1"),
     ("toyotaautounlock", "1"),
     ("toyota_bsm", "0"),
-    ("ToyotaDriveMode", "0"),
     ("toyota_stock_long", "0"),
+    ("ToyotaDriveMode", "0"),
     ("ToyotaTune", "1"),
     ("TurnVisionControl", "1"),
   ]
