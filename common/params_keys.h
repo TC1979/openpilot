@@ -142,6 +142,7 @@ inline static std::unordered_map<std::string, uint32_t> keys = {
     {"toyotaautolock", PERSISTENT},
     {"toyotaautounlock", PERSISTENT},
     {"toyota_bsm", PERSISTENT},
+    {"toyota_stock_long", PERSISTENT},
     {"ToyotaDriveMode", PERSISTENT},
     {"TurnVisionControl", PERSISTENT},
     {"QuietDrive", PERSISTENT},

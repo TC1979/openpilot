@@ -1208,6 +1208,14 @@ Internet access from mobile phone (tethering) is required.</source>
 Reboot Required.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Use Toyota Stock Longitudinal Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable to use Toyota&apos;s stock longitudinal control.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TogglesPanel</name>

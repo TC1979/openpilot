@@ -104,7 +104,11 @@ class Car:
 
       if dp_atl:
         top_params |= structs.TopFlags.LateralALKA
-      self.CI = get_car(*self.can_callbacks, obd_callback(self.params), experimental_long_allowed, num_pandas, cached_params)
+
+      if self.params.get_bool("toyota_stock_long"):
+        top_params |= structs.TopFlags.ToyotaStockLong
+
+      self.CI = get_car(*self.can_callbacks, obd_callback(self.params), experimental_long_allowed, num_pandas, top_params, cached_params)
       self.RI = interfaces[self.CI.CP.carFingerprint].RadarInterface(self.CI.CP)
       self.CP = self.CI.CP
 
