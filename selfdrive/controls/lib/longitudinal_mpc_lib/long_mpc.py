@@ -12,6 +12,7 @@ from openpilot.common.swaglog import cloudlog
 # WARNING: imports outside of constants will not trigger a rebuild
 from openpilot.selfdrive.modeld.constants import index_function
 from openpilot.selfdrive.controls.radard import _LEAD_ACCEL_TAU
+from openpilot.top.selfdrive.controls.lib.accel_personality.cruise_accel_controller import CruiseAccelController
 
 if __name__ == '__main__':  # generating code
   from openpilot.third_party.acados.acados_template import AcadosModel, AcadosOcp, AcadosOcpSolver
@@ -60,12 +61,6 @@ COMFORT_BRAKE = 2.5
 # STOP_DISTANCE = 6.0
 # CRUISE_MIN_ACCEL = -1.2
 CRUISE_MAX_ACCEL = 1.6
-
-A_CRUISE_MIN_VALS = [-1.2, -1.1, -1.0, -1.1, -1.2]
-A_CRUISE_MIN_BP =   [ 0.,  .01,  .02,   .3,    1.]
-
-def get_cruise_min_accel(v_ego):
-    return np.interp(v_ego, A_CRUISE_MIN_BP, A_CRUISE_MIN_VALS)
 
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
@@ -283,6 +278,7 @@ class LongitudinalMpc:
     self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
     self.reset()
     self.source = SOURCES[2]
+    self.cruise_accel_ctrl = CruiseAccelController()
 
   def reset(self):
     # self.solver = AcadosOcpSolverCython(MODEL_NAME, ACADOS_SOLVER_TYPE, N)
@@ -402,6 +398,7 @@ class LongitudinalMpc:
 
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
+    a_cruise_min = self.cruise_accel_ctrl.get_min_accel(v_ego)
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
 
@@ -420,11 +417,9 @@ class LongitudinalMpc:
 
       # Fake an obstacle for cruise, this ensures smooth acceleration to set speed
       # when the leads are no factor.
-      cruise_min_accel_val = get_cruise_min_accel(v_ego)
-      v_lower = v_ego + (T_IDXS * cruise_min_accel_val * 1.05)
+      v_lower = v_ego + (T_IDXS * a_cruise_min * 1.05)
       # TODO does this make sense when max_a is negative?
-      cruise_max_accel_val = CRUISE_MAX_ACCEL
-      v_upper = v_ego + (T_IDXS * cruise_max_accel_val * 1.05)
+      v_upper = v_ego + (T_IDXS * CRUISE_MAX_ACCEL * 1.05)
       v_cruise_clipped = np.clip(v_cruise * np.ones(N+1),
                                  v_lower,
                                  v_upper)
