@@ -9,7 +9,7 @@ from cereal import custom
 from numpy import interp
 from openpilot.common.params import Params
 
-AccelPersonality = custom.LongitudinalPlanSP.AccelerationPersonality
+AccelPersonality = custom.LongitudinalPlanTOP.AccelerationPersonality
 
 class CruiseAccelController:
   """
