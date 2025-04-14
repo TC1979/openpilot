@@ -1,100 +1,85 @@
-# The MIT License
-#
-# Copyright (c) 2019-, Rick Lan, dragonpilot community, and a number of other contributors.
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
+"""
+Copyright (c) 2021-, rav4kumar, Haibin Wen, sunnypilot, and a number of other contributors.
 
-# Last updated: February 20, 2025
+This file is part of sunnypilot and is licensed under the MIT License.
+See the LICENSE.md file in the root directory for more details.
+"""
 from cereal import custom
 from numpy import interp
 from openpilot.common.realtime import DT_MDL
 from openpilot.common.params import Params
 
+from openpilot.top.selfdrive.controls.lib.accel_personality.accel_profiles import (
+  MAX_ACCEL_ECO, MAX_ACCEL_NORMAL, MAX_ACCEL_SPORT,
+  MIN_ACCEL_ECO, MIN_ACCEL_NORMAL, MIN_ACCEL_SPORT, MIN_ACCEL_STOCK,
+  MAX_ACCEL_BREAKPOINTS, MIN_ACCEL_BREAKPOINTS
+)
+
+
 AccelPersonality = custom.LongitudinalPlanTOP.AccelerationPersonality
 
-# Accel personality by @arne182 modified by ct921
-
-_DP_CRUISE_MIN_V_ECO =    [-0.01, -0.01, -0.10, -1.2]
-_DP_CRUISE_MIN_V_NORMAL = [-0.015, -0.015, -0.12, -1.21]
-_DP_CRUISE_MIN_V_SPORT =  [-0.02, -0.02, -0.14, -1.22]
-_DP_CRUISE_MIN_BP =       [0.,     2.0,  11,   25.]
-
-_DP_CRUISE_MAX_V_ECO =    [2.0, 1.7, 1.1,  .95, .75, .70, .65, .45, .32, .20, .085]
-_DP_CRUISE_MAX_V_NORMAL = [2.2, 1.9, 1.4, 1.22, .95, .83, .71, .54, .45, .38, .15]
-_DP_CRUISE_MAX_V_SPORT =  [3.0, 2.4, 2.0, 1.45, 1.2, 1.0, .92, .75, .63, .55, .25]
-# CRUISE_MAX_BP in kmh =  [0.,  3,   10,   20,   30,  40,  53,  72,  90,  107, 150]
-_DP_CRUISE_MAX_BP =       [0.,  1,   3.,   6.,   8.,  11., 15., 20., 25., 30., 55.]
-
+def clamp(val: float, lower: float, upper: float) -> float:
+  return max(lower, min(val, upper))
 
 class AccelController:
   def __init__(self):
-    self._params = Params()
-    self._personality = AccelPersonality.stock
-    self._frame = 0
+    self.params = Params()
+    self.personality = AccelPersonality.stock
+    self.frame = 0
 
-  def _read_params(self):
-    if self._frame % int(1. / DT_MDL) == 0:
-      personality_str = self._params.get("AccelPersonality", encoding='utf-8')
+  def _update_personality_from_param(self):
+    if self.frame % int(1. / DT_MDL) == 0:
+      personality_str = self.params.get("AccelPersonality", encoding='utf-8')
       if personality_str is not None:
         personality_int = int(personality_str)
         if personality_int in [AccelPersonality.stock, AccelPersonality.normal, AccelPersonality.eco, AccelPersonality.sport]:
-          self._personality = personality_int
+          self.personality = personality_int
 
-  def _dp_calc_cruise_accel_limits(self, v_ego: float) -> float:
-    self._read_params()  # Ensure personality updates
+  def _get_max_accel_for_speed(self, v_ego: float) -> float:
+    self._update_personality_from_param()
 
-    # if self._personality == AccelPersonality.eco:
-    #     min_v = _DP_CRUISE_MIN_V_ECO
-    #     max_v = _DP_CRUISE_MAX_V_ECO
-    # elif self._personality == AccelPersonality.sport:
-    #     min_v = _DP_CRUISE_MIN_V_SPORT
-    #     max_v = _DP_CRUISE_MAX_V_SPORT
-    # else:
-    #     min_v = _DP_CRUISE_MIN_V_NORMAL
-    #     max_v = _DP_CRUISE_MAX_V_NORMAL
+    # Clamp v_ego to valid interpolation range
+    v_ego = clamp(v_ego, MAX_ACCEL_BREAKPOINTS[0], MAX_ACCEL_BREAKPOINTS[-1])
 
-    if self._personality == AccelPersonality.eco:
-      max_v = _DP_CRUISE_MAX_V_ECO
-    elif self._personality == AccelPersonality.sport:
-      max_v = _DP_CRUISE_MAX_V_SPORT
+    if self.personality == AccelPersonality.eco:
+      accel_profile = MAX_ACCEL_ECO
+    elif self.personality == AccelPersonality.sport:
+      accel_profile = MAX_ACCEL_SPORT
     else:
-      max_v = _DP_CRUISE_MAX_V_NORMAL
+      accel_profile = MAX_ACCEL_NORMAL
 
-    # a_cruise_min = float(interp(v_ego, _DP_CRUISE_MIN_BP, min_v))
-    a_cruise_max = float(interp(v_ego, _DP_CRUISE_MAX_BP, max_v))
+    return float(interp(v_ego, MAX_ACCEL_BREAKPOINTS, accel_profile))
 
-    return a_cruise_max
+  def _get_min_accel_for_speed(self, v_ego: float) -> float:
+    self._update_personality_from_param()
+
+    # Clamp v_ego to valid interpolation range
+    v_ego = clamp(v_ego, MIN_ACCEL_BREAKPOINTS[0], MIN_ACCEL_BREAKPOINTS[-1])
+
+    if self.personality == AccelPersonality.eco:
+      accel_profile = MIN_ACCEL_ECO
+    elif self.personality == AccelPersonality.sport:
+      accel_profile = MIN_ACCEL_SPORT
+    elif self.personality == AccelPersonality.normal:
+      accel_profile = MIN_ACCEL_NORMAL
+    else:
+      accel_profile = MIN_ACCEL_STOCK
+
+    return float(interp(v_ego, MIN_ACCEL_BREAKPOINTS, accel_profile))
 
   def get_accel_limits(self, v_ego: float, accel_limits: list[float]) -> tuple[float, float]:
-    self._read_params()
+    self._update_personality_from_param()
 
-    if self._personality == AccelPersonality.stock:
+    if self.personality == AccelPersonality.stock:
       return (accel_limits[0], accel_limits[1])
     else:
-      a_cruise_max = self._dp_calc_cruise_accel_limits(v_ego)
-      return (accel_limits[0], a_cruise_max)
+      max_accel = self._get_max_accel_for_speed(v_ego)
+      return (accel_limits[0], max_accel)
 
-  def is_enabled(self, accel_personality: int = AccelPersonality.stock) -> bool:
-    self._personality = accel_personality
-    self._read_params()
-    enabled: bool = (self._personality != AccelPersonality.stock)
-    return enabled
+  def is_personality_enabled(self, accel_personality: int = AccelPersonality.stock) -> bool:
+    self.personality = accel_personality
+    self._update_personality_from_param()
+    return bool(self.personality != AccelPersonality.stock)
 
   def update(self):
-    self._frame += 1
+    self.frame += 1

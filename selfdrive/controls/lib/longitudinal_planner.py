@@ -2,7 +2,6 @@
 import math
 import numpy as np
 from openpilot.common.params import Params
-from cereal import custom
 import cereal.messaging as messaging
 from opendbc.car.interfaces import ACCEL_MIN, ACCEL_MAX
 from openpilot.common.conversions import Conversions as CV
@@ -21,7 +20,6 @@ from openpilot.top.selfdrive.controls.lib.longitudinal_planner import Longitudin
 from openpilot.selfdrive.controls.vtsc import vtsc
 # }} PFEIFER - VTSC
 
-AccelPersonality = custom.LongitudinalPlanTOP.AccelerationPersonality
 
 LON_MPC_STEP = 0.2  # first step is 0.2s
 A_CRUISE_MAX_VALS = [1.6, 1.2, 0.8, 0.6]
@@ -159,20 +157,9 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
     else:
       accel_clip = [ACCEL_MIN, ACCEL_MAX]
 
-    accel_personality = AccelPersonality.normal
-    if hasattr(sm, 'longitudinalPlanTOP') and sm['longitudinalPlanTOP'].valid:
-      accel_personality = sm['longitudinalPlanTOP'].accelPersonality
-    else:
-      params_personality = self.params.get("AccelPersonality", encoding='utf-8')
-      if params_personality is not None:
-        try:
-          accel_personality = int(params_personality)
-        except ValueError:
-          accel_personality = AccelPersonality.stock
-
-    if self.accel_controller.is_enabled(accel_personality):
-      _, max_limit = self.accel_controller.get_accel_limits(v_ego, accel_clip)
-
+    # Override accel using Accel Controller if enabled
+    if self.accel_controller.is_personality_enabled:
+      max_limit = self.accel_controller._get_max_accel_for_speed(v_ego)
       if self.mpc.mode == 'acc':
         # Use the accel controller limits directly
         accel_clip = [ACCEL_MIN, max_limit]
