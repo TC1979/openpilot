@@ -75,9 +75,6 @@ class SelfdriveD:
     # TODO: de-couple selfdrived with card/conflate on carState without introducing controls mismatches
     self.car_state_sock = messaging.sub_sock('carState', timeout=20)
 
-    if self.dp_jetson:
-      IGNORE_PROCESSES.update({"dmonitoringd", "dmonitoringmodeld", "logcatd", "logmessaged", "loggerd", "tombstoned", "uploader"})
-
     ignore = self.sensor_packets + self.gps_packets + ['alertDebug']
     if SIMULATION:
       ignore += ['driverCameraState', 'managerState']
@@ -134,7 +131,9 @@ class SelfdriveD:
     # cause loggerd to crash on write, so ignore it only on that platform
     self.ignored_processes = set()
     if HARDWARE.get_device_type() == 'tici' and os.path.exists('/dev/nvme0'):
-      self.ignored_processes = {'loggerd', 'fleetmanager', }
+      self.ignored_processes = {'loggerd', }
+    if self.dp_jetson:
+      self.ignored_processes = {'dmonitoringd', 'dmonitoringmodeld', 'logcatd', 'logmessaged', 'loggerd', 'tombstoned', 'uploader'})
 
     # Determine startup event
     self.startup_event = EventName.startup if build_metadata.openpilot.comma_remote and build_metadata.tested_channel else EventName.startupMaster
