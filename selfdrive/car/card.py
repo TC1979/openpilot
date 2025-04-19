@@ -93,7 +93,7 @@ class Car:
         if len(can.can) > 0:
           break
 
-      alpha_long_allowed = self.params.get_bool("AlphaLongitudinalEnabled")
+      experimental_long_allowed = self.params.get_bool("ExperimentalLongitudinalEnabled")
       num_pandas = len(messaging.recv_one_retry(self.sm.sock['pandaStates']).pandaStates)
 
       cached_params = None
@@ -104,7 +104,7 @@ class Car:
 
       if dp_atl:
         top_params |= structs.TopFlags.LateralALKA
-      self.CI = get_car(*self.can_callbacks, obd_callback(self.params), alpha_long_allowed, num_pandas, cached_params)
+      self.CI = get_car(*self.can_callbacks, obd_callback(self.params), experimental_long_allowed, num_pandas, cached_params)
       self.RI = interfaces[self.CI.CP.carFingerprint].RadarInterface(self.CI.CP)
       self.CP = self.CI.CP
 
