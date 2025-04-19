@@ -323,6 +323,7 @@ jobs:
     name: Create UI Report
     runs-on:
       - 'ubuntu-24.04'
+    if: false  # FIXME: FrameReader is broken on CI runners
     steps:
       - uses: actions/checkout@v4
         with:
