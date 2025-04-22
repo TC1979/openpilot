@@ -980,6 +980,7 @@ Dies kann bis zu einer Minute dauern.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>failed to check for update</source>
         <translation>Update-Prüfung fehlgeschlagen</translation>
     </message>
     <message>
