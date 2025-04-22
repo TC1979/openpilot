@@ -102,5 +102,5 @@ class LongControl:
       output_accel = self.pid.update(error_deadzone if Params().get_bool("ExperimentalMode") else error, speed=CS.vEgo,
                                      feedforward=a_target)
 
-    self.last_output_accel = float(np.clip(output_accel, accel_limits[0], accel_limits[1]))
+    self.last_output_accel = np.clip(output_accel, accel_limits[0], accel_limits[1])
     return self.last_output_accel
