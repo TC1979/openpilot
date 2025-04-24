@@ -163,6 +163,8 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
         # Recalculate limit turn according to the new max limit
         steer_angle_without_offset = sm['carState'].steeringAngleDeg - sm['liveParameters'].angleOffsetDeg
         accel_clip = limit_accel_in_turns(v_ego, steer_angle_without_offset, accel_clip, self.CP)
+      else:
+        accel_clip = [ACCEL_MIN, ACCEL_MAX]
 
     if reset_state:
       self.v_desired_filter.x = v_ego
