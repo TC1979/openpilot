@@ -61,7 +61,7 @@ COMFORT_BRAKE = 2.5
 # CRUISE_MIN_ACCEL = -1.2
 CRUISE_MAX_ACCEL = 1.6
 
-A_CRUISE_MIN_VALS = [-0.1, -0.2, -0.3, -0.5, -0.8, -1.0, -1.2]
+A_CRUISE_MIN_VALS = [-1.2, -0.2, -0.3, -0.6, -0.8, -1.0, -1.2]
 A_CRUISE_MIN_BP =   [ 0.,   .01,  .02,   .3,   6.,  20,   40]
 
 def get_cruise_min_accel(v_ego):
@@ -111,7 +111,7 @@ def get_STOP_DISTANCE(personality=log.LongitudinalPersonality.standard):
   elif personality==log.LongitudinalPersonality.standard:
     return 4.0
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 3.5
+    return 4.0
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
