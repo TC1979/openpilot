@@ -83,6 +83,7 @@ class Car:
     self.can_callbacks = can_comm_callbacks(self.can_sock, self.pm.sock['sendcan'])
 
     dp_atl = self.params.get_bool("dp_atl")
+    accel_personality = True if self.params.get_int("AccelPersonality") != 4 else False
     top_params = 0
 
     if CI is None:
@@ -105,7 +106,10 @@ class Car:
       if dp_atl:
         top_params |= structs.TopFlags.LateralALKA
 
-      self.CI = get_car(*self.can_callbacks, obd_callback(self.params), alpha_long_allowed, num_pandas, cached_params)
+      if accel_personality:
+        top_params |= structs.TopFlags.AccelPersonality
+
+      self.CI = get_car(*self.can_callbacks, obd_callback(self.params), alpha_long_allowed, num_pandas, top_params, cached_params)
       self.RI = interfaces[self.CI.CP.carFingerprint].RadarInterface(self.CI.CP)
       self.CP = self.CI.CP
 
@@ -128,8 +132,7 @@ class Car:
     if auto_brakehold:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.ALLOW_AEB
 
-    sport_mode = self.params.get_bool("Dynamic_Follow")
-    if sport_mode:
+    if top_params & structs.TopFlags.AccelPersonality:
       self.CP.alternativeExperience |= ALTERNATIVE_EXPERIENCE.RAISE_LONGITUDINAL_LIMITS_TO_ISO_MAX
 
     openpilot_enabled_toggle = self.params.get_bool("OpenpilotEnabledToggle")
