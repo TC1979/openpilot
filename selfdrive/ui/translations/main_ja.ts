@@ -607,14 +607,6 @@ Firehoseモードを有効にすると、学習データを最大限アップロ
 <context>
     <name>QObject</name>
     <message>
-        <source>Reboot</source>
-        <translation>再起動</translation>
-    </message>
-    <message>
-        <source>Exit</source>
-        <translation>閉じる</translation>
-    </message>
-    <message>
         <source>T.O.P</source>
         <translation type="unfinished"></translation>
     </message>

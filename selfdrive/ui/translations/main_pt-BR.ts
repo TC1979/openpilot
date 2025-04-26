@@ -609,14 +609,6 @@ O Modo Firehose permite maximizar o envio de dados de treinamento para melhorar 
 <context>
     <name>QObject</name>
     <message>
-        <source>Reboot</source>
-        <translation>Reiniciar</translation>
-    </message>
-    <message>
-        <source>Exit</source>
-        <translation>Sair</translation>
-    </message>
-    <message>
         <source>T.O.P</source>
         <translation type="unfinished"></translation>
     </message>

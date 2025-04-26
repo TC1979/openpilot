@@ -617,14 +617,6 @@ Firehose Mode allows you to maximize your training data uploads to improve openp
 <context>
     <name>QObject</name>
     <message>
-        <source>Reboot</source>
-        <translation>إعادة التشغيل</translation>
-    </message>
-    <message>
-        <source>Exit</source>
-        <translation>إغلاق</translation>
-    </message>
-    <message>
         <source>T.O.P</source>
         <translation type="unfinished"></translation>
     </message>
