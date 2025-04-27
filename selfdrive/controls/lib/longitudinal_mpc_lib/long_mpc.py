@@ -61,8 +61,8 @@ COMFORT_BRAKE = 2.5
 # CRUISE_MIN_ACCEL = -1.2
 CRUISE_MAX_ACCEL = 1.6
 
-A_CRUISE_MIN_VALS = [-1.2, -0.8, -0.5, -0.8, -1.0, -1.2]
-A_CRUISE_MIN_BP =   [ 0.,   .01,  .02,   .3,   6.,  20]
+A_CRUISE_MIN_VALS = [-1.2, -0.9, -0.6, -1.0, -1.2]
+A_CRUISE_MIN_BP =   [ 0.,   .01,  .02,   .3,   6.]
 
 def get_cruise_min_accel(v_ego):
     return np.interp(v_ego, A_CRUISE_MIN_BP, A_CRUISE_MIN_VALS)
