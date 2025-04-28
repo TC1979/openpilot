@@ -58,14 +58,8 @@ FCW_IDXS = T_IDXS < 5.0
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
 COMFORT_BRAKE = 2.5
 # STOP_DISTANCE = 6.0
-# CRUISE_MIN_ACCEL = -1.2
+CRUISE_MIN_ACCEL = -1.2
 CRUISE_MAX_ACCEL = 1.6
-
-A_CRUISE_MIN_VALS = [-1.2, -0.8, -0.4, -0.8, -1.2]
-A_CRUISE_MIN_BP =   [ 0.,   .01,  .02,   .3,   6.]
-
-def get_cruise_min_accel(v_ego):
-    return np.interp(v_ego, A_CRUISE_MIN_BP, A_CRUISE_MIN_VALS)
 
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
@@ -73,7 +67,7 @@ def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   elif personality==log.LongitudinalPersonality.standard:
     return 1.0
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 0.5
+    return 0.3
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
@@ -92,14 +86,14 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
 def get_dynamic_follow(v_ego, personality=log.LongitudinalPersonality.standard):
   # The Dynamic follow function is adjusted by Marc(cgw1968-5779)
   if personality==log.LongitudinalPersonality.relaxed:
-    x_vel =  [0.,  40]
-    y_dist = [1.2, 1.8]
+    x_vel =  [0.,  6,   10., 10.01, 15., 27.7]
+    y_dist = [1.2, 1.4, 1.4,  1.5, 1.65,  1.8]
   elif personality==log.LongitudinalPersonality.standard:
-    x_vel =  [0.,  40]
-    y_dist = [1.0, 1.5]
+    x_vel =  [0.,  6,   10., 10.01, 15., 27.7]
+    y_dist = [1.1, 1.3, 1.35, 1.4,  1.4, 1.45]
   elif personality==log.LongitudinalPersonality.aggressive:
-    x_vel =  [0.,   40]
-    y_dist = [0.85, 1.1]
+    x_vel =  [0.,  6,   10., 10.01, 15., 27.7]
+    y_dist = [1.0, 1.2, 1.0,   0.9, 0.95, 1.0]
   else:
     raise NotImplementedError("Dynamic Follow personality not supported")
   return np.interp(v_ego, x_vel, y_dist)
@@ -420,11 +414,9 @@ class LongitudinalMpc:
 
       # Fake an obstacle for cruise, this ensures smooth acceleration to set speed
       # when the leads are no factor.
-      cruise_min_accel_val = get_cruise_min_accel(v_ego)
-      v_lower = v_ego + (T_IDXS * cruise_min_accel_val * 1.05)
+      v_lower = v_ego + (T_IDXS * CRUISE_MIN_ACCEL * 1.05)
       # TODO does this make sense when max_a is negative?
-      cruise_max_accel_val = CRUISE_MAX_ACCEL
-      v_upper = v_ego + (T_IDXS * cruise_max_accel_val * 1.05)
+      v_upper = v_ego + (T_IDXS * CRUISE_MAX_ACCEL * 1.05)
       v_cruise_clipped = np.clip(v_cruise * np.ones(N+1),
                                  v_lower,
                                  v_upper)
