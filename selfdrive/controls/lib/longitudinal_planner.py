@@ -88,6 +88,20 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
     self.dynamic_follow = False
     self.dynamic_follow = self.params.get_bool("Dynamic_Follow")
 
+    # StandstillMode
+    self.sng_e2e = self.params.get_bool("sng_e2e")
+    self.mode = 'acc'
+    if self.sng_e2e:
+      self.standstill_prev = False
+      self.standstill_current = False
+      self.standstill_transit_counter = 0
+      self.STANDSTILL_TRANSIT_FRAMES = 10
+      self.standstill_mode_active = False
+
+      if self.params.get("UserExperimentalMode") is None:
+        user_exp_mode = self.params.get_bool("ExperimentalMode")
+        self.params.put_bool("UserExperimentalMode", user_exp_mode)
+
   @staticmethod
   def parse_model(model_msg, model_error):
     if (len(model_msg.position.x) == ModelConstants.IDX_N and
@@ -110,7 +124,36 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
 
   def update(self, sm):
     LongitudinalPlannerTOP.update(self, sm)
+
+    # standstill e2e
+    prev_mode = self.mode
+
+    if self.sng_e2e:
+      self.standstill_current = sm['carState'].standstill
+
+      if self.standstill_current != self.standstill_prev:
+        self.standstill_transit_counter = self.STANDSTILL_TRANSIT_FRAMES
+        print(f"Standstill state change: {self.standstill_prev} -> {self.standstill_current}")
+
+      if self.standstill_transit_counter > 0:
+        self.standstill_transit_counter -= 1
+
+        if self.standstill_transit_counter == 0:
+          if self.standstill_current:
+            current_exp_mode = self.params.get_bool("ExperimentalMode")
+            self.params.put_bool_nonblocking("UserExperimentalMode", current_exp_mode)
+            self.params.put_bool_nonblocking("ExperimentalMode", True)
+            print(f"Entering standstill: Saved user setting {current_exp_mode}, set ExperimentalMode=True")
+          else:
+            user_exp_mode = self.params.get_bool("UserExperimentalMode")
+            self.params.put_bool_nonblocking("ExperimentalMode", user_exp_mode)
+            print(f"Leaving standstill: Restored user setting ExperimentalMode={user_exp_mode}")
+      self.standstill_prev = self.standstill_current
+
     self.mode = 'blended' if sm['selfdriveState'].experimentalMode else 'acc'
+
+    if self.mode != prev_mode:
+      print(f"Mode changed: {prev_mode} -> {self.mode}")
 
     if len(sm['carControl'].orientationNED) == 3:
       accel_coast = get_coast_accel(sm['carControl'].orientationNED[1])

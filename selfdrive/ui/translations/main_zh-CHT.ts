@@ -1101,6 +1101,14 @@ This may take up to a minute.</source>
         <translation>啟用Stop And Go 功能，讓車輛跟車到停並進入auto hold。</translation>
     </message>
     <message>
+        <source>Enable Experiment Mode In SNG</source>
+        <translation>SNG時開啟實驗模式</translation>
+    </message>
+    <message>
+        <source>When vehicle is stopped, enable experiment mode to prevent radar misjudgment of other moving vehicles that could cause continuous forward sliding.</source>
+        <translation>車輛停止時開啟實驗模式，這可以避免雷達對其他移動車輛的誤判而讓車輛不斷往前滑行。</translation>
+    </message>
+    <message>
         <source>Toyota Longitudinal Tuning</source>
         <translation>Toyota縱向控制調校</translation>
     </message>

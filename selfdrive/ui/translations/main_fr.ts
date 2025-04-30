@@ -1104,6 +1104,14 @@ Cela peut prendre jusqu&apos;à une minute.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Enable Experiment Mode In SNG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>When vehicle is stopped, enable experiment mode to prevent radar misjudgment of other moving vehicles that could cause continuous forward sliding.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Toyota Longitudinal Tuning</source>
         <translation type="unfinished"></translation>
     </message>
