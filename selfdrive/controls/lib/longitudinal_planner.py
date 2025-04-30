@@ -97,6 +97,9 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
       self.standstill_transit_counter = 0
       self.STANDSTILL_TRANSIT_FRAMES = 10
       self.standstill_mode_active = False
+      self.experimental_mode_override_active = False
+      self.LEAD_DISTANCE_THRESHOLD = 8.0
+      self.LEAD_SPEED_THRESHOLD = 10.0 * CV.KPH_TO_MS
 
       if self.params.get("UserExperimentalMode") is None:
         user_exp_mode = self.params.get_bool("ExperimentalMode")
@@ -131,6 +134,18 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
     if self.sng_e2e:
       self.standstill_current = sm['carState'].standstill
 
+      lead_one = sm['radarState'].leadOne
+      has_lead = lead_one.status
+      lead_dist = lead_one.dRel if has_lead else float('inf')
+      lead_speed = lead_one.vRel + sm['carState'].vEgo if has_lead else 0.0
+      lead_moving_away = has_lead and lead_dist > self.LEAD_DISTANCE_THRESHOLD and lead_speed > self.LEAD_SPEED_THRESHOLD
+
+      if lead_moving_away and self.experimental_mode_override_active:
+        user_exp_mode = self.params.get_bool("UserExperimentalMode")
+        self.params.put_bool_nonblocking("ExperimentalMode", user_exp_mode)
+        self.experimental_mode_override_active = False
+        print(f"Lead vehicle moving away: dist={lead_dist:.1f}m, speed={lead_speed*3.6:.1f}km/h, disabling ExperimentalMode override")
+
       if self.standstill_current != self.standstill_prev:
         self.standstill_transit_counter = self.STANDSTILL_TRANSIT_FRAMES
         print(f"Standstill state change: {self.standstill_prev} -> {self.standstill_current}")
@@ -143,11 +158,15 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
             current_exp_mode = self.params.get_bool("ExperimentalMode")
             self.params.put_bool_nonblocking("UserExperimentalMode", current_exp_mode)
             self.params.put_bool_nonblocking("ExperimentalMode", True)
+            self.experimental_mode_override_active = True
             print(f"Entering standstill: Saved user setting {current_exp_mode}, set ExperimentalMode=True")
           else:
-            user_exp_mode = self.params.get_bool("UserExperimentalMode")
-            self.params.put_bool_nonblocking("ExperimentalMode", user_exp_mode)
-            print(f"Leaving standstill: Restored user setting ExperimentalMode={user_exp_mode}")
+            if self.experimental_mode_override_active:
+              user_exp_mode = self.params.get_bool("UserExperimentalMode")
+              self.params.put_bool_nonblocking("ExperimentalMode", user_exp_mode)
+              self.experimental_mode_override_active = False
+              print(f"Leaving standstill: Restored user setting ExperimentalMode={user_exp_mode}")
+
       self.standstill_prev = self.standstill_current
 
     self.mode = 'blended' if sm['selfdriveState'].experimentalMode else 'acc'
