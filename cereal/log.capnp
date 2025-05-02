@@ -131,10 +131,10 @@ struct OnroadEvent @0xc4fa6047f024e718 {
     soundsUnavailableDEPRECATED @47;
 
     # TOP
-    atlEngageSound @94;
-    atlDisengageSound @95;
-    torqueNNLoad @96;
-    automaticBrakehold @97;
+    atlEngageSound @95;
+    atlDisengageSound @96;
+    torqueNNLoad @97;
+    automaticBrakehold @98;
   }
 }
 
