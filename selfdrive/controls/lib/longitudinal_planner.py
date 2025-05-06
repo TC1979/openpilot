@@ -90,20 +90,14 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
 
     # StandstillMode
     self.sng_e2e = self.params.get_bool("sng_e2e")
-    self.mode = 'acc'
     if self.sng_e2e:
       self.standstill_prev = False
       self.standstill_current = False
       self.standstill_transit_counter = 0
       self.STANDSTILL_TRANSIT_FRAMES = 10
-      self.standstill_mode_active = False
-      self.experimental_mode_override_active = False
-      self.LEAD_DISTANCE_THRESHOLD = 8.0
-      self.LEAD_SPEED_THRESHOLD = 10.0 * CV.KPH_TO_MS
-
-      if self.params.get("UserExperimentalMode") is None:
-        user_exp_mode = self.params.get_bool("ExperimentalMode")
-        self.params.put_bool("UserExperimentalMode", user_exp_mode)
+      self.experimental_mode_active_by_standstill = False
+      self.LEAD_DISTANCE_THRESHOLD = 5.0
+      self.LEAD_SPEED_THRESHOLD = 3.0 * CV.KPH_TO_MS
 
   @staticmethod
   def parse_model(model_msg, model_error):
@@ -129,7 +123,7 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
     LongitudinalPlannerTOP.update(self, sm)
 
     # standstill e2e
-    prev_mode = self.mode
+    prev_mode = self.mpc.mode
 
     if self.sng_e2e:
       self.standstill_current = sm['carState'].standstill
@@ -140,11 +134,10 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
       lead_speed = lead_one.vRel + sm['carState'].vEgo if has_lead else 0.0
       lead_moving_away = has_lead and lead_dist > self.LEAD_DISTANCE_THRESHOLD and lead_speed > self.LEAD_SPEED_THRESHOLD
 
-      if lead_moving_away and self.experimental_mode_override_active:
-        user_exp_mode = self.params.get_bool("UserExperimentalMode")
-        self.params.put_bool_nonblocking("ExperimentalMode", user_exp_mode)
-        self.experimental_mode_override_active = False
-        print(f"Lead vehicle moving away: dist={lead_dist:.1f}m, speed={lead_speed*3.6:.1f}km/h, disabling ExperimentalMode override")
+      if lead_moving_away and self.experimental_mode_active_by_standstill:
+        self.params.put_bool_nonblocking("ExperimentalMode", False)
+        self.experimental_mode_active_by_standstill = False
+        print(f"Lead vehicle moving away: dist={lead_dist:.1f}m, speed={lead_speed*3.6:.1f}km/h, disabling ExperimentalMode")
 
       if self.standstill_current != self.standstill_prev:
         self.standstill_transit_counter = self.STANDSTILL_TRANSIT_FRAMES
@@ -155,24 +148,21 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
 
         if self.standstill_transit_counter == 0:
           if self.standstill_current:
-            current_exp_mode = self.params.get_bool("ExperimentalMode")
-            self.params.put_bool_nonblocking("UserExperimentalMode", current_exp_mode)
             self.params.put_bool_nonblocking("ExperimentalMode", True)
-            self.experimental_mode_override_active = True
-            print(f"Entering standstill: Saved user setting {current_exp_mode}, set ExperimentalMode=True")
+            self.experimental_mode_active_by_standstill = True
+            print("Entering standstill: Enabling ExperimentalMode")
           else:
-            if self.experimental_mode_override_active:
-              user_exp_mode = self.params.get_bool("UserExperimentalMode")
-              self.params.put_bool_nonblocking("ExperimentalMode", user_exp_mode)
-              self.experimental_mode_override_active = False
-              print(f"Leaving standstill: Restored user setting ExperimentalMode={user_exp_mode}")
+            if self.experimental_mode_active_by_standstill:
+              self.params.put_bool_nonblocking("ExperimentalMode", False)
+              self.experimental_mode_active_by_standstill = False
+              print("Leaving standstill: Disabling ExperimentalMode")
 
       self.standstill_prev = self.standstill_current
 
-    self.mode = 'blended' if sm['selfdriveState'].experimentalMode else 'acc'
+    if self.mpc.mode != prev_mode:
+      print(f"Mode changed: {prev_mode} -> {self.mpc.mode}")
 
-    if self.mode != prev_mode:
-      print(f"Mode changed: {prev_mode} -> {self.mode}")
+    self.mpc.mode = 'blended' if sm['selfdriveState'].experimentalMode else 'acc'
 
     if len(sm['carControl'].orientationNED) == 3:
       accel_coast = get_coast_accel(sm['carControl'].orientationNED[1])
@@ -195,7 +185,7 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
     # No change cost when user is controlling the speed, or when standstill
     prev_accel_constraint = not (reset_state or sm['carState'].standstill)
 
-    if self.mode == 'acc':
+    if self.mpc.mode == 'acc':
       if self.CP.brand == "toyota":
         accel_clip = [ACCEL_MIN, get_max_accel_toyota(v_ego)]
       else:
@@ -219,7 +209,7 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
     if self.accel_controller.is_enabled(accel_personality):
       _, max_limit = self.accel_controller.get_accel_limits(v_ego, accel_clip)
 
-      if self.mode == 'acc':
+      if self.mpc.mode == 'acc':
         # Use the accel controller limits directly
         accel_clip = [ACCEL_MIN, max_limit]
         # Recalculate limit turn according to the new max limit
@@ -278,17 +268,8 @@ class LongitudinalPlanner(LongitudinalPlannerTOP):
     self.v_desired_filter.x = self.v_desired_filter.x + self.dt * (self.a_desired + a_prev) / 2.0
 
     action_t =  self.CP.longitudinalActuatorDelay + DT_MDL
-    output_a_target_mpc, output_should_stop_mpc = get_accel_from_plan(self.v_desired_trajectory, self.a_desired_trajectory, CONTROL_N_T_IDX,
+    output_a_target, self.output_should_stop = get_accel_from_plan(self.v_desired_trajectory, self.a_desired_trajectory, CONTROL_N_T_IDX,
                                                                         action_t=action_t, vEgoStopping=self.CP.vEgoStopping)
-    output_a_target_e2e = sm['modelV2'].action.desiredAcceleration
-    output_should_stop_e2e = sm['modelV2'].action.shouldStop
-
-    if self.mode == 'acc':
-      output_a_target = output_a_target_mpc
-      self.output_should_stop = output_should_stop_mpc
-    else:
-      output_a_target = min(output_a_target_mpc, output_a_target_e2e)
-      self.output_should_stop = output_should_stop_e2e or output_should_stop_mpc
 
     for idx in range(2):
       accel_clip[idx] = np.clip(accel_clip[idx], self.prev_accel_clip[idx] - 0.05, self.prev_accel_clip[idx] + 0.05)
