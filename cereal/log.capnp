@@ -132,10 +132,10 @@ struct OnroadEvent @0xc4fa6047f024e718 {
     soundsUnavailableDEPRECATED @47;
 
     # TOP
-    atlEngageSound @95;
-    atlDisengageSound @96;
-    torqueNNLoad @97;
-    automaticBrakehold @98;
+    atlEngageSound @96;
+    atlDisengageSound @97;
+    torqueNNLoad @98;
+    automaticBrakehold @99;
   }
 }
 
@@ -511,7 +511,7 @@ struct DeviceState @0xa4d8b5af2aa492eb {
   fanSpeedPercentDesired @10 :UInt16;
   screenBrightnessPercent @37 :Int8;
 
-  wifiIpAddress @49 :Text;
+  wifiIpAddress @50 :Text;
   
   struct ThermalZone {
     name @0 :Text;
