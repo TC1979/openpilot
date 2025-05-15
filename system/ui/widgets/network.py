@@ -11,6 +11,8 @@ from openpilot.system.ui.widgets.keyboard import Keyboard
 from openpilot.system.ui.widgets.confirm_dialog import confirm_dialog
 
 NM_DEVICE_STATE_NEED_AUTH = 60
+MIN_PASSWORD_LENGTH = 8
+MAX_PASSWORD_LENGTH = 64
 ITEM_HEIGHT = 160
 
 
@@ -46,7 +48,7 @@ class WifiManagerUI:
     self.state: UIState = StateIdle()
     self.btn_width = 200
     self.scroll_panel = GuiScrollPanel()
-    self.keyboard = Keyboard()
+    self.keyboard = Keyboard(max_text_size=MAX_PASSWORD_LENGTH, min_text_size=MIN_PASSWORD_LENGTH)
 
     self._networks: list[NetworkInfo] = []
 
@@ -62,14 +64,18 @@ class WifiManagerUI:
 
     match self.state:
       case StateNeedsAuth(network):
-        result = self.keyboard.render(rect, "Enter password", f"for {network.ssid}")
+        result = self.keyboard.render("Enter password", f"for {network.ssid}")
         if result == 1:
-          self.connect_to_network(network, self.keyboard.text)
+          password = self.keyboard.text
+          self.keyboard.clear()
+
+          if len(password) >= MIN_PASSWORD_LENGTH:
+            self.connect_to_network(network, password)
         elif result == 0:
           self.state = StateIdle()
 
       case StateShowForgetConfirm(network):
-        result = confirm_dialog(rect, f'Forget Wi-Fi Network "{network.ssid}"?', "Forget")
+        result = confirm_dialog(f'Forget Wi-Fi Network "{network.ssid}"?', "Forget")
         if result == 1:
           self.forget_network(network)
         elif result == 0:
@@ -77,6 +83,11 @@ class WifiManagerUI:
 
       case _:
         self._draw_network_list(rect)
+
+  @property
+  def require_full_screen(self) -> bool:
+    """Check if the WiFi UI requires exclusive full-screen rendering."""
+    return isinstance(self.state, (StateNeedsAuth, StateShowForgetConfirm))
 
   def _draw_network_list(self, rect: rl.Rectangle):
     content_rect = rl.Rectangle(rect.x, rect.y, rect.width, len(self._networks) * ITEM_HEIGHT)
