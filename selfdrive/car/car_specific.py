@@ -42,6 +42,7 @@ class CarSpecificEvents:
     self.silent_steer_warning = True
     self.prev_atl = False
     self.dp_atl = Params().get_bool("dp_atl")
+    self.toyota_stock_long = Params().get_bool("toyota_stock_long")
 
     self.cruise_buttons: deque = deque([], maxlen=HYUNDAI_PREV_BUTTON_SAMPLES)
 
@@ -102,7 +103,7 @@ class CarSpecificEvents:
             # while in standstill, send a user alert
             events.add(EventName.manualRestart)
 
-      if self.dp_atl and (self.CP.carFingerprint in TSS2_CAR or (self.CP.flags & ToyotaFlags.SMART_DSU)):
+      if self.dp_atl and not self.toyota_stock_long and (self.CP.carFingerprint in TSS2_CAR or (self.CP.flags & ToyotaFlags.SMART_DSU)):
         if not self.prev_atl and CS_prev.cruiseState.available:
           events.add(EventName.atlEngageSound)
           Params().put_bool("LateralAllowed", True)

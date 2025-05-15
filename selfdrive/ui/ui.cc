@@ -142,7 +142,6 @@ UIState::UIState(QObject *parent) : QObject(parent) {
     "wideRoadCameraState", "managerState", "selfdriveState", "longitudinalPlan",
     "topControlsState", "longitudinalPlanTOP",
   });
-  scene.world_objects_visible = true;
   scene.wide_cam = false;
   scene.longitudinal_control = false;
   prime_state = new PrimeState(this);

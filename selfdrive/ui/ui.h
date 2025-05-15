@@ -80,7 +80,6 @@ typedef struct UIScene {
   bool steering_wheel_car;
   bool turn_signal_left;
   bool turn_signal_right;
-  bool world_objects_visible;
   bool wide_cam; 
   int personality_profile;
 } UIScene;

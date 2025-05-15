@@ -12,10 +12,6 @@ ModelRenderer::ModelRenderer() {
   for (int i = 0; i < LeadcarLockon_MAX; i++) {
     leadcar_lockon[i] = {0};
   }
-  blend_factor = 1.0f;
-  prev_allow_throttle = true;
-  experimental_mode = false;
-  longitudinal_control = false;
   vc_speed = 0.0f;
 }
 
@@ -32,10 +28,6 @@ void ModelRenderer::draw(QPainter &painter, const QRect &rect_param) {
   surface_rect = rect_param;
   auto *s = uiState();
   auto &sm = *(s->sm);
-
-  if (!s->scene.world_objects_visible) {
-    return;
-  }
 
   vc_speed = sm["carState"].getCarState().getVEgo();
   // Check if data is up-to-date

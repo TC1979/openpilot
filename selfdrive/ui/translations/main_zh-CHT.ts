@@ -1220,6 +1220,14 @@ Reboot Required.</source>
         <translation>TOP 將會連結個性化加速模式與Toyota駕駛模式按鍵，開啟後可透過實體按鍵選擇個性化加速模式。
 需要重啟後生效。</translation>
     </message>
+    <message>
+        <source>Use Toyota Stock Longitudinal Control</source>
+        <translation>使用Toyota原廠蹤向控制</translation>
+    </message>
+    <message>
+        <source>Enable to use Toyota&apos;s stock longitudinal control.</source>
+        <translation>開啟後將以Toyota原廠的蹤向控制加減速，而openpilot只進行方向盤的橫向車道維持。</translation>
+    </message>
 </context>
 <context>
     <name>TogglesPanel</name>
