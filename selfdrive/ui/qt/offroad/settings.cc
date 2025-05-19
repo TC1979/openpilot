@@ -70,7 +70,7 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
                                           tr("Standard is recommended. In aggressive mode, openpilot will follow lead cars closer and be more aggressive with the gas and brake. "
                                              "In relaxed mode openpilot will stay further away from lead cars. On supported cars, you can cycle through these personalities with "
                                              "your steering wheel distance button."),
-                                          "../assets/icons/speed_limit.png",
+                                          "../assets/icons/distance.png",
                                           longi_button_texts);
 
   // accel controller
@@ -79,7 +79,7 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
                                           tr("Normal is recommended. In sport mode, TOP will provide aggressive acceleration for a dynamic driving experience. "
                                              "In eco mode, TOP will apply smoother and more relaxed acceleration. On supported cars, you can cycle through these "
                                              "acceleration personality within Onroad Settings on the driving screen."),
-                                          "../assets/offroad/icon_speed_limit.png",
+                                          "../assets/icon/speed_limit.png",
                                           accel_personality_texts);
   accel_personality_setting->showDescription();
 
@@ -643,7 +643,7 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
   toggles.append(new ParamControl("ReverseAccChange",
                                   tr("ACC +/-: Long Press Reverse"),
                                   tr("Change the ACC +/- buttons behavior with cruise speed change in openpilot.\nDisabled (Stock): Short = 1, Long = 5.\nEnabled: Short and Long = 5."),
-                                  "../assets/offroad/icon_acc_change.png",
+                                  "../assets/icon/acc_change.png",
                                   this));
 
   toggles.append(new ParamControl("dp_jetson",
