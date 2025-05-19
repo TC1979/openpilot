@@ -21,7 +21,7 @@ ExperimentalButton::ExperimentalButton(QWidget *parent) : experimental_mode(fals
 
   engage_img = loadPixmap("../assets/images/button_home.png", {img_size, img_size});
   engage_img = engage_img.scaled(engage_img.width() * 1.4, engage_img.height() * 1.4, Qt::KeepAspectRatio);
-  experimental_img = loadPixmap("../assets/img_experimental.svg", {img_size, img_size});
+  experimental_img = loadPixmap("../assets/icons/experimental.svg", {img_size, img_size});
   QObject::connect(this, &QPushButton::clicked, this, &ExperimentalButton::changeMode);
 }
 
