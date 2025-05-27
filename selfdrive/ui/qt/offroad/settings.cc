@@ -79,7 +79,7 @@ TogglesPanel::TogglesPanel(SettingsWindow *parent) : ListWidget(parent) {
                                           tr("Normal is recommended. In sport mode, TOP will provide aggressive acceleration for a dynamic driving experience. "
                                              "In eco mode, TOP will apply smoother and more relaxed acceleration. On supported cars, you can cycle through these "
                                              "acceleration personality within Onroad Settings on the driving screen."),
-                                          "../assets/icon/speed_limit.png",
+                                          "../assets/icons/speed_limit.png",
                                           accel_personality_texts);
   accel_personality_setting->showDescription();
 
@@ -541,115 +541,115 @@ TimpilotPanel::TimpilotPanel(QWidget* parent) : QWidget(parent) {
   toggles.append(new ParamControl("QuietDrive",
                                   tr("Quiet Drive"),
                                   tr("TOP will display alerts but only play the most important warning sounds. This feature can be toggled while the car is on."),
-                                  "../assets/icon/mute.png",
+                                  "../assets/icons/mute.png",
                                   this));
 
   toggles.append(new ParamControl("OnroadScreenOff",
                                   tr("Driving Screen Off"),
                                   tr("Turn off the device screen to protect the OLED panel after driving starts. It automatically brightens or turns on when a touch or event occurs."),
-                                  "../assets/icon/metric.png",
+                                  "../assets/icons/metric.png",
                                   this));
 
   toggles.append(new ParamControl("dp_atl",
                                   tr("Lateral Controls Always On"),
                                   tr("Lateral control will always be on and will not be interrupted by braking."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("NNFF",
                                   tr("NNFF Torque Control"),
                                   tr("Use Twilsonco's Neural Network Feedforward torque system for more precise lateral control."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("topsng",
                                   tr("Stop And Go"),
                                   tr("Enabled the Stop And Go feature and get auto hold."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("sng_e2e",
                                   tr("Enable Experiment Mode In SNG"),
                                   tr("When vehicle is stopped, enable experiment mode to prevent radar misjudgment of other moving vehicles that could cause continuous forward sliding."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("ToyotaTune",
                                   tr("Toyota Longitudinal Tuning"),
                                   tr("Using the longitudinal Tuning can increase the sensitivity of longitudinal control in Toyota models."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("Dynamic_Follow",
                                   tr("Dynamic Distance Adjustment"),
                                   tr("The distance to the lead car will no longer be a fixed reaction time, but will be dynamically adjusted based on the speed of the vehicle."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("NudgelessLaneChange",
                                   tr("Blinker Lane Change"),
                                   tr("Change lanes without the need to nudge the steering wheel first.\nDisabled: Need to nudge the steering wheel to change lanes.\nEnabled: Nudgeless.\nSpeed limit: Normal mode: above 20mph, Enabled Lateral Controls Always On: above 35mph."),
-                                  "../assets/icon/lane.png",
+                                  "../assets/icons/lane.png",
                                   this));
 
   toggles.append(new ParamControl("TurnVisionControl",
                                   tr("Vision Based Turn Control"),
                                   tr("Use vision path predictions to estimate the appropriate speed to drive through turns ahead."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("fleetmanager",
                                   tr("Enable Local File Server"),
                                   tr("This will allow you to play or download openpilot driving record files through your browser.\nUse web interface to control it: *http://&lt;device_ip&gt;:8082*.\nInternet access from mobile phone (tethering) is required."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("toyota_stock_long",
                                   tr("Use Toyota Stock Longitudinal Control"),
                                   tr("Enable to use Toyota's stock longitudinal control."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("ToyotaDriveMode",
                                   tr("Enable Toyota Drive Mode Button"),
                                   tr("TOP will link the Acceleration Personality to the car's physical drive mode selector.\nReboot Required."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("toyotaautolock",
                                   tr("Enable Door Auto Lock"),
                                   tr("Enabled this to lock doors when drive above 25 km/h. Only work on some Toyota vehicles."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("toyotaautounlock",
                                   tr("Enable Door Auto Unlock"),
                                   tr("Enabled this to unlock doors when shift to gear P. Only work on some Toyota vehicles."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("AleSato_AutomaticBrakeHold",
                                   tr("Automatic Brake Hold"),
                                   tr("Activates the car's brakes after 1 seconds stopped. (Only support on Toyota TSS2 Hybrid vehicles)"),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("toyota_bsm",
                                   tr("Fix Toyota BSM Signal"),
                                   tr("Enhance BSM function for some Toyota vehicles that openpilot currently does not support."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   toggles.append(new ParamControl("ReverseAccChange",
                                   tr("ACC +/-: Long Press Reverse"),
                                   tr("Change the ACC +/- buttons behavior with cruise speed change in openpilot.\nDisabled (Stock): Short = 1, Long = 5.\nEnabled: Short and Long = 5."),
-                                  "../assets/icon/acc_change.png",
+                                  "../assets/icons/acc_change.png",
                                   this));
 
   toggles.append(new ParamControl("dp_jetson",
                                   tr("Enable Jetson Support"),
                                   tr("Enable this option if you intend to run dp on Nvidia Jetson. Reboot required."),
-                                  "../assets/icon/road.png",
+                                  "../assets/icons/road.png",
                                   this));
 
   for (ParamControl *toggle : toggles) {
