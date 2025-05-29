@@ -82,6 +82,8 @@ class Car:
 
     self.can_callbacks = can_comm_callbacks(self.can_sock, self.pm.sock['sendcan'])
 
+    is_release = self.params.get_bool("IsReleaseBranch")
+
     dp_atl = self.params.get_bool("dp_atl")
     accel_personality = True if self.params.get_int("AccelPersonality") != 4 else False
     top_params = 0
@@ -112,7 +114,7 @@ class Car:
       if self.params.get_bool("toyota_stock_long"):
         top_params |= structs.TopFlags.ToyotaStockLong
 
-      self.CI = get_car(*self.can_callbacks, obd_callback(self.params), alpha_long_allowed, num_pandas, top_params, cached_params)
+      self.CI = get_car(*self.can_callbacks, obd_callback(self.params), alpha_long_allowed, is_release, num_pandas, top_params, cached_params)
       self.RI = interfaces[self.CI.CP.carFingerprint].RadarInterface(self.CI.CP)
       self.CP = self.CI.CP
 
@@ -142,7 +144,7 @@ class Car:
       safety_config.safetyModel = structs.CarParams.SafetyModel.noOutput
       self.CP.safetyConfigs = [safety_config]
 
-    if self.CP.secOcRequired and not self.params.get_bool("IsReleaseBranch"):
+    if self.CP.secOcRequired and not is_release:
       # Copy user key if available
       try:
         with open("/cache/params/SecOCKey") as f:
